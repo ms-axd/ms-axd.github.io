@@ -137,12 +137,28 @@ main {
   padding: 2rem 1rem;
 }
 
+.home-search-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
+  margin: 0 0 2rem;
+}
+
+.home-search-panel .search-container {
+  margin: 0;
+}
+
+.home-search-panel .search-box {
+  max-width: none;
+}
+
 .home-calendar-card {
   background: linear-gradient(145deg, rgba(43, 109, 68, 0.14), rgba(60, 145, 135, 0.08));
   border: 1px solid rgba(60, 145, 135, 0.2);
   border-radius: 1rem;
-  padding: 1.5rem;
-  margin: 0 0 2rem;
+  padding: 1rem;
+  margin: 0;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.14);
   backdrop-filter: blur(10px);
 }
@@ -156,9 +172,9 @@ body.dark-mode .home-calendar-card {
 .home-calendar-card__header {
   display: flex;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .home-calendar-card__eyebrow {
@@ -170,7 +186,7 @@ body.dark-mode .home-calendar-card {
 }
 
 .home-calendar-card h3 {
-  font-size: 1.45rem;
+  font-size: 1rem;
   color: var(--primary-color);
 }
 
@@ -178,18 +194,18 @@ body.dark-mode .home-calendar-card {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  min-width: 110px;
+  min-width: 72px;
 }
 
 #calendar-today-number {
-  font-size: 2.4rem;
+  font-size: 1.9rem;
   font-weight: 800;
   line-height: 1;
 }
 
 #calendar-today-label {
-  margin-top: 0.35rem;
-  font-size: 0.92rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
   color: #6b7280;
 }
 
@@ -202,9 +218,9 @@ body.dark-mode .home-calendar-card__meta {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: #4b5563;
-  font-size: 0.95rem;
+  font-size: 0.8rem;
 }
 
 .mini-calendar__weekdays,
@@ -215,8 +231,8 @@ body.dark-mode .home-calendar-card__meta {
 }
 
 .mini-calendar__weekdays {
-  margin-bottom: 0.75rem;
-  font-size: 0.72rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #6b7280;
@@ -227,14 +243,15 @@ body.dark-mode .mini-calendar__weekdays {
 }
 
 .mini-calendar__grid span {
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
-  border-radius: 0.8rem;
+  min-height: 34px;
+  border-radius: 0.65rem;
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(148, 163, 184, 0.16);
   color: #334155;
-  font-size: 0.92rem;
+  font-size: 0.8rem;
 }
 
 body.dark-mode .mini-calendar__grid span {
@@ -578,7 +595,11 @@ footer a:hover {
   }
 
   .home-calendar-card {
-    padding: 1.25rem;
+    padding: 1rem;
+  }
+
+  .home-search-panel {
+    grid-template-columns: 1fr;
   }
 
   .home-calendar-card__header,
