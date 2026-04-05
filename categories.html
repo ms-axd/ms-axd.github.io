@@ -9,10 +9,34 @@ permalink: /categories/
 {% assign post_categories = site.posts | map: 'category' | uniq | sort %}
 {% assign categories = site.category_list | default: post_categories %}
 
+<div class="category-tabs" role="tablist" aria-label="카테고리 목록">
+  {% for category in categories %}
+    {% assign matched_posts = site.posts | where: 'category', category %}
+    {% assign cat_posts = matched_posts | size %}
+    {% assign category_id = category | slugify %}
+    <button
+      class="category-tab{% if forloop.first %} is-active{% endif %}"
+      type="button"
+      role="tab"
+      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+      aria-controls="category-panel-{{ category_id }}"
+      data-category-target="category-panel-{{ category_id }}">
+      {{ category }} ({{ cat_posts }})
+    </button>
+  {% endfor %}
+</div>
+
+<div class="category-panels">
+
 {% for category in categories %}
   {% assign matched_posts = site.posts | where: 'category', category %}
   {% assign cat_posts = matched_posts | size %}
+  {% assign category_id = category | slugify %}
   
+  <section
+    id="category-panel-{{ category_id }}"
+    class="category-panel{% if forloop.first %} is-active{% endif %}"
+    role="tabpanel">
   <div class="category-section">
     <div class="category-title">
       {{ category }} ({{ cat_posts }})
@@ -35,4 +59,7 @@ permalink: /categories/
       {% endif %}
     </div>
   </div>
+  </section>
 {% endfor %}
+
+</div>
