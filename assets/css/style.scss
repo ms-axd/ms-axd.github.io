@@ -20,6 +20,16 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background: rgba(190, 255, 92, 0.45);
+  color: #f9fafb;
+}
+
+::-moz-selection {
+  background: rgba(190, 255, 92, 0.45);
+  color: #f9fafb;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: var(--text-dark);
