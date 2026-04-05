@@ -276,7 +276,8 @@ body.dark-mode .mini-calendar__grid span {
   opacity: 0.35;
 }
 
-.mini-calendar__grid span.is-today {
+.mini-calendar__grid span.is-today,
+body.dark-mode .mini-calendar__grid span.is-today {
   background: #22c55e;
   color: #f8fafc;
   border-color: #4ade80;
