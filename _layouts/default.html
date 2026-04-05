@@ -26,6 +26,7 @@
 <body class="dark-mode">
   <div class="cursor-highlight" aria-hidden="true"></div>
   <header>
+    <canvas class="header-spider-layer" aria-hidden="true"></canvas>
     <nav>
       <div>
         <h1>{{ site.title }}</h1>
@@ -54,6 +55,7 @@
   </footer>
 
   <script src="/assets/js/cursor-highlight.js?v={{ site.time | date: '%s' }}"></script>
+  <script src="/assets/js/header-spider.js?v={{ site.time | date: '%s' }}"></script>
   <script src="/assets/js/home-calendar.js?v={{ site.time | date: '%s' }}"></script>
   <script src="/assets/js/search.js?v={{ site.time | date: '%s' }}"></script>
 </body>
