@@ -1,0 +1,54 @@
+# Site settings
+title: Ms.AxD
+description: 개발, 보안, 일상을 기록하는 블로그
+author: 블로거
+email: your-email@example.com
+baseurl: ""
+url: "https://ms-axd.github.io"
+repository: "ms-axd/ms-axd.github.io"
+
+# GitHub Pages
+github: [metadata]
+
+# Build settings
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-paginate
+
+# Pagination
+paginate: 10
+paginate_path: "/blog/page:num/"
+
+# Categories
+collections:
+  categories:
+    output: true
+    permalink: /categories/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+      permalink: /blog/:year/:month/:day/:slug/
+
+# Custom settings
+show_drafts: false
+timezone: Asia/Seoul
+
+# Navigation
+nav_links:
+  - title: 홈
+    url: /
+  - title: 블로그
+    url: /blog/
+  - title: 카테고리
+    url: /categories/
+  - title: About
+    url: /about/
