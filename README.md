@@ -1,4 +1,4 @@
-# MY FIRST BLOG 🚀
+# MY FIRST BLOG !🚀
 
 ## 
 Jekyll을 기반으로 한 개인 블로그입니다. GitHub Pages를 통해 호스팅됩니다.

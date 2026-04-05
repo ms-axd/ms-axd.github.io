@@ -8,9 +8,8 @@ author: 블로거
 excerpt: 웹 개발을 시작하는 분들을 위한 HTML, CSS, JavaScript의 기본 개념과 각각의 역할을 정리했습니다.
 ---
 
-웹 개발을 시작하려는 분들을 위해 기본 개념을 정리해보았습니다.
 
-## 🌐 웹 개발의 삼대 요소
+## 🌐 웹 개발의 3 요소
 
 웹 개발은 크게 세 가지 기술로 이루어져 있습니다.
 
@@ -70,17 +69,20 @@ function greet(name) {
   alert(`안녕하세요, ${name}님!`);
 }
 
-document.addEventListener('click', function() {
-  console.log('페이지를 클릭했습니다!');
-});
+function badSleep(ms) {
+    const start = Date.now();
+    while (Date.now() - start < ms) {
+    //  ㅋㅋ
+    }
+}
 ```
 
 
-## 💡 팁
+##  팁
 
-- 📖 공식 문서를 자주 참고
-- 🎨 실제 프로젝트를 만들면서 배우기
-- 🐛 개발자 도구를 활용
-- 👥 커뮤니티와 소통
+- 공식 문서를 자주 참고
+- 실제 프로젝트를 만들면서 배우기
+- 개발자 도구를 활용
+- 커뮤니티와 소통
 
 
