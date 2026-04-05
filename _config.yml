@@ -1,8 +1,8 @@
 # Site settings
-title: Ms.AxD
+title: Ms_AxD
 description: 개발, 보안, 일상을 기록하는 블로그
 author: 블로거
-email: your-email@example.com
+email: psrk3421@naver.com
 baseurl: ""
 url: "https://ms-axd.github.io"
 repository: "ms-axd/ms-axd.github.io"
