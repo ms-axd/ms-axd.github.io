@@ -2,8 +2,8 @@
 ---
 
 :root {
-  --primary-color: #307a51;
-  --secondary-color: #31a365;
+  --primary-color: #144b2d;
+  --secondary-color: #8fd6af;
   --text-dark: #1f2937;
   --text-light: #f3f4f6;
   --bg-light: #ffffff;
@@ -215,13 +215,51 @@ body.dark-mode article h1 {
 }
 
 article .post-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   border-bottom: 2px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 2.5rem 1rem 1.5rem;
   padding-bottom: 1.5rem;
   margin-bottom: 2rem;
 }
 
 body.dark-mode article .post-header {
   border-color: var(--border-dark);
+}
+
+article .post-header .post-meta {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+article .post-header .post-meta a {
+  color: #fef08a;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+article .post-header .post-meta a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+article .post-header .tag {
+  background: rgba(17, 24, 39, 0.4);
+  color: #f9fafb;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+article .post-header .tag:hover {
+  background: rgba(17, 24, 39, 0.6);
+  color: #ffffff;
+}
+
+.post-footer > div {
+  background: #1f2937 !important;
+  border: 1px solid #374151;
+}
+
+.post-footer h3 {
+  color: #f3f4f6 !important;
 }
 
 article .post-content {
