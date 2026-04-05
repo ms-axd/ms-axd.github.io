@@ -15,6 +15,37 @@ title: 홈
   </a>
 </section>
 
+<section class="home-calendar-card" aria-labelledby="home-calendar-title">
+  <div class="home-calendar-card__header">
+    <div>
+      <p class="home-calendar-card__eyebrow">Today</p>
+      <h3 id="home-calendar-title">이번 달 일정 감각</h3>
+    </div>
+    <div class="home-calendar-card__today">
+      <span id="calendar-today-number">--</span>
+      <span id="calendar-today-label">----.--.--</span>
+    </div>
+  </div>
+
+  <div class="home-calendar-card__meta">
+    <span id="calendar-current-month">----년 --월</span>
+    <span id="calendar-current-weekday">---</span>
+  </div>
+
+  <div class="mini-calendar" aria-live="polite">
+    <div class="mini-calendar__weekdays">
+      <span>Sun</span>
+      <span>Mon</span>
+      <span>Tue</span>
+      <span>Wed</span>
+      <span>Thu</span>
+      <span>Fri</span>
+      <span>Sat</span>
+    </div>
+    <div id="mini-calendar-grid" class="mini-calendar__grid"></div>
+  </div>
+</section>
+
 <div class="search-container">
   <div class="search-box">
     <input type="text" placeholder="포스트 검색... (제목, 내용, 태그)">
