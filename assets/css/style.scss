@@ -33,6 +33,28 @@ body.dark-mode {
   background-color: var(--bg-dark);
 }
 
+.cursor-highlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 110px;
+  height: 110px;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle, rgba(190, 255, 92, 0.22) 0%, rgba(190, 255, 92, 0.12) 35%, rgba(190, 255, 92, 0.04) 60%, rgba(190, 255, 92, 0) 75%);
+  filter: blur(10px);
+  transform: translate3d(-9999px, -9999px, 0);
+  transition: opacity 0.25s ease;
+}
+
+body.cursor-active .cursor-highlight {
+  opacity: 1;
+}
+
 /* Header */
 header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -385,6 +407,10 @@ footer a:hover {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .cursor-highlight {
+    display: none;
+  }
+
   header h1 {
     font-size: 1.5rem;
   }

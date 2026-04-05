@@ -23,7 +23,8 @@
     </script>
   {% endif %}
 </head>
-<body>
+<body class="dark-mode">
+  <div class="cursor-highlight" aria-hidden="true"></div>
   <header>
     <nav>
       <div>
@@ -36,7 +37,6 @@
             <li><a href="{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
         </ul>
-        <button class="theme-toggle">🌙</button>
       </div>
     </nav>
   </header>
@@ -49,11 +49,11 @@
     <p>&copy; 2026 {{ site.author }}. </p>
     <p>
       <a href="https://instagram.com/ms_axd/{{ site.instagram }}" target="_blank">Instagram</a> |
-      <a href="">RSS</a>
+      <a href=""></a>
     </p>
   </footer>
 
-  <script src="/assets/js/theme-toggle.js"></script>
+  <script src="/assets/js/cursor-highlight.js"></script>
   <script src="/assets/js/search.js"></script>
 </body>
 </html>
