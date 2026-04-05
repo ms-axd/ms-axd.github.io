@@ -9,7 +9,7 @@
   
   {% seo %}
   
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css?v={{ site.time | date: '%s' }}">
   <link rel="canonical" href="{{ page.url | replace: 'index.html', '' | prepend: site.baseurl | prepend: site.url }}">
   <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
   
@@ -53,7 +53,7 @@
     </p>
   </footer>
 
-  <script src="/assets/js/cursor-highlight.js"></script>
-  <script src="/assets/js/search.js"></script>
+  <script src="/assets/js/cursor-highlight.js?v={{ site.time | date: '%s' }}"></script>
+  <script src="/assets/js/search.js?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
