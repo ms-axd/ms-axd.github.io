@@ -38,10 +38,6 @@ permalink: /categories/
     class="category-panel{% if forloop.first %} is-active{% endif %}"
     role="tabpanel">
   <div class="category-section">
-    <div class="category-title">
-      {{ category }} ({{ cat_posts }})
-    </div>
-    
     <div class="category-posts">
       {% if cat_posts > 0 %}
         {% for post in matched_posts %}
