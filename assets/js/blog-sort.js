@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const sortSelect = document.querySelector('#post-sort');
+  const sortButtons = Array.from(document.querySelectorAll('[data-sort-order]'));
   const postsGrid = document.querySelector('[data-sortable-posts]');
 
-  if (!sortSelect || !postsGrid) {
+  if (!sortButtons.length || !postsGrid) {
     return;
   }
 
@@ -21,14 +21,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
+  const setActiveButton = activeOrder => {
+    sortButtons.forEach(button => {
+      const isActive = button.dataset.sortOrder === activeOrder;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  };
+
   const renderSortedCards = order => {
     const sortedCards = getSortedCards(order);
     sortedCards.forEach(card => postsGrid.appendChild(card));
+    setActiveButton(order);
   };
 
-  renderSortedCards(sortSelect.value);
+  renderSortedCards('newest');
 
-  sortSelect.addEventListener('change', event => {
-    renderSortedCards(event.target.value);
+  sortButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      renderSortedCards(button.dataset.sortOrder);
+    });
   });
 });

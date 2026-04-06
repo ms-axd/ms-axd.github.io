@@ -15,12 +15,13 @@ permalink: /blog/
       </div>
     </div>
 
-    <div class="blog-sort">
-      <label for="post-sort">정렬</label>
-      <select id="post-sort" class="blog-sort__select">
-        <option value="newest">최신순</option>
-        <option value="oldest">오래된순</option>
-      </select>
+    <div class="blog-sort" aria-label="포스트 정렬">
+      <button type="button" class="blog-sort__button is-active" data-sort-order="newest" aria-pressed="true" title="최신순">
+        ⬇️
+      </button>
+      <button type="button" class="blog-sort__button" data-sort-order="oldest" aria-pressed="false" title="오래된순">
+        ⬆️
+      </button>
     </div>
   </div>
 
