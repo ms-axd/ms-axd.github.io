@@ -552,43 +552,36 @@ article img {
 }
 
 .about-photo-stack {
-  position: relative;
-  width: 180px;
-  min-width: 180px;
-  padding-top: 54px;
+  width: 220px;
+  min-width: 220px;
 }
 
 .about-profile-badge {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  z-index: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, rgba(43, 109, 68, 0.92), rgba(60, 145, 135, 0.84));
+  border: 1px solid rgba(110, 231, 183, 0.24);
+  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.24);
 }
 
 .about-profile-badge span {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0.35rem 0.8rem;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, rgba(43, 109, 68, 0.96), rgba(60, 145, 135, 0.92));
-  border: 1px solid rgba(110, 231, 183, 0.28);
+  display: block;
   color: #f8fafc;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  box-shadow: 0 14px 28px rgba(2, 6, 23, 0.24);
+  line-height: 1.25;
 }
 
 .about-photo-box {
   width: 100%;
   min-width: 100%;
-  min-height: 180px;
+  min-height: 220px;
   border-radius: 0.75rem;
   border: 1px dashed rgba(110, 231, 183, 0.35);
   background: linear-gradient(145deg, rgba(43, 109, 68, 0.18), rgba(60, 145, 135, 0.08));
