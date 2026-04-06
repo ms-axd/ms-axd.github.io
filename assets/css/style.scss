@@ -675,14 +675,6 @@ footer a:hover {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .cursor-highlight {
-    display: none;
-  }
-
-  .header-spider-layer {
-    display: none;
-  }
-
   .home-calendar-card {
     padding: 1rem;
   }
@@ -747,6 +739,13 @@ footer a:hover {
 
   main {
     padding: 1rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .cursor-highlight,
+  .header-spider-layer {
+    display: none;
   }
 }
 
