@@ -150,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     clearCanvas();
 
     // Smaller easing factor so the spider/web trails behind slower for a floaty feel
-    state.currentX += (state.targetX - state.currentX) * 0.055;
-    state.currentY += (state.targetY - state.currentY) * 0.065;
+    state.currentX += (state.targetX - state.currentX) * 0.03;
+    state.currentY += (state.targetY - state.currentY) * 0.035;
 
     if (state.visible) {
       drawSpider(state.currentX, state.currentY);
