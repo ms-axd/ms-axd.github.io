@@ -1,53 +1,96 @@
-﻿---
-layout: default
-title: About
-permalink: /about.html
----
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>About | Ms_AxD</title>
+  <meta name="description" content="Ms_AxD 소개 페이지">
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="./assets/images/favicon.png">
+</head>
+<body class="dark-mode" data-motion-effects="auto">
+  <div class="cursor-highlight" aria-hidden="true"></div>
 
-<article style="max-width: 800px; margin: 0 auto;">
-  <h1>About Me</h1>
-
-  <div class="about-intro-card">
-    <div class="about-photo-stack">
-      <div class="about-profile-badge">
-        <span>PARK MINSEOK</span>
-        <span>2003</span>
-        <span>INTJ</span>
+  <header>
+    <canvas class="header-spider-layer" aria-hidden="true"></canvas>
+    <nav>
+      <div>
+        <h1><a href="./index.html">Ms_AxD</a></h1>
+        <p class="tagline">개발, 보안, 일상을 기록하는 블로그</p>
       </div>
-      <div class="about-photo-box">
-        <img src="/assets/images/profile.jpg" alt="프로필 사진">
+      <div>
+        <ul class="nav-items">
+          <li><a href="./index.html">홈</a></li>
+          <li><a href="./blog.html">블로그</a></li>
+          <li><a href="./categories.html">카테고리</a></li>
+          <li><a href="./about.html">About</a></li>
+        </ul>
       </div>
-    </div>
-    <div style="background: #1f2937; border: 1px solid #374151; padding: 2rem; border-radius: 0.75rem; margin: 0; flex: 1;">
-      <p style="font-size: 1.1rem; line-height: 1.8; color: #e5e7eb;">
-        MY FAVORITE COLOR IS GREEN !<br>
-        반갑습니다. 이 블로그는 제가 배우고 경험한 것들을 기록하고 공유하는 공간입니다. <br>
-      </p>
-    </div>
-  </div>
+    </nav>
+  </header>
 
-  <h2>주요 관심 분야</h2>
-  <ul style="font-size: 1.1rem; line-height: 1.8;">
-    <li>Web</li>
-    <li>사이버보안 및 CTF</li>
-    <li>버그 바운티</li>
-    <li>기술 학습 및 성장</li>
-  </ul>
+  <main>
+    <article style="max-width: 800px; margin: 0 auto;">
+      <h1>About Me</h1>
 
-  <h2>활동 경험</h2>
-  <ul style="font-size: 1.1rem; line-height: 1.8;">
-    <li>대회 참여</li>
-  </ul>
+      <div class="about-intro-card">
+        <div class="about-photo-stack">
+          <div class="about-profile-badge">
+            <span>PARK MINSEOK</span>
+            <span>2003</span>
+            <span>INTJ</span>
+          </div>
+          <div class="about-photo-box">
+            <img src="./assets/images/profile.jpg" alt="프로필 사진">
+          </div>
+        </div>
 
-  <h2>연락처</h2>
-  
-  <ul style="font-size: 1.1rem; line-height: 1.8;">
-    <li>Email: psrk3421@naver.com</li>
-    <li>GitHub: <a href="https://github.com/ms-axd" target="_blank">github.com/ms-axd</a></li>
-    <li>Instagram: <a href="https://instagram.com/ms_axd" target="_blank">@ms_axd</a></li>
-    
-    <h3>고쳤으면 하는거 피드백 해주세요..</h3>
-    <li>Discord: .yah0 </li>
-  </ul>
-  
-</article>
+        <div style="background: #1f2937; border: 1px solid #374151; padding: 2rem; border-radius: 0.75rem; margin: 0; flex: 1;">
+          <p style="font-size: 1.1rem; line-height: 1.8; color: #e5e7eb;">
+            MY FAVORITE COLOR IS GREEN !<br>
+            반갑습니다. 이 블로그는 제가 배우고 경험한 것들을 기록하고 공유하는 공간입니다.<br>
+          </p>
+        </div>
+      </div>
+
+      <h2>주요 관심 분야</h2>
+      <ul style="font-size: 1.1rem; line-height: 1.8;">
+        <li>Web</li>
+        <li>사이버보안 및 CTF</li>
+        <li>버그 바운티</li>
+        <li>기술 학습 및 성장</li>
+      </ul>
+
+      <h2>활동 경험</h2>
+      <ul style="font-size: 1.1rem; line-height: 1.8;">
+        <li>대회 참여</li>
+      </ul>
+
+      <h2>연락처</h2>
+      <ul style="font-size: 1.1rem; line-height: 1.8;">
+        <li>Email: psrk3421@naver.com</li>
+        <li>GitHub: <a href="https://github.com/ms-axd" target="_blank" rel="noreferrer">github.com/ms-axd</a></li>
+        <li>Instagram: <a href="https://instagram.com/ms_axd" target="_blank" rel="noreferrer">@ms_axd</a></li>
+      </ul>
+
+      <h3>고쳤으면 하는 거 피드백 해주세요.</h3>
+      <ul style="font-size: 1.1rem; line-height: 1.8;">
+        <li>Discord: .yah0</li>
+      </ul>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 ms-axd.</p>
+  </footer>
+
+  <script src="./assets/js/cursor-highlight.js"></script>
+  <script src="./assets/js/category-tabs.js"></script>
+  <script src="./assets/js/header-spider.js"></script>
+  <script src="./assets/js/home-calendar.js"></script>
+  <script src="./assets/js/blog-sort.js"></script>
+  <script src="./assets/js/search.js"></script>
+</body>
+</html>
