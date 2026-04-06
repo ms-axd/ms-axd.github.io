@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const render = () => {
     clearCanvas();
 
-    // Smaller easing factor so the spider/web trails behind slower for a floaty feel
-    state.currentX += (state.targetX - state.currentX) * 0.03;
-    state.currentY += (state.targetY - state.currentY) * 0.035;
+    // Keep the spider visibly behind the pointer for a slower, floatier trail.
+    state.currentX += (state.targetX - state.currentX) * 0.02;
+    state.currentY += (state.targetY - state.currentY) * 0.024;
 
     if (state.visible) {
       drawSpider(state.currentX, state.currentY);
@@ -179,8 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const handleMouseEnter = event => {
     state.visible = true;
     clampTarget(event.clientX, event.clientY);
-    state.currentX = state.targetX;
-    state.currentY = state.targetY;
 
     if (isLowMotionMode) {
       drawInstantFrame();
