@@ -189,7 +189,6 @@ main {
 
 .blog-sort {
   display: flex;
-  gap: 0.55rem;
   align-items: center;
 }
 
@@ -206,6 +205,7 @@ main {
   place-items: center;
   box-shadow: 0 12px 24px rgba(2, 6, 23, 0.18);
   transition: var(--transition);
+  flex: 0 0 52px;
 }
 
 .blog-sort__button:hover {
@@ -752,6 +752,10 @@ footer a:hover {
   .blog-toolbar__search,
   .blog-sort {
     flex-basis: 100%;
+  }
+
+  .blog-sort {
+    justify-content: flex-end;
   }
 
   .category-tabs {

@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const sortButtons = Array.from(document.querySelectorAll('[data-sort-order]'));
+  const sortButton = document.querySelector('[data-sort-order]');
   const postsGrid = document.querySelector('[data-sortable-posts]');
 
-  if (!sortButtons.length || !postsGrid) {
+  if (!sortButton || !postsGrid) {
     return;
   }
+
+  let currentOrder = sortButton.dataset.sortOrder || 'newest';
 
   const getSortedCards = order => {
     const cards = Array.from(postsGrid.querySelectorAll('.post-card'));
@@ -21,25 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  const setActiveButton = activeOrder => {
-    sortButtons.forEach(button => {
-      const isActive = button.dataset.sortOrder === activeOrder;
-      button.classList.toggle('is-active', isActive);
-      button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-    });
+  const updateButtonState = order => {
+    const isNewest = order === 'newest';
+    sortButton.dataset.sortOrder = order;
+    sortButton.classList.toggle('is-active', isNewest);
+    sortButton.setAttribute('aria-pressed', isNewest ? 'true' : 'false');
+    sortButton.setAttribute('title', isNewest ? '현재 최신순, 클릭하면 오래된순' : '현재 오래된순, 클릭하면 최신순');
   };
 
   const renderSortedCards = order => {
     const sortedCards = getSortedCards(order);
     sortedCards.forEach(card => postsGrid.appendChild(card));
-    setActiveButton(order);
+    currentOrder = order;
+    updateButtonState(order);
   };
 
-  renderSortedCards('newest');
+  renderSortedCards(currentOrder);
 
-  sortButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      renderSortedCards(button.dataset.sortOrder);
-    });
+  sortButton.addEventListener('click', () => {
+    const nextOrder = currentOrder === 'newest' ? 'oldest' : 'newest';
+    renderSortedCards(nextOrder);
   });
 });
