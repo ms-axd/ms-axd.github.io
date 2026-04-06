@@ -149,8 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const render = () => {
     clearCanvas();
 
-    state.currentX += (state.targetX - state.currentX) * 0.09;
-    state.currentY += (state.targetY - state.currentY) * 0.11;
+    // Smaller easing factor so the spider/web trails behind slower for a floaty feel
+    state.currentX += (state.targetX - state.currentX) * 0.055;
+    state.currentY += (state.targetY - state.currentY) * 0.065;
 
     if (state.visible) {
       drawSpider(state.currentX, state.currentY);
