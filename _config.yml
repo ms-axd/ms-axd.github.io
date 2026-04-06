@@ -41,6 +41,9 @@ defaults:
 show_drafts: false
 timezone: Asia/Seoul
 
+# Motion / pointer effects
+motion_effects_mode: auto
+
 # Navigation
 nav_links:
   - title: 홈
