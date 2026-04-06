@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+  const isFinePointer = window.matchMedia('(any-pointer: fine)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!isFinePointer || prefersReducedMotion) {
