@@ -24,10 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const pointerQuery = window.matchMedia('(pointer: fine)');
-  const anyPointerQuery = window.matchMedia('(any-pointer: fine)');
-
-  const hasFinePointer = () => pointerQuery.matches || anyPointerQuery.matches;
   const shouldUseLowMotion = () => reducedMotionQuery.matches && motionMode !== 'force';
 
   let isLowMotionMode = shouldUseLowMotion();
@@ -167,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const handleMouseMove = event => {
+  const handlePointerMove = event => {
     state.visible = true;
     clampTarget(event.clientX, event.clientY);
 
@@ -176,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const handleMouseEnter = event => {
+  const handlePointerEnter = event => {
     state.visible = true;
     clampTarget(event.clientX, event.clientY);
 
@@ -185,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const handleMouseLeave = () => {
+  const handlePointerLeave = () => {
     state.visible = false;
 
     if (isLowMotionMode) {
@@ -202,63 +198,15 @@ document.addEventListener('DOMContentLoaded', () => {
     resize();
     drawInstantFrame();
 
-    header.addEventListener('mousemove', handleMouseMove, { passive: true });
-    header.addEventListener('mouseenter', handleMouseEnter, { passive: true });
-    header.addEventListener('mouseleave', handleMouseLeave);
+    header.addEventListener('pointermove', handlePointerMove, { passive: true });
+    header.addEventListener('pointerenter', handlePointerEnter, { passive: true });
+    header.addEventListener('pointerleave', handlePointerLeave);
+    header.addEventListener('pointercancel', handlePointerLeave);
     window.addEventListener('resize', resize);
 
     if (!isLowMotionMode) {
       render();
     }
-  };
-
-  const waitForFinePointer = () => {
-    if (hasFinePointer()) {
-      startEffect();
-      return;
-    }
-
-    let resolved = false;
-    const cleanups = [];
-
-    const resolve = () => {
-      if (resolved) {
-        return;
-      }
-
-      resolved = true;
-      cleanups.forEach(fn => fn && fn());
-      startEffect();
-    };
-
-    const fallbackHandler = event => {
-      const pointerType = event.pointerType || (event instanceof MouseEvent ? 'mouse' : undefined);
-
-      if (pointerType === 'mouse' || pointerType === 'pen') {
-        resolve();
-      }
-    };
-
-    if (window.PointerEvent) {
-      window.addEventListener('pointermove', fallbackHandler, { passive: true });
-    }
-
-    window.addEventListener('mousemove', fallbackHandler, { passive: true });
-
-    cleanups.push(() => {
-      if (window.PointerEvent) {
-        window.removeEventListener('pointermove', fallbackHandler);
-      }
-
-      window.removeEventListener('mousemove', fallbackHandler);
-    });
-
-    [pointerQuery, anyPointerQuery].forEach(query => {
-      const removeListener = attachMediaQueryListener(query, resolve);
-      if (removeListener) {
-        cleanups.push(removeListener);
-      }
-    });
   };
 
   const onMotionPreferenceChange = event => {
@@ -290,5 +238,5 @@ document.addEventListener('DOMContentLoaded', () => {
     reducedMotionQuery.addListener(onMotionPreferenceChange);
   }
 
-  waitForFinePointer();
+  startEffect();
 });
