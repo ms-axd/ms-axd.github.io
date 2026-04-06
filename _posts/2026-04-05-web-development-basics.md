@@ -4,7 +4,6 @@ title: 웹 개발 기초 개념 정리
 date: 2026-04-05
 category: 개발
 tags: [웹개발, HTML, CSS, JavaScript, 기초]
-author: 블로거
 excerpt: 웹 개발을 시작하는 분들을 위한 HTML, CSS, JavaScript의 기본 개념과 각각의 역할을 정리했습니다.
 ---
 
