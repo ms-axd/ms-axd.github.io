@@ -53,7 +53,7 @@ nav_links:
   - title: 카테고리
     url: /categories/
   - title: About
-    url: /about/
+    url: /about.html
 
 category_list:
   - 개발
