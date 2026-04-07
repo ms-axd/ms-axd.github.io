@@ -605,13 +605,14 @@ article img {
 }
 
 .about-social-card {
+  width: fit-content;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  gap: 0.85rem;
-  margin: 1.5rem 0 0;
-  padding: 2rem 1.5rem;
-  min-height: 112px;
+  gap: 0.7rem;
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  min-height: 0;
   border-radius: 0.9rem;
   border: 1px solid rgba(148, 163, 184, 0.18);
   background: linear-gradient(180deg, rgba(31, 41, 55, 0.88), rgba(17, 24, 39, 0.92));
@@ -621,8 +622,9 @@ article img {
 }
 
 .about-social-link {
-  width: 3rem;
-  height: 3rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex: 0 0 2.8rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -647,8 +649,14 @@ article img {
 }
 
 .about-social-link svg {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  min-height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  display: block;
+  flex: 0 0 18px;
   fill: currentColor;
 }
 
