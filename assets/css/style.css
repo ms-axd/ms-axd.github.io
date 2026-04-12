@@ -1221,6 +1221,8 @@ footer {
   border: 2px solid #b9bdc1;
   border-radius: 50%;
   transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .topbar-search::after {
@@ -1232,6 +1234,8 @@ footer {
   height: 2px;
   background: #b9bdc1;
   transform: rotate(45deg);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .topbar-search input,
@@ -2002,6 +2006,8 @@ body {
   border: 1px solid rgba(45, 103, 66, 0.14);
   background: #eef8f0;
   color: #174326;
+  line-height: 0;
+  vertical-align: middle;
 }
 
 .about-social-link:hover {
@@ -2024,7 +2030,7 @@ body {
 .about-spider-window {
   position: relative;
   height: clamp(220px, 34vw, 320px);
-  margin: 0 0 1rem;
+  margin: 1.5rem 0 0;
   padding: 0;
   overflow: hidden;
   box-shadow: 0 14px 28px rgba(3, 20, 10, 0.07);
@@ -2085,6 +2091,18 @@ body {
 .topbar-search.search-box input {
   width: 100%;
   min-width: 0;
+  color: #12351f;
+  caret-color: #12351f;
+  background: #ffffff;
+}
+
+.topbar-search.search-box input::placeholder {
+  color: #64746a;
+  opacity: 1;
+}
+
+.topbar-search.search-box input::-webkit-search-cancel-button {
+  cursor: pointer;
 }
 
 .topbar-search .search-results {
@@ -2092,6 +2110,20 @@ body {
   right: auto;
   width: 100%;
   min-width: 220px;
+}
+
+.topbar-search .search-result-item a {
+  color: #17231b;
+}
+
+.topbar-search .search-result-item strong {
+  display: block;
+  color: #17231b;
+  font-weight: 800;
+}
+
+.topbar-search .search-result-item small {
+  color: #66736a;
 }
 
 @media (max-width: 760px) {
@@ -2455,10 +2487,13 @@ body.terminal-is-open {
 .social-dock button {
   width: 40px;
   height: 40px;
+  display: inline-grid;
+  place-items: center;
   border-radius: 8px;
   border: 1px solid rgba(45, 103, 66, 0.14);
   background: #eef8f0;
   color: #174326;
+  line-height: 0;
 }
 
 .social-dock a:hover,
@@ -2476,10 +2511,12 @@ body.terminal-is-open {
 }
 
 .discord-copy {
+  appearance: none;
   position: relative;
   padding: 0;
   cursor: pointer;
   font: inherit;
+  line-height: 0;
 }
 
 .discord-popover {

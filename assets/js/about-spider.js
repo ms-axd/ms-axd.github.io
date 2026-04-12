@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     targetX = width * 0.62;
-    targetY = height * 0.46;
+    targetY = height * 0.56;
     spiderX = targetX;
     spiderY = targetY;
     resetPoints();
@@ -112,39 +112,103 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.save();
     ctx.translate(spiderX, spiderY);
 
-    ctx.strokeStyle = 'rgba(18, 53, 31, 0.78)';
-    ctx.lineWidth = 1.5;
+    ctx.shadowColor = 'rgba(3, 20, 10, 0.22)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 4;
+
+    ctx.strokeStyle = 'rgba(20, 34, 24, 0.82)';
+    ctx.lineWidth = 2;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    for (let i = 0; i < 8; i += 1) {
-      const side = i < 4 ? -1 : 1;
-      const row = i % 4;
-      const y = row * 4 - 7;
-      const step = Math.sin(time / 140 + row) * 2;
+    const legs = [
+      { y: -7, a: -16, b: -23, c: -31 },
+      { y: -3, a: -20, b: -31, c: -38 },
+      { y: 2, a: -19, b: -30, c: -36 },
+      { y: 7, a: -14, b: -22, c: -28 },
+    ];
 
+    legs.forEach((leg, index) => {
+      const lift = Math.sin(time / 170 + index * 1.3) * 1.8;
+
+      [-1, 1].forEach(side => {
+        ctx.beginPath();
+        ctx.moveTo(side * 4, leg.y);
+        ctx.quadraticCurveTo(
+          side * 13,
+          leg.y + lift,
+          side * 18,
+          leg.a + lift
+        );
+        ctx.quadraticCurveTo(
+          side * 26,
+          leg.b - lift,
+          side * 36,
+          leg.c + lift
+        );
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(20, 34, 24, 0.72)';
+        ctx.beginPath();
+        ctx.arc(side * 18, leg.a + lift, 1.9, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+
+    ctx.shadowBlur = 8;
+    const abdomen = ctx.createRadialGradient(-2, 4, 2, 0, 4, 13);
+    abdomen.addColorStop(0, 'rgba(112, 138, 65, 0.96)');
+    abdomen.addColorStop(0.45, 'rgba(64, 91, 46, 0.96)');
+    abdomen.addColorStop(1, 'rgba(24, 38, 27, 0.98)');
+
+    ctx.fillStyle = abdomen;
+    ctx.beginPath();
+    ctx.ellipse(0, 4, 9, 12, 0.08, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(238, 248, 240, 0.14)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(-1, 4, 5, 9, 0.08, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const thorax = ctx.createRadialGradient(-2, -8, 1, 0, -7, 8);
+    thorax.addColorStop(0, 'rgba(72, 101, 49, 0.98)');
+    thorax.addColorStop(1, 'rgba(20, 34, 24, 0.98)');
+
+    ctx.fillStyle = thorax;
+    ctx.beginPath();
+    ctx.ellipse(0, -8, 7, 6, -0.04, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(222, 246, 224, 0.72)';
+    ctx.beginPath();
+    ctx.ellipse(-3, -10, 1.4, 1.1, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(10, 16, 12, 0.9)';
+    [-3, 3].forEach(x => {
       ctx.beginPath();
-      ctx.moveTo(side * 4, y);
-      ctx.lineTo(side * (13 + row), y + step + row);
-      ctx.lineTo(side * (22 + row), y + step - 4);
+      ctx.arc(x, -12, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.strokeStyle = 'rgba(20, 34, 24, 0.72)';
+    ctx.lineWidth = 1.2;
+    [-1, 1].forEach(side => {
+      ctx.beginPath();
+      ctx.moveTo(side * 2.2, -12);
+      ctx.quadraticCurveTo(side * 6, -17, side * 9, -19);
       ctx.stroke();
-    }
-
-    ctx.fillStyle = 'rgba(99, 193, 116, 0.94)';
-    ctx.beginPath();
-    ctx.ellipse(0, 2, 6, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(18, 53, 31, 0.86)';
-    ctx.beginPath();
-    ctx.arc(0, -7, 4.5, 0, Math.PI * 2);
-    ctx.fill();
+    });
 
     ctx.restore();
   };
 
   const render = time => {
-    spiderX += (targetX - spiderX) * 0.08;
-    spiderY += (targetY - spiderY) * 0.08;
+    spiderX += (targetX - spiderX) * 0.035;
+    spiderY += (targetY - spiderY) * 0.035;
 
     ctx.clearRect(0, 0, width, height);
     drawWeb(time);
@@ -162,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   wrapper.addEventListener('pointerleave', () => {
     targetX = width * 0.62;
-    targetY = height * 0.46;
+    targetY = height * 0.56;
   });
 
   window.addEventListener('resize', resize);
