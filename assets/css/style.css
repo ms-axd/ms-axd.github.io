@@ -1,7 +1,7 @@
 
 :root {
-  --primary-color: #2b6d44;
-  --secondary-color: #3c9187;
+  --primary-color: #49b171;
+  --secondary-color: #3eb3a5;
   --text-dark: #1f2937;
   --text-light: #f3f4f6;
   --bg-light: #ffffff;
@@ -2072,8 +2072,8 @@ body {
   width: 100%;
   height: calc(100% - 38px);
   background:
-    radial-gradient(circle at 56% 44%, rgba(255, 255, 255, 0.92), rgba(250, 255, 251, 0.74) 32%, rgba(207, 238, 218, 0.34) 70%),
-    #f8fcf9;
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92) 34%, rgba(244, 247, 244, 0.86) 72%),
+    #ffffff;
   cursor: crosshair;
 }
 
