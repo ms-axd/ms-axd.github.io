@@ -40,8 +40,9 @@
     <div class="site-main">
       <header class="topbar">
         <a href="{{ '/' | relative_url }}">Home</a>
-        <div class="topbar-search">
+        <div class="topbar-search search-box">
           <input type="search" placeholder="Search..." aria-label="검색">
+          <div class="search-results" style="display: none;"></div>
         </div>
       </header>
 
@@ -65,7 +66,7 @@
             <div class="tag-cloud">
               {% assign all_tags = site.tags | sort %}
               {% for tag in all_tags limit: 8 %}
-                <a href="{{ '/blog/' | relative_url }}">#{{ tag[0] }}</a>
+                <a href="{{ '/tags/' | relative_url }}#{{ tag[0] | escape }}">#{{ tag[0] }}</a>
               {% endfor %}
             </div>
           </section>
@@ -76,6 +77,7 @@
 
   <script src="{{ '/assets/js/category-tabs.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/blog-sort.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/tag-filter.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 # Site settings
-title: tls456
+title: Ms_AxD
 description: Hacking Study
 author: ms-axd
 email: psrk3421@naver.com
@@ -43,10 +43,10 @@ nav_links:
     url: /categories/
     icon: C
   - title: Tags
-    url: /blog/
+    url: /tags/
     icon: T
   - title: Archives
-    url: /blog/
+    url: /archives/
     icon: A
   - title: About
     url: /about.html
@@ -56,6 +56,6 @@ category_list:
   - Bug bounty
   - CTF/Wargame
   - 개발
-  - 공모전/자격증
+  - 자격증/공모전
   - 논문/컨퍼런스
   - 블로그/기술문서

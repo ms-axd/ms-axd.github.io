@@ -1718,3 +1718,237 @@ footer {
   gap: 1rem;
   margin-top: 1.5rem;
 }
+
+/* Ms_AxD green theme */
+:root {
+  --page-bg: #0b1711;
+  --sidebar-bg: #102018;
+  --card-bg: rgba(250, 255, 251, 0.94);
+  --soft-card: rgba(218, 243, 224, 0.92);
+  --text-main: #17231b;
+  --text-muted: #66736a;
+  --line: rgba(45, 103, 66, 0.26);
+  --line-soft: rgba(45, 103, 66, 0.16);
+  --accent: #2b6d44;
+  --accent-bright: #63c174;
+  --shadow-soft: 0 18px 36px rgba(3, 20, 10, 0.16);
+}
+
+html,
+body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(99, 193, 116, 0.18), transparent 26rem),
+    linear-gradient(135deg, #0a1710 0%, #14281d 44%, #eaf0e9 44.1%, #edf1ec 100%);
+  color: var(--text-main);
+}
+
+.site-sidebar {
+  background:
+    linear-gradient(180deg, rgba(14, 39, 25, 0.96), rgba(20, 48, 32, 0.94)),
+    var(--sidebar-bg);
+  color: #dce9df;
+  border-right: 1px solid rgba(147, 220, 161, 0.12);
+}
+
+.profile {
+  color: #aebdb3;
+}
+
+.profile img {
+  background: #eef7ef;
+  box-shadow:
+    0 0 0 10px rgba(238, 247, 239, 0.12),
+    0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
+.profile strong {
+  color: #f1faf2;
+}
+
+.side-nav a {
+  color: #b8c8bd;
+}
+
+.side-nav a:hover,
+.side-nav a.is-active {
+  background: rgba(99, 193, 116, 0.16);
+  color: #f6fff7;
+}
+
+.nav-icon {
+  color: var(--accent-bright);
+}
+
+.social-dock a,
+.social-dock span {
+  background: rgba(242, 252, 244, 0.92);
+  color: #245b37;
+}
+
+.topbar {
+  background: rgba(248, 252, 249, 0.9);
+  border-bottom: 1px solid rgba(45, 103, 66, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.category-card {
+  background: var(--soft-card);
+  border: 1px solid rgba(45, 103, 66, 0.1);
+}
+
+.category-card:hover,
+.post-card:hover {
+  box-shadow: var(--shadow-soft);
+}
+
+.category-card__icon,
+.category-card strong,
+.section-title,
+.page-title,
+.blog-page__title,
+.right-rail h2,
+.post-card h2,
+article h2,
+.about-panel h2,
+.not-found h2 {
+  color: #245b37;
+}
+
+.post-card,
+article .post-header,
+article .post-content,
+.about-copy-card,
+.about-panel,
+.about-social-card,
+.not-found {
+  background: var(--card-bg);
+  border-color: var(--line-soft);
+}
+
+.tag-cloud a,
+.tag,
+.about-social-link,
+.blog-sort__button,
+.category-tab {
+  background: #eef8f0;
+  border-color: rgba(45, 103, 66, 0.14);
+  color: #356444;
+}
+
+.category-tab.is-active,
+.blog-sort__button.is-active {
+  background: #cfeeda;
+  color: #174326;
+}
+
+.search-results,
+.topbar-search input,
+.search-box input {
+  border-color: rgba(45, 103, 66, 0.16);
+}
+
+.blog-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.blog-toolbar__search {
+  flex: 1 1 auto;
+}
+
+.blog-toolbar__search .search-box,
+.blog-toolbar__search .search-box input {
+  height: 42px;
+}
+
+.blog-toolbar__search .search-box {
+  display: flex;
+}
+
+.blog-toolbar__search .search-box input {
+  padding: 0 1rem;
+}
+
+.blog-sort {
+  flex: 0 0 auto;
+  align-self: stretch;
+}
+
+.blog-sort__button {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+}
+
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 0 0 1.5rem;
+}
+
+.tag-filter__button,
+.tag-button {
+  border: 1px solid rgba(45, 103, 66, 0.14);
+  border-radius: 8px;
+  background: #eef8f0;
+  color: #356444;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.tag-filter__button {
+  padding: 0.55rem 0.85rem;
+}
+
+.tag-button {
+  padding: 0.32rem 0.75rem;
+}
+
+.tag-filter__button:hover,
+.tag-button:hover,
+.tag-filter__button.is-active,
+.tag-button.is-active {
+  background: #cfeeda;
+  color: #174326;
+}
+
+.post-card[hidden] {
+  display: none;
+}
+
+.empty-state {
+  padding: 1.25rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+}
+
+.archive-list h2 {
+  margin: 1.75rem 0 1rem;
+  color: #245b37;
+  font-size: 1.2rem;
+}
+
+.archive-list h2:first-child {
+  margin-top: 0;
+}
+
+.post-card--compact {
+  padding: 1.2rem 1.35rem;
+}
+
+.post-card--compact h3 {
+  margin: 0 0 0.6rem;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.post-card--compact h3 a {
+  color: inherit;
+  text-decoration: none;
+}
