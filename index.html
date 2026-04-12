@@ -1,79 +1,39 @@
 ---
 layout: default
-title: 홈
+title: Home
 ---
 
-<section style="text-align: center; padding: 3rem 0;">
-  <h2 style="font-size: 2rem; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-    ☠️☠️
-  </h2>
-  <p style="font-size: 1.1rem; color: #6b7280; margin-bottom: 2rem;">
-    개발 | 보안 | 일상
-  </p>
-  <a href="/blog/" style="display: inline-block; background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600;">
-    블로그
-  </a>
-</section>
+{% assign post_categories = site.posts | map: 'category' | uniq %}
 
-<section class="home-search-panel">
-  <div class="search-container">
-    <div class="search-box">
-      <input type="text" placeholder="포스트 검색... (제목, 내용, 태그)">
-      <div class="search-results" style="display: none;"></div>
-    </div>
-  </div>
-
-  <aside class="home-calendar-card" aria-labelledby="home-calendar-title">
-    <div class="home-calendar-card__header">
-      <div>
-        <p class="home-calendar-card__eyebrow">Today</p>
-        <h3 id="home-calendar-title"></h3>
-      </div>
-      <div class="home-calendar-card__today">
-        <span id="calendar-today-number">--</span>
-        <span id="calendar-today-label">----.--.--</span>
-      </div>
-    </div>
-
-    <div class="home-calendar-card__meta">
-      <span id="calendar-current-month">----년 --월</span>
-      <span id="calendar-current-weekday">---</span>
-    </div>
-
-    <div class="mini-calendar" aria-live="polite">
-      <div class="mini-calendar__weekdays">
-        <span>S</span>
-        <span>M</span>
-        <span>T</span>
-        <span>W</span>
-        <span>T</span>
-        <span>F</span>
-        <span>S</span>
-      </div>
-      <div id="mini-calendar-grid" class="mini-calendar__grid"></div>
-    </div>
-  </aside>
-</section>
-
-<section>
-  <h2 style="margin: 3rem 0 2rem; font-size: 1.8rem; color: var(--primary-color);">최신 포스트</h2>
-  <div class="posts-grid">
-    {% for post in site.posts | limit: 6 %}
-      <div class="post-card">
-        <h2><a href="{{ post.url }}" style="color: var(--primary-color); text-decoration: none;">{{ post.title }}</a></h2>
-        <div class="post-meta">
-          <span>📅 {{ post.date | date: "%Y.%m.%d" }}</span>
-          <span class="post-category">{{ post.category }}</span>
+<section class="home-section">
+  <h1 class="section-title">Categories</h1>
+  <div class="category-card-grid">
+    {% for category in site.category_list %}
+      {% assign matched_posts = site.posts | where: 'category', category %}
+      {% assign count = matched_posts | size %}
+      <a class="category-card" href="{{ '/categories/' | relative_url }}">
+        <span class="category-card__icon" aria-hidden="true">{% cycle 'B', 'F', '/', 'T', 'P', 'N' %}</span>
+        <div>
+          <strong>{{ category }}</strong>
+          <span>{{ count }}개의 글</span>
         </div>
-        <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
-        <a href="{{ post.url }}" class="read-more">더 읽기 →</a>
-      </div>
+      </a>
     {% endfor %}
   </div>
 </section>
 
-<div style="text-align: center; margin-top: 3rem;">
-  <a href="/blog/" style="display: inline-block; background: var(--primary-color); color: white; padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: var(--transition);">
-    모든 포스트 보기 →
-  </a>
-</div>
+<section>
+  <h2 class="section-title">Recent Posts</h2>
+  <div class="posts-list">
+    {% for post in site.posts limit: 6 %}
+      <article class="post-card">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 135 }}</p>
+        <div class="post-meta">
+          <span>{{ post.date | date: "%b %-d, %Y" }}</span>
+          <span>{{ post.category }}</span>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>

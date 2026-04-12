@@ -1,102 +1,57 @@
-﻿<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>About | Ms_AxD</title>
-  <meta name="description" content="Ms_AxD 소개 페이지">
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
-  <link rel="apple-touch-icon" href="./assets/images/favicon.png">
-</head>
-<body class="dark-mode" data-motion-effects="auto">
-  <div class="cursor-highlight" aria-hidden="true"></div>
+---
+layout: default
+title: About
+permalink: /about.html
+---
 
-  <header>
-    <canvas class="header-spider-layer" aria-hidden="true"></canvas>
-    <nav>
-      <div>
-        <h1><a href="./index.html">Ms_AxD</a></h1>
-        <p class="tagline">개발, 보안, 일상을 기록하는 블로그</p>
+<article class="about-page">
+  <h1 class="page-title">About Me</h1>
+
+  <div class="about-intro-card">
+    <div class="about-photo-stack">
+      <div class="about-profile-badge">
+        <span>PARK MINSEOK</span>
+        <span>2003</span>
+        <span>INTJ</span>
       </div>
-      <div>
-        <ul class="nav-items">
-          <li><a href="./index.html">홈</a></li>
-          <li><a href="./blog.html">블로그</a></li>
-          <li><a href="./categories.html">카테고리</a></li>
-          <li><a href="./about.html">About</a></li>
-        </ul>
+      <div class="about-photo-box">
+        <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="프로필 사진">
       </div>
-    </nav>
-  </header>
+    </div>
 
-  <main>
-    <article style="max-width: 800px; margin: 0 auto;">
-      <h1>About Me</h1>
+    <div class="about-copy-card">
+      <p>
+        MY FAVORITE COLOR IS GREEN!<br>
+        개발, 보안, CTF와 일상에서 배운 것을 차분히 기록하는 공간입니다.
+      </p>
+      <p>
+        아직 배워야 할 것이 훨씬 많지만, 매번 직접 부딪힌 흔적을 남기면서 오래 남는 공부를 하고 싶습니다.
+      </p>
+    </div>
+  </div>
 
-      <div class="about-intro-card">
-        <div class="about-photo-stack">
-          <div class="about-profile-badge">
-            <span>PARK MINSEOK</span>
-            <span>2003</span>
-            <span>INTJ</span>
-          </div>
-          <div class="about-photo-box">
-            <img src="./assets/images/profile.jpg" alt="프로필 사진">
-          </div>
-        </div>
+  <section class="about-panel">
+    <h2>주요 관심 분야</h2>
+    <ul>
+      <li>Web</li>
+      <li>사이버보안 및 CTF</li>
+      <li>버그 바운티</li>
+      <li>기술 학습 및 성장</li>
+    </ul>
+  </section>
 
-        <div style="background: #1f2937; border: 1px solid #374151; padding: 2rem; border-radius: 0.75rem; margin: 0; flex: 1;">
-          <p style="font-size: 1.1rem; line-height: 1.8; color: #e5e7eb;">
-            MY FAVORITE COLOR IS GREEN !<br>
-            반갑습니다. 이 블로그는 제가 배우고 경험한 것들을 기록하고 공유하는 공간입니다.<br>
-          </p>
-        </div>
-      </div>
+  <section class="about-panel">
+    <h2>활동 경험</h2>
+    <ul>
+      <li>대회 참여</li>
+      <li>Write-up 정리</li>
+      <li>개인 블로그 운영</li>
+    </ul>
+  </section>
 
-      <h2>주요 관심 분야</h2>
-      <ul style="font-size: 1.1rem; line-height: 1.8;">
-        <li>Web</li>
-        <li>사이버보안 및 CTF</li>
-        <li>버그 바운티</li>
-        <li>기술 학습 및 성장</li>
-      </ul>
-
-      <h2>활동 경험</h2>
-      <ul style="font-size: 1.1rem; line-height: 1.8;">
-        <li>대회 참여</li>
-      </ul>
-
-      <div class="about-social-card" aria-label="소셜 링크">
-        <a class="about-social-link" href="https://instagram.com/ms_axd" target="_blank" rel="noreferrer" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-            <path d="M7.75 3h8.5A4.75 4.75 0 0 1 21 7.75v8.5A4.75 4.75 0 0 1 16.25 21h-8.5A4.75 4.75 0 0 1 3 16.25v-8.5A4.75 4.75 0 0 1 7.75 3Zm0 1.5A3.25 3.25 0 0 0 4.5 7.75v8.5a3.25 3.25 0 0 0 3.25 3.25h8.5a3.25 3.25 0 0 0 3.25-3.25v-8.5a3.25 3.25 0 0 0-3.25-3.25h-8.5Zm8.88 1.12a.88.88 0 1 1 0 1.76.88.88 0 0 1 0-1.76ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Z" />
-          </svg>
-        </a>
-        <a class="about-social-link" href="https://github.com/ms-axd" target="_blank" rel="noreferrer" aria-label="GitHub">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.6 2 12.26c0 4.53 2.87 8.37 6.84 9.72.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.88-2.78.62-3.37-1.2-3.37-1.2-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.58 2.35 1.13 2.92.86.09-.67.35-1.13.63-1.39-2.22-.26-4.56-1.15-4.56-5.11 0-1.13.39-2.06 1.03-2.79-.1-.26-.45-1.31.1-2.73 0 0 .84-.28 2.75 1.06A9.3 9.3 0 0 1 12 6.84c.85 0 1.7.12 2.49.36 1.9-1.34 2.74-1.06 2.74-1.06.55 1.42.2 2.47.1 2.73.64.73 1.03 1.66 1.03 2.79 0 3.97-2.35 4.84-4.58 5.09.36.32.68.95.68 1.92 0 1.39-.01 2.51-.01 2.85 0 .27.18.59.69.49A10.26 10.26 0 0 0 22 12.26C22 6.6 17.52 2 12 2Z" />
-          </svg>
-        </a>
-        <span class="about-social-link about-social-link--static" aria-label="Discord 아이디 .yah0" title="Discord: .yah0">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-            <path d="M18.93 5.34A16.9 16.9 0 0 0 14.8 4l-.2.4a15.7 15.7 0 0 1 3.82 1.44 13.56 13.56 0 0 0-4.18-1.3l-.27.54a14.4 14.4 0 0 1 4.88 1.74A14.33 14.33 0 0 0 5.15 6.8a14.52 14.52 0 0 1 4.85-1.73L9.74 4.5a13.33 13.33 0 0 0-4.16 1.3A15.8 15.8 0 0 1 9.4 4.4L9.2 4a16.72 16.72 0 0 0-4.12 1.33C2.45 9.16 1.73 12.86 2.1 16.51a16.93 16.93 0 0 0 5.06 2.57l1.09-1.46c-.6-.23-1.18-.51-1.72-.85l.41-.31c3.32 1.59 6.91 1.59 10.19 0l.41.31c-.54.34-1.12.63-1.72.85l1.09 1.46a16.85 16.85 0 0 0 5.05-2.57c.45-4.23-.76-7.9-3.03-11.17ZM9.53 14.28c-.99 0-1.8-.93-1.8-2.07 0-1.15.8-2.08 1.8-2.08 1 0 1.81.93 1.8 2.08 0 1.14-.8 2.07-1.8 2.07Zm4.94 0c-.99 0-1.8-.93-1.8-2.07 0-1.15.8-2.08 1.8-2.08 1 0 1.81.93 1.8 2.08 0 1.14-.8 2.07-1.8 2.07Z" />
-          </svg>
-        </span>
-      </div>
-    </article>
-  </main>
-
-  <footer>
-    <p>&copy; 2026 ms-axd.</p>
-  </footer>
-
-  <script src="./assets/js/cursor-highlight.js"></script>
-  <script src="./assets/js/category-tabs.js"></script>
-  <script src="./assets/js/header-spider.js"></script>
-  <script src="./assets/js/home-calendar.js"></script>
-  <script src="./assets/js/blog-sort.js"></script>
-  <script src="./assets/js/search.js"></script>
-</body>
-</html>
+  <div class="about-social-card" aria-label="소셜 링크">
+    <a class="about-social-link" href="https://instagram.com/ms_axd" target="_blank" rel="noreferrer" aria-label="Instagram">I</a>
+    <a class="about-social-link" href="https://github.com/ms-axd" target="_blank" rel="noreferrer" aria-label="GitHub">G</a>
+    <span class="about-social-link about-social-link--static" aria-label="Discord 아이디 .yah0" title="Discord: .yah0">D</span>
+  </div>
+</article>

@@ -1,19 +1,16 @@
 ---
 layout: default
-title: 카테고리
+title: Categories
 permalink: /categories/
 ---
 
-<h1 style="margin-bottom: 3rem;">📁 카테고리</h1>
-
-{% assign post_categories = site.posts | map: 'category' | uniq | sort %}
-{% assign categories = site.category_list | default: post_categories %}
+<h1 class="page-title">Categories</h1>
 
 <div class="category-tabs" role="tablist" aria-label="카테고리 목록">
-  {% for category in categories %}
+  {% for category in site.category_list %}
     {% assign matched_posts = site.posts | where: 'category', category %}
     {% assign cat_posts = matched_posts | size %}
-    {% assign category_id = category | slugify %}
+    {% assign category_id = forloop.index %}
     <button
       class="category-tab{% if forloop.first %} is-active{% endif %}"
       type="button"
@@ -27,32 +24,31 @@ permalink: /categories/
 </div>
 
 <div class="category-panels">
-{% for category in categories %}
+{% for category in site.category_list %}
   {% assign matched_posts = site.posts | where: 'category', category %}
   {% assign cat_posts = matched_posts | size %}
-  {% assign category_id = category | slugify %}
+  {% assign category_id = forloop.index %}
 
   <section
     id="category-panel-{{ category_id }}"
     class="category-panel{% if forloop.first %} is-active{% endif %}"
     role="tabpanel">
-    <div class="category-section">
-      <div class="category-posts">
-        {% if cat_posts > 0 %}
-          {% for post in matched_posts %}
-            <div class="post-card">
-              <h2><a href="{{ post.url }}" style="color: var(--primary-color); text-decoration: none;">{{ post.title }}</a></h2>
-              <div class="post-meta">
-                <span>📅 {{ post.date | date: "%Y.%m.%d" }}</span>
-              </div>
-              <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
-              <a href="{{ post.url }}" class="read-more">더 읽기 →</a>
+    <div class="category-posts">
+      {% if cat_posts > 0 %}
+        {% for post in matched_posts %}
+          <article class="post-card">
+            <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+            <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 120 }}</p>
+            <div class="post-meta">
+              <span>{{ post.date | date: "%b %-d, %Y" }}</span>
             </div>
-          {% endfor %}
-        {% else %}
-          <p class="post-excerpt" style="margin: 0.5rem 0 0;">아직 등록된 글이 없습니다.</p>
-        {% endif %}
-      </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        <article class="post-card">
+          <p class="post-excerpt">아직 등록된 글이 없습니다.</p>
+        </article>
+      {% endif %}
     </div>
   </section>
 {% endfor %}

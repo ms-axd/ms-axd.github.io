@@ -6,60 +6,76 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
   <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | truncatewords: 20 }}">
-  
   {% seo %}
-  
-  <link rel="stylesheet" href="/assets/css/style.css?v={{ site.time | date: '%s' }}">
-  <link rel="icon" type="image/png" href="/assets/images/favicon.png">
-  <link rel="apple-touch-icon" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/images/favicon.png' | relative_url }}">
   <link rel="canonical" href="{{ page.url | replace: 'index.html', '' | prepend: site.baseurl | prepend: site.url }}">
-  
-  {% if site.google_analytics %}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '{{ site.google_analytics }}');
-    </script>
-  {% endif %}
 </head>
-<body class="dark-mode" data-motion-effects="{{ site.motion_effects_mode | default: 'auto' }}">
-  <div class="cursor-highlight" aria-hidden="true"></div>
-  <header>
-    <canvas class="header-spider-layer" aria-hidden="true"></canvas>
-    <nav>
-      <div>
-        <h1><a href="/">{{ site.title }}</a></h1>
-        <p class="tagline">{{ site.description }}</p>
+<body>
+  <div class="site-shell">
+    <aside class="site-sidebar" aria-label="사이트 메뉴">
+      <a class="profile" href="{{ '/' | relative_url }}" aria-label="홈으로 이동">
+        <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="프로필 사진">
+        <strong>{{ site.title }}</strong>
+        <span>{{ site.description }}</span>
+      </a>
+
+      <nav class="side-nav" aria-label="주요 메뉴">
+        {% for link in site.nav_links %}
+          <a href="{{ link.url | relative_url }}" {% if page.url == link.url %}class="is-active"{% endif %}>
+            <span class="nav-icon" aria-hidden="true">{{ link.icon }}</span>
+            <span>{{ link.title }}</span>
+          </a>
+        {% endfor %}
+      </nav>
+
+      <div class="social-dock" aria-label="소셜 링크">
+        <a href="https://github.com/ms-axd" target="_blank" rel="noreferrer" aria-label="GitHub">G</a>
+        <a href="mailto:{{ site.email }}" aria-label="Email">M</a>
+        <span title="Discord: .yah0" aria-label="Discord .yah0">D</span>
       </div>
-      <div>
-        <ul class="nav-items">
-          {% for link in site.nav_links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-        </ul>
+    </aside>
+
+    <div class="site-main">
+      <header class="topbar">
+        <a href="{{ '/' | relative_url }}">Home</a>
+        <div class="topbar-search">
+          <input type="search" placeholder="Search..." aria-label="검색">
+        </div>
+      </header>
+
+      <div class="content-grid">
+        <main class="content-area">
+          {{ content }}
+        </main>
+
+        <aside class="right-rail" aria-label="블로그 정보">
+          <section>
+            <h2>Recently Updated</h2>
+            <ul class="link-list">
+              {% for post in site.posts limit: 5 %}
+                <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </section>
+
+          <section>
+            <h2>Trending Tags</h2>
+            <div class="tag-cloud">
+              {% assign all_tags = site.tags | sort %}
+              {% for tag in all_tags limit: 8 %}
+                <a href="{{ '/blog/' | relative_url }}">#{{ tag[0] }}</a>
+              {% endfor %}
+            </div>
+          </section>
+        </aside>
       </div>
-    </nav>
-  </header>
+    </div>
+  </div>
 
-  <main>
-    {{ content }}
-  </main>
-
-  <footer>
-    <p>&copy; 2026 ms-axd. </p>
-    <p>
-      <!-- <a href="https://instagram.com/ms_axd/{{ site.instagram }}" target="_blank">Instagram</a> | -->
-      <a href=""></a>
-    </p>
-  </footer>
-
-  <script src="/assets/js/cursor-highlight.js?v={{ site.time | date: '%s' }}"></script>
-  <script src="/assets/js/category-tabs.js?v={{ site.time | date: '%s' }}"></script>
-  <script src="/assets/js/header-spider.js?v={{ site.time | date: '%s' }}"></script>
-  <script src="/assets/js/home-calendar.js?v={{ site.time | date: '%s' }}"></script>
-  <script src="/assets/js/blog-sort.js?v={{ site.time | date: '%s' }}"></script>
-  <script src="/assets/js/search.js?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/category-tabs.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/blog-sort.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
