@@ -3,25 +3,6 @@ layout: default
 title: Home
 ---
 
-{% assign post_categories = site.posts | map: 'category' | uniq %}
-
-<section class="home-section">
-  <h1 class="section-title">Categories</h1>
-  <div class="category-card-grid">
-    {% for category in site.category_list %}
-      {% assign matched_posts = site.posts | where: 'category', category %}
-      {% assign count = matched_posts | size %}
-      <a class="category-card" href="{{ '/categories/' | relative_url }}">
-        <span class="category-card__icon" aria-hidden="true">{% cycle 'B', 'F', '/', 'T', 'P', 'N' %}</span>
-        <div>
-          <strong>{{ category }}</strong>
-          <span>{{ count }}개의 글</span>
-        </div>
-      </a>
-    {% endfor %}
-  </div>
-</section>
-
 <section>
   <h2 class="section-title">Recent Posts</h2>
   <div class="posts-list">
