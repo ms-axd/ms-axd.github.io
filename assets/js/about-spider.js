@@ -20,14 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let velocityY = 0;
 
   const legConfigs = [
-    { side: -1, angle: -2.55, length: 78, phase: 0.0 },
-    { side: -1, angle: -2.9, length: 92, phase: 0.8 },
-    { side: -1, angle: 2.9, length: 92, phase: 1.6 },
-    { side: -1, angle: 2.45, length: 78, phase: 2.4 },
-    { side: 1, angle: -0.58, length: 78, phase: 1.2 },
-    { side: 1, angle: -0.25, length: 92, phase: 2.0 },
-    { side: 1, angle: 0.25, length: 92, phase: 2.8 },
-    { side: 1, angle: 0.62, length: 78, phase: 3.6 },
+    { angle: -2.72, length: 78, phase: 0.0 },
+    { angle: -2.3, length: 96, phase: 0.7 },
+    { angle: 2.3, length: 96, phase: 1.4 },
+    { angle: 2.72, length: 78, phase: 2.1 },
+    { angle: -0.42, length: 78, phase: 2.8 },
+    { angle: -0.82, length: 96, phase: 3.5 },
+    { angle: 0.82, length: 96, phase: 4.2 },
+    { angle: 0.42, length: 78, phase: 4.9 },
   ];
 
   const legs = legConfigs.map(config => ({
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     jointY: 0,
     footX: 0,
     footY: 0,
+    vx: 0,
+    vy: 0,
   }));
 
   const resize = () => {
@@ -60,68 +62,78 @@ document.addEventListener('DOMContentLoaded', () => {
       leg.footY = bodyY + Math.sin(leg.angle) * leg.length;
       leg.jointX = bodyX + Math.cos(leg.angle) * leg.length * 0.48;
       leg.jointY = bodyY + Math.sin(leg.angle) * leg.length * 0.48;
+      leg.vx = 0;
+      leg.vy = 0;
     });
   };
 
-  const drawLeg = (baseX, baseY, leg, time) => {
+  const drawLeg = (leg, time) => {
     const speed = Math.hypot(velocityX, velocityY);
     const direction = Math.atan2(velocityY, velocityX || 0.001);
-    const crawl = Math.sin(time / 130 + leg.phase) * Math.min(speed * 0.8, 10);
-    const spread = Math.cos(time / 180 + leg.phase) * 8;
-    const stride = Math.min(speed * 3.4, 34);
+    const crawl = Math.sin(time / 120 + leg.phase) * Math.min(speed * 1.4, 14);
+    const spread = Math.cos(time / 190 + leg.phase) * 12;
+    const stride = Math.min(speed * 5, 42);
+    const normalAngle = leg.angle + Math.PI / 2;
 
     const targetFootX =
       bodyX +
       Math.cos(leg.angle) * leg.length +
       Math.cos(direction) * stride +
-      Math.cos(leg.angle + Math.PI / 2) * spread;
+      Math.cos(normalAngle) * spread;
     const targetFootY =
       bodyY +
       Math.sin(leg.angle) * leg.length +
       Math.sin(direction) * stride +
-      Math.sin(leg.angle + Math.PI / 2) * spread +
+      Math.sin(normalAngle) * spread +
       crawl;
 
-    leg.footX += (targetFootX - leg.footX) * 0.08;
-    leg.footY += (targetFootY - leg.footY) * 0.08;
+    leg.vx += (targetFootX - leg.footX) * 0.018;
+    leg.vy += (targetFootY - leg.footY) * 0.018;
+    leg.vx *= 0.78;
+    leg.vy *= 0.78;
+    leg.footX += leg.vx;
+    leg.footY += leg.vy;
 
-    const midX = (baseX + leg.footX) * 0.5;
-    const midY = (baseY + leg.footY) * 0.5;
-    const bendX = Math.cos(leg.angle + leg.side * 0.72) * 26;
-    const bendY = Math.sin(leg.angle + leg.side * 0.72) * 26;
+    const midX = (bodyX + leg.footX) * 0.5;
+    const midY = (bodyY + leg.footY) * 0.5;
+    const bend = Math.sin(time / 210 + leg.phase) * 18 + 24;
+    const bendX = Math.cos(normalAngle) * bend;
+    const bendY = Math.sin(normalAngle) * bend;
 
-    leg.jointX += (midX + bendX - leg.jointX) * 0.18;
-    leg.jointY += (midY + bendY - leg.jointY) * 0.18;
+    leg.jointX += (midX + bendX - leg.jointX) * 0.16;
+    leg.jointY += (midY + bendY - leg.jointY) * 0.16;
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
-    ctx.lineWidth = 1.55;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.86)';
+    ctx.lineWidth = 1.2;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.25)';
-    ctx.shadowBlur = 5;
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.18)';
+    ctx.shadowBlur = 4;
 
     ctx.beginPath();
-    ctx.moveTo(baseX, baseY);
-    ctx.quadraticCurveTo(leg.jointX, leg.jointY, leg.footX, leg.footY);
+    ctx.moveTo(bodyX, bodyY);
+    ctx.lineTo(leg.jointX, leg.jointY);
+    ctx.lineTo(leg.footX, leg.footY);
     ctx.stroke();
 
     ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.58)';
     ctx.beginPath();
-    ctx.arc(leg.footX, leg.footY, 1.8, 0, Math.PI * 2);
+    ctx.arc(leg.jointX, leg.jointY, 1.25, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
+    ctx.beginPath();
+    ctx.arc(leg.footX, leg.footY, 2.2, 0, Math.PI * 2);
     ctx.fill();
   };
 
-  const drawBody = () => {
-    const gradient = ctx.createRadialGradient(bodyX - 4, bodyY - 5, 2, bodyX, bodyY, 13);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.96)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.5)');
-
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.22)';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = gradient;
+  const drawCenter = () => {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.26)';
+    ctx.shadowBlur = 6;
     ctx.beginPath();
-    ctx.ellipse(bodyX, bodyY, 5.8, 7.2, 0, 0, Math.PI * 2);
+    ctx.arc(bodyX, bodyY, 2.6, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
   };
@@ -129,8 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const render = time => {
     previousX = bodyX;
     previousY = bodyY;
-    bodyX += (targetX - bodyX) * 0.035;
-    bodyY += (targetY - bodyY) * 0.035;
+    bodyX += (targetX - bodyX) * 0.075;
+    bodyY += (targetY - bodyY) * 0.075;
     velocityX = bodyX - previousX;
     velocityY = bodyY - previousY;
 
@@ -138,12 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.fillStyle = '#030405';
     ctx.fillRect(0, 0, width, height);
 
-    legs.forEach(leg => {
-      const baseX = bodyX + leg.side * 4;
-      const baseY = bodyY + Math.sin(leg.angle) * 5;
-      drawLeg(baseX, baseY, leg, time);
-    });
-    drawBody();
+    legs.forEach(leg => drawLeg(leg, time));
+    drawCenter();
 
     requestAnimationFrame(render);
   };
