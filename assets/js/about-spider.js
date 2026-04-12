@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetPoints = () => {
     points.length = 0;
 
-    for (let i = 0; i < 48; i += 1) {
+    for (let i = 0; i < 150; i += 1) {
       points.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const centerX = width * 0.5;
     const centerY = height * 0.46;
 
-    ctx.strokeStyle = 'rgba(80, 92, 104, 0.09)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
     ctx.lineWidth = 1;
 
     for (let ring = 1; ring <= 6; ring += 1) {
@@ -86,17 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const drawParticles = time => {
-    ctx.fillStyle = 'rgba(80, 92, 104, 0.12)';
-    ctx.strokeStyle = 'rgba(20, 24, 28, 0.34)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.34)';
 
     points.forEach(point => {
-      const x = point.x + Math.sin(time / 1200 + point.phase) * 3;
-      const y = point.y + Math.cos(time / 1400 + point.phase) * 3;
+      const x = point.x + Math.sin(time / 1200 + point.phase) * 2.4;
+      const y = point.y + Math.cos(time / 1400 + point.phase) * 2.4;
       const distance = Math.hypot(x - spiderX, y - spiderY);
 
-      if (distance < 135) {
-        const alpha = 0.36 - (distance / 135) * 0.16;
-        ctx.strokeStyle = `rgba(20, 24, 28, ${alpha})`;
+      if (distance < 145) {
+        const alpha = 0.62 - (distance / 145) * 0.28;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.lineWidth = distance < 70 ? 1.2 : 0.8;
         ctx.beginPath();
         ctx.moveTo(spiderX, spiderY);
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(x, y, 1.1, 0, Math.PI * 2);
+      ctx.arc(x, y, 0.9, 0, Math.PI * 2);
       ctx.fill();
     });
   };
@@ -117,11 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const legShift = Math.sin(time / 180) * 0.7;
 
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
-    ctx.shadowBlur = 4;
-    ctx.shadowOffsetY = 1;
-    ctx.strokeStyle = 'rgba(12, 13, 14, 0.78)';
-    ctx.lineWidth = 0.9;
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.24)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 0;
+    ctx.strokeStyle = 'rgba(235, 235, 235, 0.82)';
+    ctx.lineWidth = 1.1;
     ctx.lineCap = 'round';
 
     const legs = [
@@ -143,12 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.stroke();
     });
 
-    ctx.fillStyle = 'rgba(8, 9, 10, 0.95)';
+    ctx.fillStyle = 'rgba(242, 242, 242, 0.9)';
     ctx.beginPath();
     ctx.ellipse(0, 2, 4.2, 5.8, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(11, 12, 13, 0.92)';
+    ctx.fillStyle = 'rgba(248, 248, 248, 0.88)';
     ctx.beginPath();
     ctx.ellipse(0, -4, 3.1, 3, 0, 0, Math.PI * 2);
     ctx.fill();

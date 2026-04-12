@@ -2072,8 +2072,8 @@ body {
   width: 100%;
   height: calc(100% - 38px);
   background:
-    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92) 34%, rgba(244, 247, 244, 0.86) 72%),
-    #ffffff;
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015) 18%, rgba(0, 0, 0, 0) 42%),
+    #030405;
   cursor: crosshair;
 }
 
