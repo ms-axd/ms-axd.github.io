@@ -1,81 +1,106 @@
-# MY FIRST BLOG !
+# Ms_AxD Blog
 
-## 
-Jekyll을 기반으로 한 개인 블로그입니다. GitHub Pages를 통해 호스팅됩니다.
+Jekyll 기반 개인 블로그
+## 기술 스택
 
+- Jekyll `~> 4.3.0`
+- Minima `~> 2.5`
+- kramdown
+- jekyll-seo-tag
+- jekyll-sitemap
+- jekyll-paginate
+- jekyll-feed
+- jemoji
 
-##  프로젝트 구조
+## 프로젝트 구조
 
-```
+```text
 .
-├── _posts/              # 블로그 포스트
-├── _layouts/            # 레이아웃 템플릿
+├── _config.yml              # 사이트 설정, 내비게이션, 카테고리 목록
+├── _layouts/
+│   ├── default.html         # 공통 레이아웃, 사이드바, 검색, 터미널 로드
+│   └── post.html            # 포스트 상세 레이아웃, 태그, 댓글
+├── _posts/                  # 블로그 포스트
 ├── assets/
-│   ├── css/            # 스타일시트
-│   └── js/             # JavaScript 파일
-├── index.html          # 홈페이지
-├── blog.html           # 블로그 페이지
-├── categories.html     # 카테고리 페이지
-├── about.html          # 소개 페이지
-├── _config.yml         # Jekyll 설정
-└── Gemfile             # 루비 의존성
+│   ├── css/style.css        # 전체 스타일
+│   ├── images/              # 프로필, favicon, 로고 이미지
+│   └── js/
+│       ├── blog-sort.js         # 블로그 목록 최신순/오래된순 정렬
+│       ├── category-tabs.js     # 카테고리 탭 전환
+│       ├── cursor-glow.js       # 마우스 커서 glow 효과
+│       ├── discord-popover.js   # Discord 아이디 팝오버
+│       ├── mini-terminal.js     # 미니 터미널 모달
+│       ├── search.js            # search-data.json 기반 검색
+│       ├── sidebar-calendar.js  # 오른쪽 사이드 캘린더
+│       └── tag-filter.js        # 태그 필터
+├── index.html               # 홈, 최근 글
+├── blog.html                # 전체 글 목록
+├── categories.html          # 카테고리별 글 목록
+├── tags.html                # 태그별 필터
+├── archives.html            # 연도별 아카이브
+├── about.html               # 소개 페이지
+├── search-data.json         # 클라이언트 검색 데이터
+├── 404.html                 # 404 페이지
+├── Gemfile                  # Ruby/Jekyll 의존성
+└── README.md
 ```
 
 
-### 요구사항
-- Ruby 2.7 이상
-- Jekyll 4.3.0 이상
+## 로컬 실행
 
+Ruby와 Bundler가 필요.
+
+```bash
+bundle install
+bundle exec jekyll serve
 ```
-##  포스트 작성
 
-`_posts` 폴더에 아래 형식으로 파일을 생성:
+## 포스트 작성
+
+포스트는 `_posts` 폴더에 `YYYY-MM-DD-title.md` 형식으로 추가.
 
 ```markdown
 ---
 layout: post
 title: 포스트 제목
-date: 2024-04-05
-category: 개발
-tags: [태그1, 태그2]
-excerpt: 간단한 설명
+date: 2026-04-13
+category: CTF/Wargame
+tags: [web, ctf]
+excerpt: 목록에 표시될 짧은 설명
 ---
 
-포스트 내용...
+본문 내용
 ```
 
-### 사용 가능한 카테고리
+`category` 값은 `_config.yml`의 `category_list`와 일치해야 카테고리 페이지에서 정상적으로 묶인다.
 
-1. **개발** - 프로그래밍 및 웹 개발
-2. **CTF/Wargame** - 사이버보안 및 CTF
-3. **BugBounty** - 버그 바운티 및 보안 연구
-4. **일상** - 개발자의 일상 이야기
-5. **블로그/기술문서** - 기술 서적 리뷰 및 학습
-6. **논문/컨퍼런스** - 도움이 되는 정보
-7. **자격증/공모전** - 자격증
+## 검색 데이터
 
+검색은 `assets/js/search.js`가 `/search-data.json`을 불러와 클라이언트에서 처리. 포스트를 추가하거나 제목/본문/태그가 바뀌면 `search-data.json`도 함께 갱신해야 검색 결과에 반영됨.
 
-## 🔍 검색 기능
+## 주요 설정
 
-검색 기능은 `/search-data.json`을 기반으로 작동합니다.
+`_config.yml`에서 관리하는 값:
 
+- `title`, `description`, `author`, `email`
+- `url`, `baseurl`, `repository`
+- `paginate`, `paginate_path`
+- `nav_links`
+- `category_list`
+- 포스트 기본 permalink: `/blog/:year/:month/:day/:slug/`
 
+## 배포
+
+GitHub Pages 저장소로 push하면 Jekyll 빌드 후 배포되는 구성을 기준으로 한다.
 
 ```bash
 git add .
-git commit -m "블로그 포스트 추가"
+git commit -m "Update blog"
 git push origin main
 ```
 
-## 📄 라이선스
+## 참고
 
-MIT License - 자유롭게 사용 가능합니다.
-
-
-## 🔗 참고 자료
-
-- [Jekyll 공식 문서](https://jekyllrb.com/)
-- [GitHub Pages](https://pages.github.com/)
-- [Utterances](https://utteranc.es/)
-
----
+- Jekyll: https://jekyllrb.com/
+- GitHub Pages: https://pages.github.com/
+- Utterances: https://utteranc.es/
