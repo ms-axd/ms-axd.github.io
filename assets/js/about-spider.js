@@ -45,21 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
     resetPoints();
   };
 
-  const drawWeb = time => {
+  const drawWeb = () => {
     const centerX = width * 0.5;
     const centerY = height * 0.46;
 
-    ctx.strokeStyle = 'rgba(27, 37, 44, 0.1)';
+    ctx.strokeStyle = 'rgba(80, 92, 104, 0.09)';
     ctx.lineWidth = 1;
 
-    for (let ring = 1; ring <= 7; ring += 1) {
+    for (let ring = 1; ring <= 6; ring += 1) {
       ctx.beginPath();
 
-      for (let ray = 0; ray <= 22; ray += 1) {
-        const angle = (Math.PI * 2 * ray) / 22;
-        const wobble = Math.sin(time / 900 + ring + ray) * 2;
-        const radiusX = ring * width * 0.043 + wobble;
-        const radiusY = ring * height * 0.052 + wobble;
+      for (let ray = 0; ray <= 20; ray += 1) {
+        const angle = (Math.PI * 2 * ray) / 20;
+        const radiusX = ring * width * 0.045;
+        const radiusY = ring * height * 0.052;
         const x = centerX + Math.cos(angle) * radiusX;
         const y = centerY + Math.sin(angle) * radiusY;
 
@@ -73,8 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.stroke();
     }
 
-    for (let ray = 0; ray < 22; ray += 1) {
-      const angle = (Math.PI * 2 * ray) / 22;
+    for (let ray = 0; ray < 20; ray += 1) {
+      const angle = (Math.PI * 2 * ray) / 20;
 
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
@@ -87,18 +86,18 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const drawParticles = time => {
-    ctx.fillStyle = 'rgba(9, 10, 10, 0.2)';
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.34)';
+    ctx.fillStyle = 'rgba(80, 92, 104, 0.12)';
+    ctx.strokeStyle = 'rgba(20, 24, 28, 0.34)';
 
     points.forEach(point => {
       const x = point.x + Math.sin(time / 1200 + point.phase) * 3;
       const y = point.y + Math.cos(time / 1400 + point.phase) * 3;
       const distance = Math.hypot(x - spiderX, y - spiderY);
 
-      if (distance < 150) {
-        const alpha = 0.64 - (distance / 150) * 0.28;
-        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
-        ctx.lineWidth = distance < 70 ? 1.7 : 1.1;
+      if (distance < 135) {
+        const alpha = 0.36 - (distance / 135) * 0.16;
+        ctx.strokeStyle = `rgba(20, 24, 28, ${alpha})`;
+        ctx.lineWidth = distance < 70 ? 1.2 : 0.8;
         ctx.beginPath();
         ctx.moveTo(spiderX, spiderY);
         ctx.lineTo(x, y);
@@ -116,35 +115,42 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.save();
     ctx.translate(spiderX, spiderY);
 
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    ctx.shadowBlur = 9;
-    ctx.shadowOffsetY = 3;
+    const legShift = Math.sin(time / 180) * 0.7;
 
-    const pulse = Math.sin(time / 280) * 0.8;
-    const ripple = Math.cos(time / 360) * 0.7;
-    const liquid = ctx.createRadialGradient(-3, -5, 1, 0, 2, 15);
-    liquid.addColorStop(0, 'rgba(48, 50, 50, 0.98)');
-    liquid.addColorStop(0.38, 'rgba(14, 15, 15, 0.99)');
-    liquid.addColorStop(1, 'rgba(0, 0, 0, 1)');
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 1;
+    ctx.strokeStyle = 'rgba(12, 13, 14, 0.78)';
+    ctx.lineWidth = 0.9;
+    ctx.lineCap = 'round';
 
-    ctx.fillStyle = liquid;
+    const legs = [
+      [-3, -6, -9, -10, -15, -13],
+      [-3, -2, -11, -4, -18, -3],
+      [-3, 2, -10, 5, -15, 10],
+      [-2, 5, -7, 11, -10, 17],
+      [3, -6, 9, -10, 15, -13],
+      [3, -2, 11, -4, 18, -3],
+      [3, 2, 10, 5, 15, 10],
+      [2, 5, 7, 11, 10, 17],
+    ];
+
+    legs.forEach((leg, index) => {
+      const sideShift = index % 2 === 0 ? legShift : -legShift;
+      ctx.beginPath();
+      ctx.moveTo(leg[0], leg[1]);
+      ctx.quadraticCurveTo(leg[2], leg[3] + sideShift, leg[4], leg[5]);
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = 'rgba(8, 9, 10, 0.95)';
     ctx.beginPath();
-    ctx.moveTo(0, -15 - pulse);
-    ctx.bezierCurveTo(9 + ripple, -12, 12, -3, 10, 6);
-    ctx.bezierCurveTo(8, 15 + pulse, 1, 19, -5, 15);
-    ctx.bezierCurveTo(-13, 11, -12, 0, -9, -7);
-    ctx.bezierCurveTo(-6, -12, -3, -15, 0, -15 - pulse);
+    ctx.ellipse(0, 2, 4.2, 5.8, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+    ctx.fillStyle = 'rgba(11, 12, 13, 0.92)';
     ctx.beginPath();
-    ctx.ellipse(-4, -7, 1.7, 4.2, 0.55, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.68)';
-    ctx.beginPath();
-    ctx.ellipse(2, 16 + pulse * 0.3, 2.8, 4.2, -0.15, 0, Math.PI * 2);
+    ctx.ellipse(0, -4, 3.1, 3, 0, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.restore();
@@ -155,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     spiderY += (targetY - spiderY) * 0.012;
 
     ctx.clearRect(0, 0, width, height);
-    drawWeb(time);
+    drawWeb();
     drawParticles(time);
     drawSpider(time);
 
