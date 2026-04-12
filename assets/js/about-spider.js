@@ -87,8 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const drawParticles = time => {
-    ctx.fillStyle = 'rgba(27, 37, 44, 0.16)';
-    ctx.strokeStyle = 'rgba(8, 10, 12, 0.28)';
+    ctx.fillStyle = 'rgba(9, 10, 10, 0.2)';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.34)';
 
     points.forEach(point => {
       const x = point.x + Math.sin(time / 1200 + point.phase) * 3;
@@ -96,14 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const distance = Math.hypot(x - spiderX, y - spiderY);
 
       if (distance < 150) {
-        const alpha = 0.5 - (distance / 150) * 0.24;
-        ctx.strokeStyle = `rgba(8, 10, 12, ${alpha})`;
+        const alpha = 0.64 - (distance / 150) * 0.28;
+        ctx.strokeStyle = `rgba(0, 0, 0, ${alpha})`;
+        ctx.lineWidth = distance < 70 ? 1.7 : 1.1;
         ctx.beginPath();
         ctx.moveTo(spiderX, spiderY);
         ctx.lineTo(x, y);
         ctx.stroke();
       }
 
+      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(x, y, 1.1, 0, Math.PI * 2);
       ctx.fill();
@@ -114,38 +116,71 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.save();
     ctx.translate(spiderX, spiderY);
 
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.32)';
-    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.42)';
+    ctx.shadowBlur = 14;
     ctx.shadowOffsetY = 4;
 
-    const pulse = Math.sin(time / 260) * 0.9;
-    const liquid = ctx.createRadialGradient(-3, -4, 1, 0, 2, 14);
-    liquid.addColorStop(0, 'rgba(55, 58, 58, 0.98)');
-    liquid.addColorStop(0.45, 'rgba(15, 17, 17, 0.99)');
+    const pulse = Math.sin(time / 230) * 1.2;
+    const ripple = Math.cos(time / 310) * 1.1;
+    const liquid = ctx.createRadialGradient(-5, -7, 1, 0, 2, 17);
+    liquid.addColorStop(0, 'rgba(64, 69, 68, 0.98)');
+    liquid.addColorStop(0.32, 'rgba(18, 20, 20, 0.99)');
     liquid.addColorStop(1, 'rgba(0, 0, 0, 1)');
 
     ctx.fillStyle = liquid;
     ctx.beginPath();
-    ctx.moveTo(0, -13 - pulse);
-    ctx.bezierCurveTo(8 + pulse, -8, 10, 2, 5, 10 + pulse);
-    ctx.bezierCurveTo(2, 15, -4, 15, -7, 9);
-    ctx.bezierCurveTo(-11, 1, -8, -8, 0, -13 - pulse);
+    ctx.moveTo(-1, -17 - pulse);
+    ctx.bezierCurveTo(8 + ripple, -15, 15 + pulse, -7, 13, 4);
+    ctx.bezierCurveTo(16, 12 + pulse, 7, 20 + ripple, 0, 17);
+    ctx.bezierCurveTo(-7, 22, -17 - ripple, 11, -13, 2);
+    ctx.bezierCurveTo(-15, -8, -9, -15, -1, -17 - pulse);
     ctx.fill();
+
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.72)';
+    ctx.lineWidth = 2.8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-10, 3);
+    ctx.bezierCurveTo(-21 - ripple, 5, -24, 16, -31, 19 + pulse);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(10, 2);
+    ctx.bezierCurveTo(22 + ripple, 4, 26, 14, 34, 12 - pulse);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, 14);
+    ctx.bezierCurveTo(1 + ripple, 23, -4, 29, -2, 36 + pulse);
+    ctx.stroke();
 
     ctx.shadowBlur = 0;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.beginPath();
-    ctx.ellipse(-3, -5, 2, 4, 0.45, 0, Math.PI * 2);
+    ctx.ellipse(-5.2, -5.5, 4.6, 1.9, -0.28, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
     ctx.beginPath();
-    ctx.ellipse(0, 11 + pulse * 0.4, 3.2, 4.8, 0, 0, Math.PI * 2);
+    ctx.ellipse(5.2, -5.7, 4.6, 1.9, 0.28, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.52)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
     ctx.beginPath();
-    ctx.ellipse(-5, 16, 1.8, 2.5, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(-3.2, -6.2, 1.3, 0.5, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(3.2, -6.3, 1.3, 0.5, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.beginPath();
+    ctx.ellipse(-5, -10, 2.1, 5.2, 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
+    ctx.beginPath();
+    ctx.ellipse(6, 16 + pulse * 0.3, 2.4, 4.4, -0.2, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.restore();
