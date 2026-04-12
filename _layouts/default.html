@@ -13,15 +13,15 @@
   <link rel="canonical" href="{{ page.url | replace: 'index.html', '' | prepend: site.baseurl | prepend: site.url }}">
 </head>
 <body>
+  <div class="cursor-glow" aria-hidden="true"></div>
   <div class="site-shell">
-    <aside class="site-sidebar" aria-label="사이트 메뉴">
-      <a class="profile" href="{{ '/' | relative_url }}" aria-label="홈으로 이동">
-        <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="프로필 사진">
+    <aside class="site-sidebar" aria-label="Site menu">
+      <a class="profile" href="{{ '/' | relative_url }}" aria-label="Go home">
+        <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="Profile photo">
         <strong>{{ site.title }}</strong>
-        <span>{{ site.description }}</span>
       </a>
 
-      <nav class="side-nav" aria-label="주요 메뉴">
+      <nav class="side-nav" aria-label="Main navigation">
         {% for link in site.nav_links %}
           <a href="{{ link.url | relative_url }}" {% if page.url == link.url %}class="is-active"{% endif %}>
             <span class="nav-icon" aria-hidden="true">{{ link.icon }}</span>
@@ -30,7 +30,7 @@
         {% endfor %}
       </nav>
 
-      <div class="social-dock" aria-label="소셜 링크">
+      <div class="social-dock" aria-label="Social links">
         <a href="https://github.com/ms-axd" target="_blank" rel="noreferrer" aria-label="GitHub">G</a>
         <a href="mailto:{{ site.email }}" aria-label="Email">M</a>
         <span title="Discord: .yah0" aria-label="Discord .yah0">D</span>
@@ -41,7 +41,7 @@
       <header class="topbar">
         <a href="{{ '/' | relative_url }}">Home</a>
         <div class="topbar-search search-box">
-          <input type="search" placeholder="Search..." aria-label="검색">
+          <input type="search" placeholder="Search..." aria-label="Search">
           <div class="search-results" style="display: none;"></div>
         </div>
       </header>
@@ -51,7 +51,7 @@
           {{ content }}
         </main>
 
-        <aside class="right-rail" aria-label="블로그 정보">
+        <aside class="right-rail" aria-label="Blog info">
           <section>
             <h2>Recently Updated</h2>
             <ul class="link-list">
@@ -78,6 +78,7 @@
   <script src="{{ '/assets/js/category-tabs.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/blog-sort.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/tag-filter.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/cursor-glow.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
