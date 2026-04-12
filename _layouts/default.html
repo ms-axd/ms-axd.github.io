@@ -102,15 +102,15 @@
   </div>
 
   <div class="terminal-modal" data-terminal-modal hidden>
-    <div class="terminal-modal__panel" role="dialog" aria-modal="true" aria-label="Mini terminal">
+    <div class="terminal-modal__panel" role="dialog" aria-modal="false" aria-label="Mini terminal">
       <div class="terminal-modal__bar">
-        <div class="terminal-window-controls" aria-hidden="true">
-          <span class="terminal-window-control is-close"></span>
-          <span class="terminal-window-control is-minimize"></span>
-          <span class="terminal-window-control is-zoom"></span>
+        <div class="terminal-window-controls">
+          <button type="button" class="terminal-window-control is-close" data-terminal-close aria-label="Close terminal"></button>
+          <button type="button" class="terminal-window-control is-minimize" data-terminal-minimize aria-label="Minimize terminal"></button>
+          <button type="button" class="terminal-window-control is-zoom" data-terminal-zoom aria-label="Zoom terminal"></button>
         </div>
         <span>guest@ms_axd:~</span>
-        <button type="button" data-terminal-close aria-label="Close terminal">×</button>
+        <span aria-hidden="true"></span>
       </div>
       <div class="terminal-output" data-terminal-output aria-live="polite"></div>
       <form class="terminal-input" data-terminal-form>
@@ -119,6 +119,11 @@
       </form>
     </div>
   </div>
+
+  <button type="button" class="terminal-dock-item" data-terminal-restore hidden>
+    <span aria-hidden="true">&gt;_</span>
+    Terminal
+  </button>
 
   <script src="{{ '/assets/js/category-tabs.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/blog-sort.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>

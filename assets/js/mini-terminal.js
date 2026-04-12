@@ -1,12 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.querySelector('[data-terminal-modal]');
+  const panel = modal ? modal.querySelector('.terminal-modal__panel') : null;
   const openButton = document.querySelector('[data-terminal-open]');
   const closeButton = document.querySelector('[data-terminal-close]');
+  const minimizeButton = document.querySelector('[data-terminal-minimize]');
+  const zoomButton = document.querySelector('[data-terminal-zoom]');
+  const restoreButton = document.querySelector('[data-terminal-restore]');
   const form = document.querySelector('[data-terminal-form]');
   const input = document.querySelector('[data-terminal-input]');
   const output = document.querySelector('[data-terminal-output]');
 
-  if (!modal || !openButton || !closeButton || !form || !input || !output) {
+  if (!modal || !panel || !openButton || !closeButton || !minimizeButton || !zoomButton || !restoreButton || !form || !input || !output) {
     return;
   }
 
@@ -21,8 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     whoami: ['guest@ms_axd'],
     ls: ['about  archives  blog  categories  tags  flag.txt'],
-    'cat flag.txt': ['flag{keep_learning_keep_hacking}'],
+    'cat flag.txt': ['flag{welcome_to_my_blog}'],
   };
+
+  let hasBooted = false;
 
   const print = (lines, type = '') => {
     const block = document.createElement('div');
@@ -32,35 +38,52 @@ document.addEventListener('DOMContentLoaded', () => {
     output.scrollTop = output.scrollHeight;
   };
 
-  const reset = () => {
+  const boot = () => {
+    if (hasBooted) {
+      return;
+    }
+
     output.innerHTML = '';
     print('Ms_AxD mini terminal. type help.');
+    hasBooted = true;
   };
 
-  const openTerminal = () => {
+  const showTerminal = () => {
     modal.hidden = false;
-    document.body.classList.add('terminal-is-open');
-    reset();
+    restoreButton.hidden = true;
+    panel.classList.remove('is-minimized');
+    boot();
     requestAnimationFrame(() => input.focus());
   };
 
   const closeTerminal = () => {
     modal.hidden = true;
-    document.body.classList.remove('terminal-is-open');
+    restoreButton.hidden = true;
+    panel.classList.remove('is-zoomed', 'is-minimized');
+    modal.classList.remove('is-zoomed');
   };
 
-  openButton.addEventListener('click', openTerminal);
-  closeButton.addEventListener('click', closeTerminal);
+  const minimizeTerminal = () => {
+    modal.hidden = true;
+    restoreButton.hidden = false;
+    panel.classList.add('is-minimized');
+  };
 
-  modal.addEventListener('click', event => {
-    if (event.target === modal) {
-      closeTerminal();
-    }
-  });
+  const toggleZoom = () => {
+    panel.classList.toggle('is-zoomed');
+    modal.classList.toggle('is-zoomed', panel.classList.contains('is-zoomed'));
+    requestAnimationFrame(() => input.focus());
+  };
+
+  openButton.addEventListener('click', showTerminal);
+  restoreButton.addEventListener('click', showTerminal);
+  closeButton.addEventListener('click', closeTerminal);
+  minimizeButton.addEventListener('click', minimizeTerminal);
+  zoomButton.addEventListener('click', toggleZoom);
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !modal.hidden) {
-      closeTerminal();
+      minimizeTerminal();
     }
   });
 
@@ -76,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     print(`> ${command}`, 'is-command');
 
     if (command === 'clear') {
-      reset();
+      output.innerHTML = '';
       return;
     }
 

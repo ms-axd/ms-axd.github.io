@@ -2430,3 +2430,109 @@ article .post-content img {
 body.terminal-is-open {
   overflow: hidden;
 }
+
+/* Floating macOS-like terminal */
+.terminal-modal {
+  inset: auto 1.25rem 1.25rem auto;
+  display: block;
+  width: min(560px, calc(100vw - 2rem));
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+
+.terminal-modal__panel {
+  width: 100%;
+  height: 360px;
+  max-height: calc(100vh - 2.5rem);
+  pointer-events: auto;
+}
+
+.terminal-modal__panel.is-zoomed {
+  width: min(920px, calc(100vw - 2rem));
+  height: min(680px, calc(100vh - 2.5rem));
+}
+
+.terminal-modal.is-zoomed {
+  width: min(920px, calc(100vw - 2rem));
+}
+
+.terminal-window-controls {
+  align-items: center;
+}
+
+.terminal-window-control,
+.terminal-modal__bar .terminal-window-control {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  min-height: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0;
+  line-height: 0;
+}
+
+.terminal-window-control:hover {
+  filter: brightness(0.92);
+}
+
+.terminal-dock-item[hidden] {
+  display: none;
+}
+
+.terminal-dock-item {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1rem;
+  z-index: 10000;
+  min-width: 132px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(16, 20, 18, 0.88);
+  color: #e9f7ed;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.terminal-dock-item span {
+  color: #beff5c;
+}
+
+.terminal-dock-item:hover {
+  background: rgba(23, 67, 38, 0.94);
+}
+
+@media (max-width: 760px) {
+  .terminal-modal {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+  }
+
+  .terminal-modal__panel {
+    height: 340px;
+  }
+
+  .terminal-modal__panel.is-zoomed,
+  .terminal-modal.is-zoomed {
+    width: calc(100vw - 1.5rem);
+  }
+
+  .terminal-dock-item {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+}
