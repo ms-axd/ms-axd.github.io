@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.querySelector('[data-terminal-modal]');
   const panel = modal ? modal.querySelector('.terminal-modal__panel') : null;
-  const openButton = document.querySelector('[data-terminal-open]');
   const closeButton = document.querySelector('[data-terminal-close]');
   const minimizeButton = document.querySelector('[data-terminal-minimize]');
   const zoomButton = document.querySelector('[data-terminal-zoom]');
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('[data-terminal-input]');
   const output = document.querySelector('[data-terminal-output]');
 
-  if (!modal || !panel || !openButton || !closeButton || !minimizeButton || !zoomButton || !restoreButton || !form || !input || !output) {
+  if (!modal || !panel || !closeButton || !minimizeButton || !zoomButton || !restoreButton || !form || !input || !output) {
     return;
   }
 
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const closeTerminal = () => {
     modal.hidden = true;
-    restoreButton.hidden = true;
+    restoreButton.hidden = false;
     panel.classList.remove('is-zoomed', 'is-minimized');
     modal.classList.remove('is-zoomed');
   };
@@ -75,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => input.focus());
   };
 
-  openButton.addEventListener('click', showTerminal);
   restoreButton.addEventListener('click', showTerminal);
   closeButton.addEventListener('click', closeTerminal);
   minimizeButton.addEventListener('click', minimizeTerminal);

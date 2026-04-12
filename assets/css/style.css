@@ -2261,39 +2261,6 @@ article .post-content img {
   background: #beff5c;
 }
 
-.terminal-launch {
-  padding: 1rem;
-  border: 1px solid rgba(45, 103, 66, 0.14);
-  border-radius: 8px;
-  background: rgba(250, 255, 251, 0.8);
-  box-shadow: 0 12px 24px rgba(3, 20, 10, 0.06);
-}
-
-.terminal-launch__button {
-  width: 100%;
-  min-height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-  border: 1px solid rgba(45, 103, 66, 0.16);
-  border-radius: 8px;
-  background: #13201a;
-  color: #e9f7ed;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.86rem;
-  font-weight: 800;
-}
-
-.terminal-launch__button span {
-  color: #beff5c;
-}
-
-.terminal-launch__button:hover {
-  background: #174326;
-}
-
 .terminal-modal[hidden] {
   display: none;
 }
@@ -2429,6 +2396,29 @@ article .post-content img {
 
 body.terminal-is-open {
   overflow: hidden;
+}
+
+.social-dock a,
+.social-dock span {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(45, 103, 66, 0.14);
+  background: #eef8f0;
+  color: #174326;
+}
+
+.social-dock a:hover,
+.social-dock span:hover {
+  background: #cfeeda;
+  transform: translateY(-1px);
+}
+
+.social-dock svg {
+  width: 19px;
+  height: 19px;
+  display: block;
+  fill: currentColor;
 }
 
 /* Floating macOS-like terminal */
