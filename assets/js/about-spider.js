@@ -7,26 +7,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const ctx = canvas.getContext('2d');
   const wrapper = canvas.closest('.about-spider-window');
-  const points = [];
 
   let width = 0;
   let height = 0;
   let targetX = 0;
   let targetY = 0;
-  let spiderX = 0;
-  let spiderY = 0;
+  let bodyX = 0;
+  let bodyY = 0;
+  let previousX = 0;
+  let previousY = 0;
+  let velocityX = 0;
+  let velocityY = 0;
 
-  const resetPoints = () => {
-    points.length = 0;
+  const legConfigs = [
+    { side: -1, angle: -2.55, length: 78, phase: 0.0 },
+    { side: -1, angle: -2.9, length: 92, phase: 0.8 },
+    { side: -1, angle: 2.9, length: 92, phase: 1.6 },
+    { side: -1, angle: 2.45, length: 78, phase: 2.4 },
+    { side: 1, angle: -0.58, length: 78, phase: 1.2 },
+    { side: 1, angle: -0.25, length: 92, phase: 2.0 },
+    { side: 1, angle: 0.25, length: 92, phase: 2.8 },
+    { side: 1, angle: 0.62, length: 78, phase: 3.6 },
+  ];
 
-    for (let i = 0; i < 150; i += 1) {
-      points.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
-  };
+  const legs = legConfigs.map(config => ({
+    ...config,
+    jointX: 0,
+    jointY: 0,
+    footX: 0,
+    footY: 0,
+  }));
 
   const resize = () => {
     const rect = canvas.getBoundingClientRect();
@@ -39,131 +49,101 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     targetX = width * 0.5;
-    targetY = height * 0.48;
-    spiderX = targetX;
-    spiderY = targetY;
-    resetPoints();
-  };
+    targetY = height * 0.5;
+    bodyX = targetX;
+    bodyY = targetY;
+    previousX = bodyX;
+    previousY = bodyY;
 
-  const drawWeb = () => {
-    const centerX = width * 0.5;
-    const centerY = height * 0.46;
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.lineWidth = 1;
-
-    for (let ring = 1; ring <= 6; ring += 1) {
-      ctx.beginPath();
-
-      for (let ray = 0; ray <= 20; ray += 1) {
-        const angle = (Math.PI * 2 * ray) / 20;
-        const radiusX = ring * width * 0.045;
-        const radiusY = ring * height * 0.052;
-        const x = centerX + Math.cos(angle) * radiusX;
-        const y = centerY + Math.sin(angle) * radiusY;
-
-        if (ray === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      }
-
-      ctx.stroke();
-    }
-
-    for (let ray = 0; ray < 20; ray += 1) {
-      const angle = (Math.PI * 2 * ray) / 20;
-
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(
-        centerX + Math.cos(angle) * width * 0.4,
-        centerY + Math.sin(angle) * height * 0.42
-      );
-      ctx.stroke();
-    }
-  };
-
-  const drawParticles = time => {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.34)';
-
-    points.forEach(point => {
-      const x = point.x + Math.sin(time / 1200 + point.phase) * 2.4;
-      const y = point.y + Math.cos(time / 1400 + point.phase) * 2.4;
-      const distance = Math.hypot(x - spiderX, y - spiderY);
-
-      if (distance < 145) {
-        const alpha = 0.62 - (distance / 145) * 0.28;
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.lineWidth = distance < 70 ? 1.2 : 0.8;
-        ctx.beginPath();
-        ctx.moveTo(spiderX, spiderY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
-
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(x, y, 0.9, 0, Math.PI * 2);
-      ctx.fill();
+    legs.forEach(leg => {
+      leg.footX = bodyX + Math.cos(leg.angle) * leg.length;
+      leg.footY = bodyY + Math.sin(leg.angle) * leg.length;
+      leg.jointX = bodyX + Math.cos(leg.angle) * leg.length * 0.48;
+      leg.jointY = bodyY + Math.sin(leg.angle) * leg.length * 0.48;
     });
   };
 
-  const drawSpider = time => {
-    ctx.save();
-    ctx.translate(spiderX, spiderY);
+  const drawLeg = (baseX, baseY, leg, time) => {
+    const speed = Math.hypot(velocityX, velocityY);
+    const direction = Math.atan2(velocityY, velocityX || 0.001);
+    const crawl = Math.sin(time / 130 + leg.phase) * Math.min(speed * 0.8, 10);
+    const spread = Math.cos(time / 180 + leg.phase) * 8;
+    const stride = Math.min(speed * 3.4, 34);
 
-    const legShift = Math.sin(time / 180) * 0.7;
+    const targetFootX =
+      bodyX +
+      Math.cos(leg.angle) * leg.length +
+      Math.cos(direction) * stride +
+      Math.cos(leg.angle + Math.PI / 2) * spread;
+    const targetFootY =
+      bodyY +
+      Math.sin(leg.angle) * leg.length +
+      Math.sin(direction) * stride +
+      Math.sin(leg.angle + Math.PI / 2) * spread +
+      crawl;
 
-    ctx.shadowColor = 'rgba(255, 255, 255, 0.24)';
-    ctx.shadowBlur = 6;
-    ctx.shadowOffsetY = 0;
-    ctx.strokeStyle = 'rgba(235, 235, 235, 0.82)';
-    ctx.lineWidth = 1.1;
+    leg.footX += (targetFootX - leg.footX) * 0.08;
+    leg.footY += (targetFootY - leg.footY) * 0.08;
+
+    const midX = (baseX + leg.footX) * 0.5;
+    const midY = (baseY + leg.footY) * 0.5;
+    const bendX = Math.cos(leg.angle + leg.side * 0.72) * 26;
+    const bendY = Math.sin(leg.angle + leg.side * 0.72) * 26;
+
+    leg.jointX += (midX + bendX - leg.jointX) * 0.18;
+    leg.jointY += (midY + bendY - leg.jointY) * 0.18;
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+    ctx.lineWidth = 1.55;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.25)';
+    ctx.shadowBlur = 5;
 
-    const legs = [
-      [-3, -6, -9, -10, -15, -13],
-      [-3, -2, -11, -4, -18, -3],
-      [-3, 2, -10, 5, -15, 10],
-      [-2, 5, -7, 11, -10, 17],
-      [3, -6, 9, -10, 15, -13],
-      [3, -2, 11, -4, 18, -3],
-      [3, 2, 10, 5, 15, 10],
-      [2, 5, 7, 11, 10, 17],
-    ];
-
-    legs.forEach((leg, index) => {
-      const sideShift = index % 2 === 0 ? legShift : -legShift;
-      ctx.beginPath();
-      ctx.moveTo(leg[0], leg[1]);
-      ctx.quadraticCurveTo(leg[2], leg[3] + sideShift, leg[4], leg[5]);
-      ctx.stroke();
-    });
-
-    ctx.fillStyle = 'rgba(242, 242, 242, 0.9)';
     ctx.beginPath();
-    ctx.ellipse(0, 2, 4.2, 5.8, 0, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(baseX, baseY);
+    ctx.quadraticCurveTo(leg.jointX, leg.jointY, leg.footX, leg.footY);
+    ctx.stroke();
 
-    ctx.fillStyle = 'rgba(248, 248, 248, 0.88)';
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
     ctx.beginPath();
-    ctx.ellipse(0, -4, 3.1, 3, 0, 0, Math.PI * 2);
+    ctx.arc(leg.footX, leg.footY, 1.8, 0, Math.PI * 2);
     ctx.fill();
+  };
 
-    ctx.restore();
+  const drawBody = () => {
+    const gradient = ctx.createRadialGradient(bodyX - 4, bodyY - 5, 2, bodyX, bodyY, 13);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.96)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0.5)');
+
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.22)';
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.ellipse(bodyX, bodyY, 5.8, 7.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
   };
 
   const render = time => {
-    spiderX += (targetX - spiderX) * 0.012;
-    spiderY += (targetY - spiderY) * 0.012;
+    previousX = bodyX;
+    previousY = bodyY;
+    bodyX += (targetX - bodyX) * 0.035;
+    bodyY += (targetY - bodyY) * 0.035;
+    velocityX = bodyX - previousX;
+    velocityY = bodyY - previousY;
 
     ctx.clearRect(0, 0, width, height);
-    drawWeb();
-    drawParticles(time);
-    drawSpider(time);
+    ctx.fillStyle = '#030405';
+    ctx.fillRect(0, 0, width, height);
+
+    legs.forEach(leg => {
+      const baseX = bodyX + leg.side * 4;
+      const baseY = bodyY + Math.sin(leg.angle) * 5;
+      drawLeg(baseX, baseY, leg, time);
+    });
+    drawBody();
 
     requestAnimationFrame(render);
   };
@@ -176,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   wrapper.addEventListener('pointerleave', () => {
     targetX = width * 0.5;
-    targetY = height * 0.48;
+    targetY = height * 0.5;
   });
 
   window.addEventListener('resize', resize);
