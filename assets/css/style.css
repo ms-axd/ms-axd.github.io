@@ -2183,13 +2183,20 @@ article .post-content pre {
   overflow-x: auto;
   border: 1px solid rgba(18, 53, 31, 0.22);
   border-radius: 8px;
-  background:
-    linear-gradient(#eef2ef 0 2.05rem, transparent 2.05rem),
-    #101812;
+  background: #101812;
   color: #e8f6ec;
   box-shadow:
     0 16px 32px rgba(3, 20, 10, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+article .post-content pre::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2.05rem;
+  border-radius: 8px 8px 0 0;
+  background: #eef2ef;
 }
 
 article .post-content pre::before {
@@ -2197,6 +2204,7 @@ article .post-content pre::before {
   position: absolute;
   top: 0.72rem;
   left: 0.88rem;
+  z-index: 1;
   width: 0.72rem;
   height: 0.72rem;
   border-radius: 50%;
@@ -2230,6 +2238,46 @@ article .post-content img {
   margin: 1.2rem auto;
   border: 1px solid rgba(45, 103, 66, 0.12);
   box-shadow: 0 14px 28px rgba(3, 20, 10, 0.08);
+}
+
+.post-top-button {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 5.2rem;
+  z-index: 45;
+  height: 40px;
+  min-width: 48px;
+  padding: 0 0.78rem;
+  border: 1px solid rgba(45, 103, 66, 0.18);
+  border-radius: 8px;
+  background: rgba(250, 255, 251, 0.92);
+  color: #174326;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  box-shadow: 0 12px 24px rgba(3, 20, 10, 0.12);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.post-top-button.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.post-top-button:hover,
+.post-top-button:focus-visible {
+  background: #eef8f0;
+}
+
+.post-top-button:focus-visible {
+  outline: 2px solid rgba(99, 193, 116, 0.45);
+  outline-offset: 3px;
 }
 
 .rail-calendar {
