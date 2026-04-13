@@ -101,21 +101,6 @@
             <div class="rail-calendar__grid" data-calendar-grid aria-label="Calendar"></div>
           </section>
 
-          <section class="visitor-card" aria-label="Visitor count">
-            <span class="visitor-card__label">Total</span>
-            <strong class="visitor-card__total" data-visitor-total>--</strong>
-            <dl class="visitor-card__daily">
-              <div>
-                <dt>Today</dt>
-                <dd data-visitor-today>--</dd>
-              </div>
-              <div>
-                <dt>Yesterday</dt>
-                <dd data-visitor-yesterday>--</dd>
-              </div>
-            </dl>
-          </section>
-
         </aside>
       </div>
     </div>
@@ -154,6 +139,5 @@
   <script src="{{ '/assets/js/mini-terminal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
-  <script src="{{ '/assets/js/visitor-counter.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
