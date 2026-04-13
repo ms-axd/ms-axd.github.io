@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const namespace = 'ms-axd-github-io';
-  const endpoint = 'https://api.countapi.xyz';
+  const endpoint = 'https://api.counterapi.dev/v1';
   const countedKey = 'ms-axd-visitor-counted-date';
   const dateFormatter = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Seoul',
@@ -37,8 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const getCounterValue = data => {
+    const value = data.count ?? data.value ?? data.data?.count ?? data.data?.value ?? data.data;
+    return Number(value || 0);
+  };
+
   const requestCount = async (action, key) => {
-    const response = await fetch(`${endpoint}/${action}/${namespace}/${key}`, {
+    const suffix = action === 'get' ? '' : `/${action}`;
+    const response = await fetch(`${endpoint}/${namespace}/${key}${suffix}`, {
       cache: 'no-store',
     });
 
@@ -46,13 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
       throw new Error('Visitor counter request failed');
     }
 
-    return response.json();
+    const data = await response.json();
+    return getCounterValue(data);
   };
 
   const getCount = async key => {
     try {
-      const data = await requestCount('get', key);
-      return data.value;
+      return await requestCount('get', key);
     } catch (error) {
       return 0;
     }
@@ -78,14 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasCountedToday = getCountedDate() === today;
 
     if (!hasCountedToday) {
-      const [totalData, todayData] = await Promise.all([
-        requestCount('hit', 'total'),
-        requestCount('hit', `day-${today}`),
+      const [totalValue, todayValue] = await Promise.all([
+        requestCount('up', 'total'),
+        requestCount('up', `day-${today}`),
       ]);
 
       setCountedDate();
-      setValue(totalElement, totalData.value);
-      setValue(todayElement, todayData.value);
+      setValue(totalElement, totalValue);
+      setValue(todayElement, todayValue);
     } else {
       const [totalValue, todayValue] = await Promise.all([
         getCount('total'),
