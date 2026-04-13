@@ -85,9 +85,9 @@
 
           <section class="rail-calendar" data-calendar data-post-dates="{% for post in site.posts %}{{ post.date | date: '%Y-%m-%d' }}{% unless forloop.last %},{% endunless %}{% endfor %}">
             <div class="rail-calendar__header">
-              <button type="button" class="rail-calendar__nav" data-calendar-prev aria-label="Previous month">‹</button>
+              <button type="button" class="rail-calendar__nav" data-calendar-prev aria-label="Previous month">&lt;</button>
               <h2 data-calendar-title>Calendar</h2>
-              <button type="button" class="rail-calendar__nav" data-calendar-next aria-label="Next month">›</button>
+              <button type="button" class="rail-calendar__nav" data-calendar-next aria-label="Next month">&gt;</button>
             </div>
             <div class="rail-calendar__weekdays" aria-hidden="true">
               <span>S</span>
