@@ -64,24 +64,6 @@
         </main>
 
         <aside class="right-rail" aria-label="Blog info">
-          <section class="visitor-stats" aria-label="Visitor stats">
-            <h2>Visitors</h2>
-            <div class="visitor-stats__grid">
-              <div class="visitor-stat" id="busuanzi_container_site_pv">
-                <span class="visitor-stat__label">Views</span>
-                <strong id="busuanzi_value_site_pv">--</strong>
-              </div>
-              <div class="visitor-stat" id="busuanzi_container_site_uv">
-                <span class="visitor-stat__label">Visitors</span>
-                <strong id="busuanzi_value_site_uv">--</strong>
-              </div>
-              <div class="visitor-stat" id="busuanzi_container_page_pv">
-                <span class="visitor-stat__label">This Page</span>
-                <strong id="busuanzi_value_page_pv">--</strong>
-              </div>
-            </div>
-          </section>
-
           <section>
             <h2>Recently Updated</h2>
             <ul class="link-list">
@@ -117,6 +99,21 @@
               <span>S</span>
             </div>
             <div class="rail-calendar__grid" data-calendar-grid aria-label="Calendar"></div>
+          </section>
+
+          <section class="visitor-card" aria-label="Visitor count">
+            <span class="visitor-card__label">Total</span>
+            <strong class="visitor-card__total" data-visitor-total>--</strong>
+            <dl class="visitor-card__daily">
+              <div>
+                <dt>Today</dt>
+                <dd data-visitor-today>--</dd>
+              </div>
+              <div>
+                <dt>Yesterday</dt>
+                <dd data-visitor-yesterday>--</dd>
+              </div>
+            </dl>
           </section>
 
         </aside>
@@ -157,6 +154,6 @@
   <script src="{{ '/assets/js/mini-terminal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
-  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script src="{{ '/assets/js/visitor-counter.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
