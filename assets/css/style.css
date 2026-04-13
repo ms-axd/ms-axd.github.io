@@ -1285,6 +1285,38 @@ footer {
   font-size: 0.95rem;
 }
 
+.visitor-stats__grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.visitor-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 46px;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(45, 103, 66, 0.14);
+  border-radius: 8px;
+  background: rgba(250, 255, 251, 0.86);
+  box-shadow: 0 10px 20px rgba(3, 20, 10, 0.05);
+}
+
+.visitor-stat__label {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.visitor-stat strong {
+  color: #174326;
+  font-size: 1.08rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
 .link-list {
   display: grid;
   gap: 0.72rem;
