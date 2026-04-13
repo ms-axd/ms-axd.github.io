@@ -409,8 +409,27 @@ article h2 {
   color: #34383a;
 }
 
+.about-page {
+  max-width: 860px;
+}
+
 .about-intro-card {
+  display: flex;
+  gap: 1.5rem;
   align-items: stretch;
+  margin: 0 0 1rem;
+}
+
+.about-photo-stack {
+  width: 220px;
+  min-width: 220px;
+}
+
+.about-profile-badge {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 0.8rem;
+  padding: 0.85rem 1rem;
 }
 
 .about-copy-card,
@@ -438,9 +457,23 @@ article h2 {
 }
 
 .about-photo-box {
+  width: 100%;
+  min-height: 220px;
+  overflow: hidden;
   border: 1px solid var(--line-soft);
   background: #fff;
   box-shadow: none;
+}
+
+.about-photo-box img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.about-copy-card {
+  flex: 1;
 }
 
 .about-social-card {
@@ -533,6 +566,15 @@ footer {
 
   .right-rail {
     grid-template-columns: 1fr;
+  }
+
+  .about-intro-card {
+    flex-direction: column;
+  }
+
+  .about-photo-stack {
+    width: 100%;
+    min-width: 0;
   }
 
   .post-card,
