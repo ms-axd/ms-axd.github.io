@@ -362,21 +362,36 @@ article h1,
 }
 
 .category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
   margin-bottom: 1.5rem;
 }
 
 .category-tab {
+  min-height: 42px;
   border: 1px solid var(--line-soft);
   border-radius: 8px;
   background: #fff;
   color: #62686c;
   padding: 0.75rem 1rem;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  text-align: left;
 }
 
 .category-tab.is-active {
   background: #d9dddc;
   color: #2f3336;
   box-shadow: none;
+}
+
+.category-panel {
+  display: none;
+}
+
+.category-panel.is-active {
+  display: block;
 }
 
 article {
@@ -566,6 +581,10 @@ footer {
 
   .right-rail {
     grid-template-columns: 1fr;
+  }
+
+  .category-tab {
+    width: 100%;
   }
 
   .about-intro-card {
