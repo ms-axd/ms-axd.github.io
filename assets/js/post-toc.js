@@ -49,6 +49,59 @@
   listHost.appendChild(list);
   toc.hidden = false;
 
+  const setExpanded = (expanded) => {
+    toc.setAttribute('data-expanded', expanded ? 'true' : 'false');
+  };
+
+  const hoverMedia = window.matchMedia('(hover: hover)');
+  let supportsHover = hoverMedia.matches;
+
+  const expand = () => setExpanded(true);
+  const collapse = () => setExpanded(false);
+
+  const syncHoverState = () => {
+    supportsHover = hoverMedia.matches;
+    if (supportsHover) {
+      collapse();
+    } else {
+      expand();
+    }
+  };
+
+  syncHoverState();
+
+  const handleHoverChange = () => {
+    syncHoverState();
+  };
+
+  if (typeof hoverMedia.addEventListener === 'function') {
+    hoverMedia.addEventListener('change', handleHoverChange);
+  } else if (typeof hoverMedia.addListener === 'function') {
+    hoverMedia.addListener(handleHoverChange);
+  }
+
+  const requestExpand = () => {
+    if (!supportsHover) {
+      return;
+    }
+    expand();
+  };
+
+  const requestCollapse = (event) => {
+    if (!supportsHover) {
+      return;
+    }
+    if (event?.type === 'focusout' && event.relatedTarget && toc.contains(event.relatedTarget)) {
+      return;
+    }
+    collapse();
+  };
+
+  toc.addEventListener('mouseenter', requestExpand);
+  toc.addEventListener('mouseleave', requestCollapse);
+  toc.addEventListener('focusin', requestExpand);
+  toc.addEventListener('focusout', requestCollapse);
+
   const updateActive = (activeId) => {
     linkRefs.forEach((link, id) => {
       link.classList.toggle('is-active', id === activeId);
