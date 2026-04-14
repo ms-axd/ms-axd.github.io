@@ -58,11 +58,12 @@
         </div>
       </header>
 
-      <div class="content-grid">
+      <div class="content-grid{% if page.layout == 'post' %} is-post-view{% endif %}">
         <main class="content-area">
           {{ content }}
         </main>
 
+        {% unless page.layout == 'post' %}
         <aside class="right-rail" aria-label="Blog info">
           <section>
             <h2>Recently Updated</h2>
@@ -102,6 +103,7 @@
           </section>
 
         </aside>
+        {% endunless %}
       </div>
     </div>
   </div>

@@ -33,6 +33,52 @@ layout: default
   </div>
 </article>
 
+<footer class="post-footer">
+  {% if page.previous or page.next %}
+  <div class="post-pagination" role="navigation" aria-label="Post pagination">
+    {% if page.previous %}
+    <a class="post-pagination__link is-prev" href="{{ page.previous.url | relative_url }}">
+      <span class="post-pagination__label">Previous</span>
+      <strong>{{ page.previous.title }}</strong>
+    </a>
+    {% endif %}
+    {% if page.next %}
+    <a class="post-pagination__link is-next" href="{{ page.next.url | relative_url }}">
+      <span class="post-pagination__label">Next</span>
+      <strong>{{ page.next.title }}</strong>
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% assign tag_blob = '' %}
+  {% for tag in site.tags %}
+    {% assign tag_name = tag[0] %}
+    {% assign tag_count = tag[1].size %}
+    {% assign padded = tag_count | plus: 1000 %}
+    {% if tag_blob != '' %}
+      {% assign tag_blob = tag_blob | append: '||' %}
+    {% endif %}
+    {% assign tag_blob = tag_blob | append: padded | append: '::' | append: tag_name %}
+  {% endfor %}
+  {% if tag_blob != '' %}
+    {% assign popular_entries = tag_blob | split: '||' | sort | reverse %}
+    <div class="post-popular-tags" aria-label="Popular tags">
+      <div class="post-popular-tags__header">
+        <h2>Popular Tags</h2>
+        <span>?? ? ??</span>
+      </div>
+      <div class="tag-cloud">
+        {% for entry in popular_entries limit: 10 %}
+          {% assign parts = entry | split: '::' %}
+          {% assign tag_name = parts[1] %}
+          <a href="{{ '/tags/' | relative_url }}#{{ tag_name | uri_escape }}">#{{ tag_name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</footer>
+
 <button type="button" class="post-top-button" data-post-top aria-label="제일 위로 가기">
   TOP
 </button>
