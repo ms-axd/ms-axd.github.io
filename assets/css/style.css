@@ -472,15 +472,6 @@ article .post-header .tag:hover {
   color: #ffffff;
 }
 
-.post-footer > div {
-  background: #1f2937 !important;
-  border: 1px solid #374151;
-}
-
-.post-footer h3 {
-  color: #f3f4f6 !important;
-}
-
 article .post-content {
   font-size: 1.1rem;
   line-height: 1.8;
