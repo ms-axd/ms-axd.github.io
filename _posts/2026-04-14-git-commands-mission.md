@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Git 명령어 정리
+title: "Git 명령어 정리"
 date: 2026-04-14
-category: 개발
-tags: [Git, GitHub, , 명령어]
-excerpt: LearnGitBranching에서 다루는 주요 Git 명령어를 실제 작업 흐름 중심으로 정리했다.
+category: "개발"
+tags: ["Git", "GitHub", "버전관리", "명령어"]
+excerpt: "LearnGitBranching에서 다루는 주요 Git 명령어를 실제 작업 흐름 중심으로 정리했다."
 ---
 
 Git은 작업 기록을 커밋으로 남기고, 브랜치로 흐름을 나누고, 원격 저장소로 작업을 공유하는 도구다. 명령어가 많아 보여도 실제로는 `저장`, `이동`, `합치기`, `되돌리기`, `공유` 흐름으로 묶어서 이해하면 쉽다.
