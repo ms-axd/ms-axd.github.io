@@ -35,13 +35,13 @@ layout: default
   <div class="post-pagination" role="navigation" aria-label="Post pagination">
     {% if page.previous %}
     <a class="post-pagination__link is-prev" href="{{ page.previous.url | relative_url }}">
-      <span class="post-pagination__label">?? ?</span>
+      <span class="post-pagination__label">이전 글</span>
       <strong>{{ page.previous.title }}</strong>
     </a>
     {% endif %}
     {% if page.next %}
     <a class="post-pagination__link is-next" href="{{ page.next.url | relative_url }}">
-      <span class="post-pagination__label">?? ?</span>
+      <span class="post-pagination__label">다음 글</span>
       <strong>{{ page.next.title }}</strong>
     </a>
     {% endif %}
@@ -62,8 +62,8 @@ layout: default
     {% assign popular_entries = tag_blob | split: '||' | sort | reverse %}
     <div class="post-popular-tags" aria-label="Popular tags">
       <div class="post-popular-tags__header">
-        <h2>?? ??</h2>
-        <span>?? ?? ??</span>
+        <h2>인기 태그</h2>
+        <span>요즘 많이 쓰는 태그</span>
       </div>
       <div class="tag-cloud">
         {% for entry in popular_entries limit: 10 %}
