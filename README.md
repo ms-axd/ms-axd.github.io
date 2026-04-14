@@ -1,6 +1,7 @@
 # Ms_AxD Blog
 
 Jekyll 기반 개인 블로그
+
 ## 기술 스택
 
 - Jekyll `~> 4.3.0`
@@ -12,38 +13,6 @@ Jekyll 기반 개인 블로그
 - jekyll-feed
 - jemoji
 
-## 프로젝트 구조
-
-```text
-.
-├── _config.yml              # 사이트 설정, 내비게이션, 카테고리 목록
-├── _layouts/
-│   ├── default.html         # 공통 레이아웃, 사이드바, 검색, 터미널 로드
-│   └── post.html            # 포스트 상세 레이아웃, 태그, 댓글
-├── _posts/                  # 블로그 포스트
-├── assets/
-│   ├── css/style.css        # 전체 스타일
-│   ├── images/              # 프로필, favicon, 로고 이미지
-│   └── js/
-│       ├── blog-sort.js         # 블로그 목록 최신순/오래된순 정렬
-│       ├── category-tabs.js     # 카테고리 탭 전환
-│       ├── cursor-glow.js       # 마우스 커서 glow 효과
-│       ├── discord-popover.js   # Discord 아이디 팝오버
-│       ├── mini-terminal.js     # 미니 터미널 모달
-│       ├── search.js            # search-data.json 기반 검색
-│       ├── sidebar-calendar.js  # 오른쪽 사이드 캘린더
-│       └── tag-filter.js        # 태그 필터
-├── index.html               # 홈, 최근 글
-├── blog.html                # 전체 글 목록
-├── categories.html          # 카테고리별 글 목록
-├── tags.html                # 태그별 필터
-├── archives.html            # 연도별 아카이브
-├── about.html               # 소개 페이지
-├── search-data.json         # 클라이언트 검색 데이터
-├── 404.html                 # 404 페이지
-├── Gemfile                  # Ruby/Jekyll 의존성
-└── README.md
-```
 
 
 ## 로컬 실행
