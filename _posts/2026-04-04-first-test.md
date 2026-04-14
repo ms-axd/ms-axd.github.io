@@ -2,7 +2,7 @@
 layout: post
 title: 포스트 테스트
 date: 2026-04-04
-category: 일상
+category: 개발
 tags: [웹개발, HTML, CSS, JavaScript, 기초]
 excerpt: 포스트 테스트 입니다. 1ㅡ,2,3,4
 ---
