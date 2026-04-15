@@ -3,7 +3,7 @@ layout: post
 title: "Git 명령어 정리"
 date: 2026-04-14
 category: "개발"
-tags: ["Git", "GitHub", "버전관리", "명령어"]
+tags: ["Git", "GitHub", "명령어"]
 excerpt: "LearnGitBranching에서 다루는 주요 Git 명령어를 실제 작업 흐름 중심으로 정리했다."
 ---
 
@@ -162,9 +162,6 @@ git tag v1 C1
 git describe main
 #`main` 위치를 가장 가까운 태그 기준으로 설명한다.
 ```
-
-
-
 
 
 
