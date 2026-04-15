@@ -30,7 +30,7 @@ defaults:
       type: "posts"
     values:
       layout: post
-      permalink: /blog/:year/:month/:day/:slug/
+      permalink: /blog/:slug/
 
 show_drafts: false
 timezone: Asia/Seoul
