@@ -28,13 +28,14 @@ git checkout -b bugFix
 
 `branch`
 
-`bugFix`라는 새 브랜치를 만든다. 브랜치는 특정 커밋을 가리키는 포인터다.
+bugFix 라는 새 브랜치를 만든다. 브랜치는 특정 커밋을 가리키는 포인터다.
 
 `checkout`
 
-`bugFix` 브랜치로 이동한다.
+bugFix 브랜치로 이동한다.
 
 `checkout -b`
+
 브랜치를 만들고 바로 이동한다.
 
 ## 브랜치 합치기
