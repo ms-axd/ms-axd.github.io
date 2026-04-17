@@ -1723,7 +1723,7 @@ footer {
 /* Ms_AxD green theme */
 :root {
   --page-bg: #0b1711;
-  --sidebar-bg: #102018;
+  --sidebar-bg: #26503b;
   --card-bg: rgba(250, 255, 251, 0.94);
   --soft-card: rgba(218, 243, 224, 0.92);
   --text-main: #17231b;
@@ -1744,100 +1744,11 @@ body {
 }
 
 .site-sidebar {
-  overflow: hidden;
-  isolation: isolate;
   background:
-    linear-gradient(180deg, rgba(14, 39, 25, 0.96), rgba(20, 48, 32, 0.94)),
+    linear-gradient(180deg, rgba(45, 124, 79, 0.96), rgba(30, 68, 47, 0.94)),
     var(--sidebar-bg);
   color: #dce9df;
   border-right: 1px solid rgba(147, 220, 161, 0.12);
-}
-
-.site-sidebar > :not(.sidebar-code-float) {
-  position: relative;
-  z-index: 1;
-}
-
-.sidebar-code-float {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.sidebar-code-float span {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  color: rgba(213, 247, 221, 0.13);
-  font-family: "Cascadia Code", "Consolas", monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  white-space: nowrap;
-  transform: translate3d(0, 0, 0) rotate(var(--r));
-  animation: code-drift var(--d) ease-in-out infinite alternate;
-  animation-delay: var(--delay);
-}
-
-.sidebar-code-float span:nth-child(1) {
-  --x: 11%;
-  --y: 19%;
-  --r: -8deg;
-  --d: 11s;
-  --delay: -1s;
-}
-
-.sidebar-code-float span:nth-child(2) {
-  --x: 58%;
-  --y: 31%;
-  --r: 7deg;
-  --d: 13s;
-  --delay: -5s;
-}
-
-.sidebar-code-float span:nth-child(3) {
-  --x: 16%;
-  --y: 47%;
-  --r: 5deg;
-  --d: 12s;
-  --delay: -3s;
-}
-
-.sidebar-code-float span:nth-child(4) {
-  --x: 48%;
-  --y: 59%;
-  --r: -6deg;
-  --d: 15s;
-  --delay: -8s;
-}
-
-.sidebar-code-float span:nth-child(5) {
-  --x: 10%;
-  --y: 73%;
-  --r: 8deg;
-  --d: 14s;
-  --delay: -6s;
-}
-
-.sidebar-code-float span:nth-child(6) {
-  --x: 44%;
-  --y: 86%;
-  --r: -5deg;
-  --d: 16s;
-  --delay: -2s;
-}
-
-@keyframes code-drift {
-  from {
-    opacity: 0.16;
-    transform: translate3d(-0.25rem, 0.35rem, 0) rotate(var(--r));
-  }
-
-  to {
-    opacity: 0.34;
-    transform: translate3d(0.45rem, -1rem, 0) rotate(var(--r));
-  }
 }
 
 .profile {
