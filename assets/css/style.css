@@ -1744,11 +1744,51 @@ body {
 }
 
 .site-sidebar {
+  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(45, 124, 79, 0.96), rgba(30, 68, 47, 0.94)),
     var(--sidebar-bg);
   color: #dce9df;
   border-right: 1px solid rgba(147, 220, 161, 0.12);
+}
+
+.site-sidebar::before {
+  content: "";
+  position: absolute;
+  inset: auto -20% -35% -20%;
+  z-index: 0;
+  height: 58%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 35% 78%, rgba(228, 255, 233, 0.18), transparent 36%),
+    radial-gradient(ellipse at 68% 86%, rgba(170, 226, 182, 0.13), transparent 42%),
+    linear-gradient(0deg, rgba(230, 255, 235, 0.13), transparent 72%);
+  filter: blur(18px);
+  opacity: 0.52;
+  animation: sidebar-fog-rise 13s ease-in-out infinite alternate;
+}
+
+.site-sidebar > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes sidebar-fog-rise {
+  from {
+    transform: translate3d(-0.4rem, 1.5rem, 0) scale(1.04);
+    opacity: 0.35;
+  }
+
+  to {
+    transform: translate3d(0.45rem, -2.25rem, 0) scale(1.1);
+    opacity: 0.58;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-sidebar::before {
+    animation: none;
+  }
 }
 
 .profile {
