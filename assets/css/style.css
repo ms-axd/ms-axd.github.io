@@ -2978,8 +2978,16 @@ body.terminal-is-open {
 
   article .post-content table {
     display: block;
-    min-width: 42rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    table-layout: auto;
     overflow-x: auto;
+  }
+
+  article .post-content th,
+  article .post-content td {
+    white-space: normal;
   }
 
   .post-toc {
