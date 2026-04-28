@@ -17,7 +17,10 @@
   <div class="site-shell">
     <aside class="site-sidebar" aria-label="Site menu">
       <a class="profile" href="{{ '/' | relative_url }}" aria-label="Go home">
-        <img src="{{ '/assets/images/profile.jpg' | relative_url }}" alt="Profile photo">
+        <span class="profile-photo-tilt" data-profile-tilt>
+          <img src="{{ '/assets/images/cat.jpg' | relative_url }}" alt="Profile photo">
+          <span class="profile-photo-shine" aria-hidden="true"></span>
+        </span>
         <strong>{{ site.title }}</strong>
       </a>
 
@@ -143,6 +146,7 @@
   {% endif %}
   <script src="{{ '/assets/js/mini-terminal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/profile-tilt.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
