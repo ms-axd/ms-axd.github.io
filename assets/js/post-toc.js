@@ -40,6 +40,20 @@
   toc.hidden = false;
 
   const links = Array.from(tocList.querySelectorAll('a'));
+
+  links.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      const target = document.getElementById(link.hash.slice(1));
+
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setActive(target.id);
+      }
+    });
+  });
+
   const setActive = (id) => {
     links.forEach((link) => {
       link.classList.toggle('is-active', link.hash === `#${id}`);
