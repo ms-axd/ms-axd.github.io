@@ -46,19 +46,30 @@
     });
   };
 
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
+  let ticking = false;
 
-    if (visible[0]) {
-      setActive(visible[0].target.id);
+  const updateActiveHeading = () => {
+    const marker = Math.min(window.innerHeight * 0.32, 220);
+    let activeHeading = headings[0];
+
+    headings.forEach((heading) => {
+      if (heading.getBoundingClientRect().top <= marker) {
+        activeHeading = heading;
+      }
+    });
+
+    setActive(activeHeading.id);
+    ticking = false;
+  };
+
+  const requestActiveUpdate = () => {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateActiveHeading);
     }
-  }, {
-    rootMargin: '-18% 0px -68% 0px',
-    threshold: 0.1
-  });
+  };
 
-  headings.forEach((heading) => observer.observe(heading));
-  setActive(headings[0].id);
+  window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+  window.addEventListener('resize', requestActiveUpdate);
+  updateActiveHeading();
 })();

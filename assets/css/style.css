@@ -2172,6 +2172,7 @@ article .post-content h2,
 article .post-content h3 {
   color: #174326;
   line-height: 1.35;
+  scroll-margin-top: 2rem;
 }
 
 article .post-content h1 {
