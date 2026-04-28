@@ -32,6 +32,7 @@
 
     const link = document.createElement('a');
     link.href = `#${heading.id}`;
+    link.dataset.targetId = heading.id;
     link.textContent = heading.textContent.trim();
     link.className = `post-toc__link post-toc__link--${heading.tagName.toLowerCase()}`;
     tocList.appendChild(link);
@@ -45,7 +46,7 @@
     link.addEventListener('click', (event) => {
       event.preventDefault();
 
-      const target = document.getElementById(link.hash.slice(1));
+      const target = document.getElementById(link.dataset.targetId);
 
       if (target) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -56,7 +57,7 @@
 
   const setActive = (id) => {
     links.forEach((link) => {
-      link.classList.toggle('is-active', link.hash === `#${id}`);
+      link.classList.toggle('is-active', link.dataset.targetId === id);
     });
   };
 
