@@ -16,8 +16,8 @@
     const y = event.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateY = ((x - centerX) / centerX) * 12;
-    const rotateX = ((centerY - y) / centerY) * 12;
+    const rotateY = ((x - centerX) / centerX) * 22;
+    const rotateX = ((centerY - y) / centerY) * 22;
 
     profilePhoto.classList.add('is-tilting');
     profilePhoto.style.transform = `perspective(450px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;

@@ -1102,11 +1102,11 @@ footer {
 }
 
 .profile-photo-tilt {
-  width: 146px;
-  height: 146px;
+  width: 164px;
+  height: 164px;
   position: relative;
   display: block;
-  border-radius: 50%;
+  border-radius: 28px;
   margin-bottom: 0.55rem;
   overflow: hidden;
   transform: perspective(450px) rotateX(0deg) rotateY(0deg);
@@ -1120,7 +1120,7 @@ footer {
   height: 100%;
   display: block;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 28px;
   background: #fff;
   box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.38);
 }
@@ -1128,7 +1128,7 @@ footer {
 .profile-photo-shine {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
+  border-radius: 28px;
   pointer-events: none;
   opacity: 0;
   background:
