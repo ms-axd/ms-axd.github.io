@@ -2243,6 +2243,93 @@ article .post-content blockquote {
   padding: 0.85rem 1rem;
 }
 
+article .post-content table {
+  display: block;
+  width: 100%;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  border: 1px solid rgba(45, 103, 66, 0.16);
+  border-radius: 8px;
+  border-spacing: 0;
+  background: #fbfffc;
+  box-shadow: 0 10px 22px rgba(3, 20, 10, 0.06);
+  line-height: 1.65;
+}
+
+article .post-content thead {
+  background: #e8f6ec;
+}
+
+article .post-content th,
+article .post-content td {
+  padding: 0.78rem 1rem;
+  border-bottom: 1px solid rgba(45, 103, 66, 0.12);
+  vertical-align: top;
+  text-align: left;
+}
+
+article .post-content th {
+  color: #174326;
+  font-size: 0.96rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+article .post-content td {
+  color: #26342b;
+}
+
+article .post-content th + th,
+article .post-content td + td {
+  border-left: 1px solid rgba(45, 103, 66, 0.1);
+}
+
+article .post-content tbody tr:nth-child(even) {
+  background: rgba(232, 246, 236, 0.35);
+}
+
+article .post-content tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+article .post-content td:first-child,
+article .post-content td:nth-child(2) {
+  min-width: 8.5rem;
+  white-space: nowrap;
+}
+
+body.dark-mode article .post-content table {
+  border-color: rgba(133, 191, 148, 0.2);
+  background: rgba(16, 28, 20, 0.96);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+body.dark-mode article .post-content thead {
+  background: rgba(78, 129, 91, 0.26);
+}
+
+body.dark-mode article .post-content th,
+body.dark-mode article .post-content td {
+  border-bottom-color: rgba(133, 191, 148, 0.16);
+}
+
+body.dark-mode article .post-content th {
+  color: #d7f2dd;
+}
+
+body.dark-mode article .post-content td {
+  color: #d7dfda;
+}
+
+body.dark-mode article .post-content th + th,
+body.dark-mode article .post-content td + td {
+  border-left-color: rgba(133, 191, 148, 0.14);
+}
+
+body.dark-mode article .post-content tbody tr:nth-child(even) {
+  background: rgba(78, 129, 91, 0.14);
+}
+
 article .post-content img {
   display: block;
   margin: 1.2rem auto;
