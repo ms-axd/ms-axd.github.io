@@ -2244,16 +2244,16 @@ article .post-content blockquote {
 }
 
 article .post-content table {
-  display: block;
   width: 100%;
   margin: 1.25rem 0;
-  overflow-x: auto;
   border: 1px solid rgba(45, 103, 66, 0.16);
   border-radius: 8px;
   border-spacing: 0;
+  table-layout: fixed;
   background: #fbfffc;
   box-shadow: 0 10px 22px rgba(3, 20, 10, 0.06);
   line-height: 1.65;
+  overflow: hidden;
 }
 
 article .post-content thead {
@@ -2294,8 +2294,22 @@ article .post-content tbody tr:last-child td {
 
 article .post-content td:first-child,
 article .post-content td:nth-child(2) {
-  min-width: 8.5rem;
   white-space: nowrap;
+}
+
+article .post-content th:first-child,
+article .post-content td:first-child {
+  width: 24%;
+}
+
+article .post-content th:nth-child(2),
+article .post-content td:nth-child(2) {
+  width: 28%;
+}
+
+article .post-content th:last-child,
+article .post-content td:last-child {
+  width: 48%;
 }
 
 body.dark-mode article .post-content table {
@@ -2960,6 +2974,12 @@ body.terminal-is-open {
 @media (max-width: 640px) {
   .post-body {
     display: block;
+  }
+
+  article .post-content table {
+    display: block;
+    min-width: 42rem;
+    overflow-x: auto;
   }
 
   .post-toc {
