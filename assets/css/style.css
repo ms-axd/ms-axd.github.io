@@ -2293,7 +2293,7 @@ article .post-content table {
   border: 1px solid rgba(45, 103, 66, 0.16);
   border-radius: 8px;
   border-spacing: 0;
-  table-layout: fixed;
+  table-layout: auto;
   background: #fbfffc;
   box-shadow: 0 10px 22px rgba(3, 20, 10, 0.06);
   line-height: 1.65;
@@ -2310,6 +2310,8 @@ article .post-content td {
   border-bottom: 1px solid rgba(45, 103, 66, 0.12);
   vertical-align: top;
   text-align: left;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 article .post-content th {
@@ -2343,17 +2345,17 @@ article .post-content td:nth-child(2) {
 
 article .post-content th:first-child,
 article .post-content td:first-child {
-  width: 24%;
+  width: 1%;
 }
 
 article .post-content th:nth-child(2),
 article .post-content td:nth-child(2) {
-  width: 28%;
+  width: 1%;
 }
 
 article .post-content th:last-child,
 article .post-content td:last-child {
-  width: 48%;
+  width: auto;
 }
 
 body.dark-mode article .post-content table {
@@ -3031,7 +3033,7 @@ body.terminal-is-open {
     display: block;
     width: 100%;
     max-width: 100%;
-    min-width: 0;
+    min-width: max-content;
     table-layout: auto;
     overflow-x: auto;
   }
