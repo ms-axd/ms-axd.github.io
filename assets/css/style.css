@@ -2876,6 +2876,13 @@ body.terminal-is-open {
   gap: 2rem;
 }
 
+.post-copyright {
+  margin: 0;
+  color: rgba(14, 53, 32, 0.62);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
 .post-pagination {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

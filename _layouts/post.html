@@ -33,6 +33,10 @@ layout: default
 </article>
 
 <footer class="post-footer">
+  <p class="post-copyright">
+    © {{ page.date | date: "%Y" }} Ms_AxD. All rights reserved.
+  </p>
+
   {% if page.previous or page.next %}
   <div class="post-pagination" role="navigation" aria-label="Post pagination">
     {% if page.previous %}
