@@ -2290,11 +2290,12 @@ article .post-content blockquote {
 
 article .post-content table {
   width: 100%;
+  max-width: 100%;
   margin: 1.25rem 0;
   border: 1px solid rgba(45, 103, 66, 0.16);
   border-radius: 8px;
   border-spacing: 0;
-  table-layout: auto;
+  table-layout: fixed;
   background: #fbfffc;
   box-shadow: 0 10px 22px rgba(3, 20, 10, 0.06);
   line-height: 1.65;
@@ -2312,7 +2313,7 @@ article .post-content td {
   vertical-align: top;
   text-align: left;
   word-break: keep-all;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
 }
 
 article .post-content th {
@@ -2341,22 +2342,28 @@ article .post-content tbody tr:last-child td {
 
 article .post-content td:first-child,
 article .post-content td:nth-child(2) {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 article .post-content th:first-child,
 article .post-content td:first-child {
-  width: 1%;
+  width: 18%;
 }
 
 article .post-content th:nth-child(2),
 article .post-content td:nth-child(2) {
-  width: 1%;
+  width: 22%;
 }
 
 article .post-content th:last-child,
 article .post-content td:last-child {
-  width: auto;
+  width: 60%;
+}
+
+article .post-content td code {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 body.dark-mode article .post-content table {
@@ -3034,8 +3041,8 @@ body.terminal-is-open {
     display: block;
     width: 100%;
     max-width: 100%;
-    min-width: max-content;
-    table-layout: auto;
+    min-width: 0;
+    table-layout: fixed;
     overflow-x: auto;
   }
 
