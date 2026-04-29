@@ -15,7 +15,11 @@
     return;
   }
 
+  const hasMainSections = headings.some((heading) => heading.tagName.toLowerCase() === 'h2');
   const slugCounts = new Map();
+
+  const headingMeta = new Map();
+  let currentSectionId = '';
 
   headings.forEach((heading) => {
     if (!heading.id) {
@@ -30,14 +34,24 @@
       heading.id = count ? `${baseSlug}-${count + 1}` : baseSlug;
     }
 
+    if (heading.tagName.toLowerCase() === 'h2') {
+      currentSectionId = heading.id;
+    }
+
+    const sectionId = currentSectionId || heading.id;
+    headingMeta.set(heading.id, { sectionId });
+
     const link = document.createElement('a');
     link.href = `#${heading.id}`;
     link.dataset.targetId = heading.id;
+    link.dataset.sectionId = sectionId;
     link.textContent = heading.textContent.trim();
+    link.title = heading.textContent.trim();
     link.className = `post-toc__link post-toc__link--${heading.tagName.toLowerCase()}`;
     tocList.appendChild(link);
   });
 
+  toc.classList.toggle('post-toc--nested', hasMainSections);
   toc.hidden = false;
 
   const links = Array.from(tocList.querySelectorAll('a'));
@@ -56,8 +70,11 @@
   });
 
   const setActive = (id) => {
+    const activeSectionId = headingMeta.get(id)?.sectionId || id;
+
     links.forEach((link) => {
       link.classList.toggle('is-active', link.dataset.targetId === id);
+      link.classList.toggle('is-current-section', link.dataset.sectionId === activeSectionId);
     });
   };
 
