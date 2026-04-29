@@ -36,6 +36,46 @@ body {
   line-height: 1.6;
 }
 
+@media (pointer: fine) {
+  html,
+  body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17' viewBox='0 0 17 17'%3E%3Cpath d='M8.5 1v15M1 8.5h15' stroke='%23111417' stroke-width='1.25' stroke-linecap='round'/%3E%3Cpath d='M8.5 1v15M1 8.5h15' stroke='%23e9f7ed' stroke-width='.45' stroke-linecap='round'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.2' fill='%23111417'/%3E%3C/svg%3E") 8 8, crosshair;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  summary {
+    cursor: pointer;
+  }
+
+  input,
+  textarea,
+  article p,
+  article li,
+  article h1,
+  article h2,
+  article h3,
+  article h4,
+  article h5,
+  article h6,
+  article blockquote,
+  article code,
+  article pre,
+  article table {
+    cursor: text;
+  }
+
+  article a,
+  article button,
+  article [role="button"] {
+    cursor: pointer;
+  }
+}
+
 body.dark-mode {
   color: var(--text-light);
   background-color: var(--bg-dark);
