@@ -2027,16 +2027,15 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 220px;
-  height: 220px;
+  width: 150px;
+  height: 150px;
   border-radius: 999px;
   pointer-events: none;
   z-index: 9999;
   opacity: 0;
   background:
-    radial-gradient(circle, rgba(229, 255, 120, 0.7) 0%, rgba(120, 255, 160, 0.38) 24%, rgba(31, 142, 82, 0.18) 48%, rgba(31, 142, 82, 0) 72%);
-  filter: blur(6px);
-  mix-blend-mode: multiply;
+    radial-gradient(circle, rgba(190, 235, 168, 0.26) 0%, rgba(111, 185, 126, 0.14) 42%, rgba(111, 185, 126, 0) 72%);
+  filter: blur(12px);
   transform: translate3d(-200px, -200px, 0);
   transition: opacity 0.18s ease;
 }

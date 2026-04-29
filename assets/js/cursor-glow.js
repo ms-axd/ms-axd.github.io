@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.addEventListener('pointermove', event => {
-    targetX = event.clientX - 110;
-    targetY = event.clientY - 110;
+    targetX = event.clientX - 75;
+    targetY = event.clientY - 75;
     isVisible = true;
   });
 
