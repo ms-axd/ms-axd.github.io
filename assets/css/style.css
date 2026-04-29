@@ -10,6 +10,7 @@
   --border-dark: #374151;
   --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
+  --site-cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21'%3E%3Cpath d='M10.5 2v17M2 10.5h17' stroke='%2309160f' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M10.5 2v17M2 10.5h17' stroke='%2368e28f' stroke-width='1.7' stroke-linecap='round'/%3E%3Ccircle cx='10.5' cy='10.5' r='2.1' fill='%2309160f'/%3E%3Ccircle cx='10.5' cy='10.5' r='1.05' fill='%23d9ffd8'/%3E%3C/svg%3E") 10 10, crosshair;
 }
 
 * {
@@ -37,42 +38,10 @@ body {
 }
 
 @media (pointer: fine) {
-  html,
-  body {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='17' height='17' viewBox='0 0 17 17'%3E%3Cpath d='M8.5 1v15M1 8.5h15' stroke='%23111417' stroke-width='1.25' stroke-linecap='round'/%3E%3Cpath d='M8.5 1v15M1 8.5h15' stroke='%23e9f7ed' stroke-width='.45' stroke-linecap='round'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.2' fill='%23111417'/%3E%3C/svg%3E") 8 8, crosshair;
-  }
-
-  a,
-  button,
-  [role="button"],
-  input[type="button"],
-  input[type="submit"],
-  input[type="reset"],
-  summary {
-    cursor: pointer;
-  }
-
-  input,
-  textarea,
-  article p,
-  article li,
-  article h1,
-  article h2,
-  article h3,
-  article h4,
-  article h5,
-  article h6,
-  article blockquote,
-  article code,
-  article pre,
-  article table {
-    cursor: text;
-  }
-
-  article a,
-  article button,
-  article [role="button"] {
-    cursor: pointer;
+  *,
+  *::before,
+  *::after {
+    cursor: var(--site-cursor) !important;
   }
 }
 
