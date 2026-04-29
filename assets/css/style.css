@@ -2027,14 +2027,16 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 140px;
-  height: 140px;
+  width: 220px;
+  height: 220px;
   border-radius: 999px;
   pointer-events: none;
   z-index: 9999;
   opacity: 0;
-  background: radial-gradient(circle, rgba(99, 193, 116, 0.2) 0%, rgba(99, 193, 116, 0.11) 38%, rgba(99, 193, 116, 0) 72%);
-  filter: blur(8px);
+  background:
+    radial-gradient(circle, rgba(229, 255, 120, 0.7) 0%, rgba(120, 255, 160, 0.38) 24%, rgba(31, 142, 82, 0.18) 48%, rgba(31, 142, 82, 0) 72%);
+  filter: blur(6px);
+  mix-blend-mode: multiply;
   transform: translate3d(-200px, -200px, 0);
   transition: opacity 0.18s ease;
 }
@@ -2181,7 +2183,7 @@ article .post-content h2,
 article .post-content h3 {
   color: #174326;
   line-height: 1.35;
-  scroll-margin-top: 2rem;
+  scroll-margin-top: calc(46px + 1rem);
 }
 
 article .post-content h1 {
@@ -2938,9 +2940,9 @@ body.terminal-is-open {
 
 .post-toc {
   position: sticky;
-  top: 1.5rem;
+  top: calc(46px + 1rem);
   flex: 0 0 210px;
-  max-height: calc(100vh - 3rem);
+  max-height: calc(100vh - 46px - 2rem);
   padding: 0.4rem 0 0.4rem 0.8rem;
   overflow-y: auto;
   scrollbar-width: thin;
