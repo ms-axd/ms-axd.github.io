@@ -2369,7 +2369,7 @@ article .post-content table {
   border: 1px solid rgba(45, 103, 66, 0.16);
   border-radius: 8px;
   border-spacing: 0;
-  table-layout: fixed;
+  table-layout: auto;
   background: #fbfffc;
   box-shadow: 0 10px 22px rgba(3, 20, 10, 0.06);
   line-height: 1.65;
@@ -2386,8 +2386,8 @@ article .post-content td {
   border-bottom: 1px solid rgba(45, 103, 66, 0.12);
   vertical-align: top;
   text-align: left;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 article .post-content th {
@@ -2412,26 +2412,6 @@ article .post-content tbody tr:nth-child(even) {
 
 article .post-content tbody tr:last-child td {
   border-bottom: 0;
-}
-
-article .post-content td:first-child,
-article .post-content td:nth-child(2) {
-  white-space: normal;
-}
-
-article .post-content th:first-child,
-article .post-content td:first-child {
-  width: 18%;
-}
-
-article .post-content th:nth-child(2),
-article .post-content td:nth-child(2) {
-  width: 22%;
-}
-
-article .post-content th:last-child,
-article .post-content td:last-child {
-  width: 60%;
 }
 
 article .post-content td code {
@@ -3128,7 +3108,7 @@ body.terminal-is-open {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    table-layout: fixed;
+    table-layout: auto;
     overflow-x: auto;
   }
 
