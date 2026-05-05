@@ -2236,6 +2236,7 @@ article .post-content code {
 
 article .post-content pre {
   position: relative;
+  max-width: 100%;
   margin: 1.35rem 0;
   padding: 3rem 1.05rem 1.2rem;
   overflow-x: auto;
@@ -2280,6 +2281,7 @@ article .post-content pre::before {
 
 article .post-content pre code {
   display: block;
+  max-width: 100%;
   padding: 0;
   border: 0;
   background: transparent;
@@ -3101,6 +3103,16 @@ body.terminal-is-open {
 @media (max-width: 640px) {
   .post-body {
     display: block;
+  }
+
+  article .post-content pre {
+    padding: 2.75rem 0.9rem 1rem;
+  }
+
+  article .post-content pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   article .post-content table {
