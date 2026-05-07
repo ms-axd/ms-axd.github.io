@@ -1,0 +1,73 @@
+---
+layout: post
+title: "M&S 사이버 공격 분석"
+date: 2026-05-07
+category: "블로그/기술문서"
+tags: ["보안사고", "Marks and Spencer", "ransomware", "Scattered Spider", "DragonForce"]
+excerpt: "2025 Marks & Spencer 사이버 공격."
+---
+
+# M&S 사이버 공격 분석
+
+## 사건 개요
+
+영국 유통기업 Marks & Spencer는 2025년 4월 사이버 사고를 공시했다. 초기에는 일부 매장 운영 변경과 서비스 장애로 알려졌지만, 이후 온라인 주문 중단, 클릭 앤 컬렉트 제한, 물류 차질, 고객 개인정보 유출로 확대됐다.
+
+M&S는 2025년 5월 13일 추가 공시에서 일부 고객 개인정보가 탈취됐다고 밝혔다. 다만 사용 가능한 결제카드 정보와 계정 비밀번호는 포함되지 않았다고 설명했다. 이후 고객에게 비밀번호 재설정을 요구하고, 정부기관과 법 집행기관, 외부 보안 전문가와 함께 대응했다.
+
+공개 보도에 따르면 공격은 Scattered Spider 전술과 DragonForce 랜섬웨어와 연계된 것으로 알려졌다. M&S가 공식적으로 모든 세부 기술 경로를 공개한 것은 아니므로, 공격자 귀속은 공개 보도 기반의 분석으로 보는 것이 맞다.
+
+## 주요 타임라인
+
+- 2025년 4월 19일 전후: 매장 결제, 클릭 앤 컬렉트 등 일부 서비스 장애 발생
+- 2025년 4월 22일: M&S가 사이버 사고를 공시하고 NCSC, 개인정보 감독기관에 신고
+- 2025년 4월 말: 온라인 주문 중단과 물류 장애가 장기화
+- 2025년 5월 13일: M&S가 일부 고객 개인정보 탈취를 추가 공시
+- 2025년 5월 이후: 고객 비밀번호 재설정, 외부 보안 전문가 투입, 복구 진행
+
+## 근본 원인 분석
+
+M&S 사고의 핵심은 랜섬웨어가 단일 시스템이 아니라 운영 전반에 영향을 줬다는 점이다. 유통기업은 온라인몰, 매장 결제, 재고, 물류, 고객 계정, 공급망 시스템이 서로 연결돼 있다. 한 구간이 침해되면 공격자는 인증 체계나 관리 도구를 이용해 다른 영역으로 이동할 수 있다.
+
+Scattered Spider 계열 공격은 기술 취약점만 노리기보다 사람과 인증 절차를 집중적으로 공격하는 것으로 알려져 있다. 대표적인 방식은 헬프데스크 사칭, MFA 초기화 유도, 계정 탈취, 외부 협력사 또는 SaaS 계정 악용이다. 이 방식은 방화벽보다 신원 확인 프로세스의 약점을 노린다.
+
+보도에 따르면 랜섬웨어는 VMware ESXi 가상화 서버 암호화와 관련된 것으로 알려졌다. 가상화 호스트가 암호화되면 그 위에서 동작하는 여러 업무 시스템이 동시에 멈춘다. 그래서 랜섬웨어 피해가 매장, 물류, 온라인 주문까지 확산될 수 있다.
+
+## 대응 방법
+
+M&S는 사고 인지 후 외부 사이버 보안 전문가를 투입하고, 관련 정부기관과 법 집행기관에 신고했다. 일부 시스템을 보호하기 위해 운영을 제한했고, 고객 개인정보 유출 확인 후 고객에게 알렸다. 계정 보호를 위해 고객 로그인 시 비밀번호 재설정도 요구했다.
+
+운영 측면에서는 매장을 계속 열어두면서 일부 기능을 제한하는 방식으로 피해를 줄이려 했다. 그러나 온라인 주문이 장기간 중단되면서 직접적인 매출 손실과 고객 불편이 발생했다.
+
+## 미흡했던 부분
+
+첫째, 신원 확인 기반 공격에 대한 방어가 충분하지 않았을 가능성이 크다. Scattered Spider식 공격은 계정과 헬프데스크 절차를 노린다. 따라서 관리자 계정 MFA만으로는 부족하고, MFA 재등록, 비밀번호 초기화, 권한 상승 요청에 대한 강한 검증이 필요하다.
+
+둘째, 업무 시스템 간 격리가 부족했을 가능성이 있다. 랜섬웨어가 온라인 주문, 물류, 매장 운영에 넓게 영향을 줬다면 핵심 시스템 간 네트워크 분리와 권한 분리가 충분하지 않았을 수 있다.
+
+셋째, 가상화 인프라 방어가 중요하게 드러났다. ESXi 같은 가상화 계층은 여러 서버를 한 번에 멈출 수 있는 지점이다. 관리 인터페이스 접근 통제, 백업, 스냅샷 보호, 하이퍼바이저 로그 모니터링이 약하면 피해가 급격히 커진다.
+
+넷째, 비즈니스 연속성 계획이 현실 피해를 충분히 줄이지 못했다. 대형 유통사는 온라인 주문과 물류가 핵심 매출 흐름이다. 오프라인 매장이 열려 있어도 디지털 채널이 멈추면 손실은 빠르게 커진다.
+
+## 재발 방지 대책
+
+- 헬프데스크 본인확인 절차 강화
+- MFA 재등록과 계정 복구 요청에 대한 관리자 승인과 지연 적용
+- 관리자 계정의 피싱 저항 MFA 적용
+- 협력사 계정과 SaaS 계정의 조건부 접근 정책 강화
+- 가상화 관리망 분리, ESXi 관리 인터페이스 접근 제한
+- 불변 백업과 오프라인 복구 훈련
+- 온라인몰, 물류, 매장 결제 시스템의 장애 전파 차단 설계
+- 랜섬웨어 대응 훈련에 매장 운영, 고객센터, 물류팀을 포함
+
+## 결론
+
+M&S 사고는 랜섬웨어가 IT 부서만의 문제가 아니라 유통사의 매출 구조를 직접 멈추는 경영 리스크임을 보여준다. 공격자는 기술 취약점뿐 아니라 사람, 헬프데스크, 협력사 계정, 가상화 인프라를 함께 노린다. 따라서 방어도 계정 보안, 운영 절차, 망 분리, 복구 훈련을 함께 설계해야 한다.
+
+## 참고 자료
+
+- [M&S, Cyber Incident Update - 2025년 4월 22일 공시](https://uk.advfn.com/stock-market/london/marks-and-spencer-MKS/share-news/Marks-and-Spencer-Group-PLC-Cyber-Incident-Update/95881647)
+- [M&S, Cyber Incident Further Update - 2025년 5월 13일 공시](https://www.lse.co.uk/rns/cyber-incident-further-update-okn9cwtknlyl0f4.html?mobile_view=desktop)
+- [ICO, Statement on cyber incidents impacting retailers](https://ico.org.uk/about-the-ico/media-centre/news-and-blogs/2025/05/statement-on-cyber-incidents-impacting-retailers/)
+- [BleepingComputer, Marks & Spencer breach linked to Scattered Spider ransomware attack](https://www.bleepingcomputer.com/news/security/marks-and-spencer-breach-linked-to-scattered-spider-ransomware-attack/)
+- [BleepingComputer, M&S says customer data stolen](https://www.bleepingcomputer.com/news/security/mands-says-customer-data-stolen-in-cyberattack-forces-password-resets/)
