@@ -3,7 +3,7 @@ layout: post
 title: "M&S 사이버 공격 분석"
 date: 2026-05-07
 category: "블로그/기술문서"
-tags: ["보안사고", "Marks and Spencer", "ransomware", "Scattered Spider", "DragonForce"]
+tags: ["보안사고", "M&S", "랜섬웨어"]
 excerpt: "2025 Marks & Spencer 사이버 공격."
 ---
 

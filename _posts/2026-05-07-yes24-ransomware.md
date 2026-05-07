@@ -3,7 +3,7 @@ layout: post
 title: "예스24 랜섬웨어 사고 분석"
 date: 2026-05-07
 category: "블로그/기술문서"
-tags: ["보안사고", "ransomware", "incident-response", "YES24", "개인정보"]
+tags: ["보안사고", "랜섬웨어", "예스24"]
 excerpt: "2025 예스24 랜섬웨어 사고"
 ---
 

@@ -3,7 +3,7 @@ layout: post
 title: "SK텔레콤 USIM 정보 유출 사고 분석"
 date: 2026-05-07
 category: "블로그/기술문서"
-tags: ["보안사고", "SK텔레콤", "USIM", "BPFDoor", "telecom"]
+tags: ["보안사고", "SK텔레콤", "USIM"]
 excerpt: "2025 SK텔레콤 침해사고"
 ---
 

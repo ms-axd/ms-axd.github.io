@@ -3,7 +3,7 @@ layout: post
 title: "Microsoft Midnight Blizzard 침해사고 분석"
 date: 2026-05-07
 category: "블로그/기술문서"
-tags: ["보안사고", "Microsoft", "Midnight Blizzard", "NOBELIUM", "password-spray"]
+tags: ["보안사고", "Microsoft", "APT"]
 excerpt: "Microsoft Midnight Blizzard 침해사고"
 ---
 
