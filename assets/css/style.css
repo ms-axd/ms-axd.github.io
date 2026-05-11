@@ -2250,10 +2250,18 @@ article .post-content pre {
 }
 
 article .post-content pre::after {
-  content: "Ms_AxD";
+  content: none;
+}
+
+article .post-content .code-window-bar {
   position: absolute;
-  inset: 0 0 auto;
+  top: 0;
+  left: 0;
+  right: auto;
+  z-index: 1;
+  width: max(100%, var(--code-scroll-width, 100%));
   height: 1.85rem;
+  min-width: 100%;
   border-radius: 8px 8px 0 0;
   background: #3a3a3a;
   color: #d6d6d6;
@@ -2261,15 +2269,15 @@ article .post-content pre::after {
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1.85rem;
+  pointer-events: none;
   text-align: center;
 }
 
-article .post-content pre::before {
+article .post-content .code-window-bar::before {
   content: "";
   position: absolute;
   top: 0.56rem;
   left: 0.72rem;
-  z-index: 1;
   width: 0.72rem;
   height: 0.72rem;
   border-radius: 50%;
@@ -2277,6 +2285,23 @@ article .post-content pre::before {
   box-shadow:
     1.05rem 0 0 #ffbd2e,
     2.1rem 0 0 #28c840;
+}
+
+article .post-content .code-language-label {
+  position: absolute;
+  top: 0.34rem;
+  right: 0.72rem;
+  z-index: 2;
+  max-width: 8rem;
+  overflow: hidden;
+  color: #d6d6d6;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2rem;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 article .post-content pre code {
