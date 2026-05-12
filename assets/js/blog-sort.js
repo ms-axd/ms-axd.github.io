@@ -14,7 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return cards.sort((left, right) => {
       const leftDate = Number(left.dataset.postDate || 0);
       const rightDate = Number(right.dataset.postDate || 0);
-      return order === 'oldest' ? leftDate - rightDate : rightDate - leftDate;
+      const leftPostOrder = Number(left.dataset.postOrder || 0);
+      const rightPostOrder = Number(right.dataset.postOrder || 0);
+
+      if (leftDate !== rightDate) {
+        return order === 'oldest' ? leftDate - rightDate : rightDate - leftDate;
+      }
+
+      return order === 'oldest'
+        ? leftPostOrder - rightPostOrder
+        : rightPostOrder - leftPostOrder;
     });
   };
 

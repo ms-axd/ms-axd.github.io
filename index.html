@@ -6,15 +6,25 @@ title: Home
 <section>
   <h2 class="section-title">Recent Posts</h2>
   <div class="posts-list">
-    {% for post in site.posts limit: 6 %}
-      <article class="post-card">
-        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-        <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 135 }}</p>
-        <div class="post-meta">
-          <span>{{ post.date | date: "%b %-d, %Y" }}</span>
-          <span>{{ post.category }}</span>
-        </div>
-      </article>
+    {% assign posts_by_date = site.posts | group_by_exp: "post", "post.date | date: '%Y-%m-%d'" %}
+    {% assign shown_posts = 0 %}
+    {% for date_group in posts_by_date %}
+      {% assign ordered_posts = date_group.items | where_exp: "post", "post.post_order" | sort: 'post_order' | reverse %}
+      {% assign unordered_posts = date_group.items | where_exp: "post", "post.post_order == nil" %}
+      {% assign ordered_posts = ordered_posts | concat: unordered_posts %}
+      {% for post in ordered_posts %}
+        {% if shown_posts < 6 %}
+          <article class="post-card">
+            <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+            <p class="post-excerpt">{{ post.excerpt | strip_html | truncate: 135 }}</p>
+            <div class="post-meta">
+              <span>{{ post.date | date: "%b %-d, %Y" }}</span>
+              <span>{{ post.category }}</span>
+            </div>
+          </article>
+          {% assign shown_posts = shown_posts | plus: 1 %}
+        {% endif %}
+      {% endfor %}
     {% endfor %}
   </div>
 </section>
