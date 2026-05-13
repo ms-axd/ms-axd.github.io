@@ -3,7 +3,7 @@ layout: post
 title: "DEF CON 25 Hacking Smart Contracts 리뷰"
 date: 2026-05-13
 post_order: 1
-category: "블로그/기술문서"
+category: "논문/컨퍼런스"
 tags: ["Review", "DEF CON", "Ethereum", "Smart Contract", "Security"]
 excerpt: "Web3 입문"
 ---
