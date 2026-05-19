@@ -1211,8 +1211,8 @@ footer {
   gap: 0.7rem;
 }
 
-.social-dock a,
-.social-dock span {
+.social-dock > a,
+.social-dock > span {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -1839,8 +1839,8 @@ body {
   color: var(--accent-bright);
 }
 
-.social-dock a,
-.social-dock span {
+.social-dock > a,
+.social-dock > span {
   background: rgba(242, 252, 244, 0.92);
   color: #245b37;
 }
@@ -2754,9 +2754,9 @@ body.terminal-is-open {
   overflow: hidden;
 }
 
-.social-dock a,
-.social-dock span,
-.social-dock button {
+.social-dock > a,
+.social-dock > span,
+.social-dock > button {
   width: 40px;
   height: 40px;
   display: inline-grid;
@@ -2768,9 +2768,9 @@ body.terminal-is-open {
   line-height: 0;
 }
 
-.social-dock a:hover,
-.social-dock span:hover,
-.social-dock button:hover {
+.social-dock > a:hover,
+.social-dock > span:hover,
+.social-dock > button:hover {
   background: #cfeeda;
   transform: translateY(-1px);
 }
@@ -2797,6 +2797,8 @@ body.terminal-is-open {
   bottom: calc(100% + 0.6rem);
   z-index: 20;
   width: max-content;
+  min-width: 3.4rem;
+  box-sizing: border-box;
   padding: 0.38rem 0.55rem;
   border-radius: 8px;
   background: #101412;
@@ -2805,6 +2807,7 @@ body.terminal-is-open {
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
+  white-space: nowrap;
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 0.25rem);
