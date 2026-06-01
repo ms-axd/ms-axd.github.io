@@ -50,8 +50,46 @@
     isDrawing = true;
     canvas.setPointerCapture(event.pointerId);
     lastPoint = point;
-    context.beginPath();
-    context.moveTo(point.x, point.y);
+  };
+
+  const drawWatercolorLine = (from, to) => {
+    const control = {
+      x: (from.x + to.x) / 2,
+      y: (from.y + to.y) / 2
+    };
+
+    context.save();
+    context.globalCompositeOperation = 'multiply';
+
+    for (let index = 0; index < 5; index += 1) {
+      const spread = index * 0.45;
+      const offsetX = (Math.random() - 0.5) * spread;
+      const offsetY = (Math.random() - 0.5) * spread;
+
+      context.beginPath();
+      context.strokeStyle = hexToRgba(strokeColor, index === 0 ? 0.34 : 0.055);
+      context.lineWidth = index === 0 ? 1.7 : 2.4 + index * 0.35;
+      context.moveTo(from.x + offsetX, from.y + offsetY);
+      context.quadraticCurveTo(
+        control.x + offsetX,
+        control.y + offsetY,
+        to.x + offsetX,
+        to.y + offsetY
+      );
+      context.stroke();
+    }
+
+    context.restore();
+  };
+
+  const drawPoint = (point) => {
+    if (!lastPoint) {
+      lastPoint = point;
+      return;
+    }
+
+    drawWatercolorLine(lastPoint, point);
+    lastPoint = point;
   };
 
   const draw = (event) => {
@@ -59,37 +97,16 @@
       return;
     }
 
-    const point = getPoint(event);
+    const events = typeof event.getCoalescedEvents === 'function'
+      ? event.getCoalescedEvents()
+      : [event];
 
-    if (!lastPoint) {
-      lastPoint = point;
-      return;
-    }
-
-    context.save();
-    context.globalCompositeOperation = 'multiply';
-
-    for (let index = 0; index < 7; index += 1) {
-      const spread = index * 0.75;
-      const offsetX = (Math.random() - 0.5) * spread;
-      const offsetY = (Math.random() - 0.5) * spread;
-
-      context.beginPath();
-      context.strokeStyle = hexToRgba(strokeColor, index === 0 ? 0.26 : 0.075);
-      context.lineWidth = index === 0 ? 3.2 : 5.5 + index * 0.55;
-      context.moveTo(lastPoint.x + offsetX, lastPoint.y + offsetY);
-      context.lineTo(point.x + offsetX, point.y + offsetY);
-      context.stroke();
-    }
-
-    context.restore();
-    lastPoint = point;
+    events.forEach((pointerEvent) => drawPoint(getPoint(pointerEvent)));
   };
 
   const stopDrawing = () => {
     isDrawing = false;
     lastPoint = null;
-    context.closePath();
   };
 
   colorButtons.forEach((button) => {
