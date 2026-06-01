@@ -24,7 +24,7 @@ EVM 실행 방식
 
 ---
 
-## 전체 구조
+## Solidity 기본
 
 기본 컨트랙트는 이렇게 생겼다.
 
@@ -67,7 +67,7 @@ function
 
 ---
 
-## EVM 관점
+### EVM 관점
 
 Solidity 코드는 EVM bytecode로 컴파일된다.
 
@@ -96,7 +96,7 @@ Solidity 코드
 
 ---
 
-## 값 타입
+## 타입과 데이터
 
 값 타입은 데이터 자체가 복사된다.
 
@@ -127,7 +127,7 @@ address payable receiver = payable(msg.sender);
 
 ---
 
-## 위치를 신경 써야 하는 타입
+### 위치를 신경 써야 하는 타입
 
 아래 타입은 데이터가 커질 수 있다.
 
@@ -170,7 +170,7 @@ Solidity에서 `mapping`은 길이 순회가 안 된다.
 
 ---
 
-## 상태 변수
+### 상태 변수
 
 상태 변수는 블록체인에 저장되는 값이다.
 
@@ -203,7 +203,7 @@ contract Vault {
 
 ---
 
-## 함수 기본
+## 함수
 
 함수는 입력값을 받고 코드를 실행한 뒤 값을 돌려줄 수 있다.
 
@@ -229,7 +229,7 @@ function add(uint256 a, uint256 b) external pure returns (uint256 result) {
 
 ---
 
-## 함수 접근 범위
+### 함수 접근 범위
 
 함수와 변수에는 접근 범위가 있다.
 
@@ -268,7 +268,7 @@ contract Visibility {
 
 ---
 
-## 상태 변경 여부
+### 상태 변경 여부
 
 함수는 상태를 읽거나 바꾸는 방식에 따라 표시할 수 있다.
 
@@ -307,7 +307,7 @@ contract FunctionType {
 
 ---
 
-## ETH 단위
+## ETH와 실행 정보
 
 Solidity는 ETH 단위를 지원한다.
 
@@ -330,7 +330,7 @@ uint256 oneEther = 1 ether;
 
 ---
 
-## 기본 제공 값
+### 기본 제공 값
 
 Solidity에는 트랜잭션과 블록 정보를 담은 기본 제공 값이 있다.
 
@@ -373,7 +373,7 @@ block.chainid
 
 ---
 
-## require, revert, assert
+### require, revert, assert
 
 조건 확인은 스마트 컨트랙트에서 매우 중요하다.
 
@@ -420,7 +420,7 @@ contract Ownable {
 
 ---
 
-## constructor
+### constructor
 
 `constructor`는 배포 시 한 번 실행된다.
 
@@ -440,7 +440,7 @@ contract Ownable {
 
 ---
 
-## modifier
+### modifier
 
 `modifier`는 함수 실행 전후에 공통 조건을 붙일 때 사용한다.
 
@@ -469,7 +469,7 @@ contract OnlyOwner {
 
 ---
 
-## event
+### event
 
 `event`는 로그를 남긴다.
 
@@ -512,7 +512,7 @@ calldata
 
 ---
 
-## storage
+### storage
 
 `storage`는 컨트랙트의 영구 저장소다.
 
@@ -541,7 +541,7 @@ contract StorageExample {
 
 ---
 
-## storage로 원본 다루기
+### storage로 원본 다루기
 
 `storage` 변수는 원본 상태를 직접 가리킬 수 있다.
 
@@ -569,7 +569,7 @@ contract StorageReference {
 
 ---
 
-## memory
+### memory
 
 `memory`는 함수 실행 중에만 존재하는 임시 공간이다.
 
@@ -591,7 +591,7 @@ contract MemoryExample {
 
 ---
 
-## calldata
+### calldata
 
 `calldata`는 외부 함수 호출의 입력 데이터 위치다.
 
@@ -611,7 +611,7 @@ contract CalldataExample {
 
 ---
 
-## 선택 기준
+### 선택 기준
 
 데이터 위치는 아래 기준으로 고른다.
 
@@ -639,7 +639,7 @@ contract CalldataExample {
 
 ---
 
-## 배열
+## 자료구조
 
 배열은 길이가 고정된 배열과 길이가 변하는 배열이 있다.
 
@@ -687,7 +687,7 @@ function remove(uint256 index) external {
 
 ---
 
-## mapping
+### mapping
 
 `mapping`은 key-value 저장소다.
 
@@ -715,7 +715,7 @@ address -> address(0)
 
 ---
 
-## struct
+### struct
 
 `struct`는 관련 값을 묶는다.
 
@@ -747,7 +747,7 @@ contract UserStore {
 
 ---
 
-## enum
+### enum
 
 `enum`은 정해진 상태 중 하나를 표현한다.
 
@@ -775,7 +775,7 @@ contract OrderBook {
 
 ---
 
-## receive와 fallback
+## ETH 송수신과 외부 호출
 
 ETH를 직접 받을 때는 `receive`나 `fallback`을 사용한다.
 
@@ -807,7 +807,7 @@ fallback
 
 ---
 
-## ETH 보내기
+### ETH 보내기
 
 ETH 전송은 보통 `call`을 사용한다.
 
@@ -826,7 +826,7 @@ function sendEth(address payable to, uint256 amount) external {
 
 ---
 
-## 외부 컨트랙트 호출
+### 외부 컨트랙트 호출
 
 인터페이스를 만들어 두면 다른 컨트랙트를 호출할 수 있다.
 
@@ -850,7 +850,7 @@ contract TokenSender {
 
 ---
 
-## 상속
+## 재사용 구조
 
 Solidity는 상속을 지원한다.
 
@@ -881,7 +881,7 @@ contract AdminVault is Ownable {
 
 ---
 
-## interface
+### interface
 
 `interface`는 외부 컨트랙트의 함수 모양만 적어 둔 것이다.
 
@@ -898,7 +898,7 @@ interface IVault {
 
 ---
 
-## library
+### library
 
 `library`는 재사용 함수 묶음이다.
 
@@ -920,7 +920,7 @@ contract UseLibrary {
 
 ---
 
-## modifier 남용 주의
+### modifier 남용 주의
 
 `modifier`는 편하지만 과하게 쓰면 흐름이 숨는다.
 
@@ -937,7 +937,7 @@ modifier validAmount(uint256 amount) {
 
 ---
 
-## ABI
+### ABI
 
 ABI는 Application Binary Interface다.
 
@@ -956,7 +956,7 @@ Solidity 코드는 사람이 읽는 코드고, ABI는 외부 프로그램이 호
 
 ---
 
-## Gas 기본
+## Gas와 보안
 
 가스는 EVM 실행 비용이다.
 
@@ -997,7 +997,7 @@ function sum(uint256[] calldata numbers) external pure returns (uint256 total) {
 
 ---
 
-## 보안 기본 원칙
+### 보안 기본 원칙
 
 Solidity 보안은 아래 문장으로 시작하면 된다.
 
@@ -1016,7 +1016,7 @@ Solidity 보안은 아래 문장으로 시작하면 된다.
 
 ---
 
-## Checks Effects Interactions
+### Checks Effects Interactions
 
 외부 호출이 있는 함수는 순서가 중요하다.
 
@@ -1065,7 +1065,7 @@ function withdrawGood(uint256 amount) external {
 
 ---
 
-## Reentrancy
+### Reentrancy
 
 재진입 공격은 외부 호출 중 다시 내 컨트랙트로 들어오는 공격이다.
 
@@ -1096,7 +1096,7 @@ contract ReentrancyLock {
 
 ---
 
-## Access Control
+### Access Control
 
 권한 검사는 기본 중 기본이다.
 
@@ -1131,7 +1131,7 @@ tx.origin으로 인증 금지
 
 ---
 
-## Integer
+### Integer
 
 Solidity `0.8.0`부터는 기본적으로 overflow, underflow를 검사한다.
 
@@ -1156,7 +1156,7 @@ function addUnchecked(uint256 x) external pure returns (uint256) {
 
 ---
 
-## Delegatecall
+### Delegatecall
 
 `delegatecall`은 호출 대상의 코드를 내 컨트랙트 storage 기준으로 실행한다.
 
@@ -1176,7 +1176,7 @@ storage layout이 맞지 않으면 상태가 깨짐
 
 ---
 
-## Randomness
+### Randomness
 
 온체인에서 안전한 랜덤은 어렵다.
 
@@ -1194,7 +1194,7 @@ blockhash(block.number - 1)
 
 ---
 
-## Timestamp
+### Timestamp
 
 `block.timestamp`는 시간 조건에 자주 사용한다.
 
@@ -1208,7 +1208,7 @@ require(block.timestamp >= unlockTime, "locked");
 
 ---
 
-## 테스트할 것
+## 공부 체크
 
 Solidity 공부는 테스트와 같이 해야 빨리 는다.
 
@@ -1232,7 +1232,7 @@ address(0) 입력
 
 ---
 
-## 읽는 순서
+### 읽는 순서
 
 Solidity를 처음 공부하면 아래 순서가 좋다.
 
@@ -1251,7 +1251,7 @@ Solidity를 처음 공부하면 아래 순서가 좋다.
 
 ---
 
-## 암기표
+### 암기표
 
 외워야 할것
 
