@@ -17,22 +17,6 @@ permalink: /about.html
       <div class="about-photo-box">
         <img src="{{ '/assets/images/cat.jpg' | relative_url }}" alt="프로필 사진">
       </div>
-
-      <section class="about-sketch-card" aria-labelledby="about-sketch-title-inline">
-        <div class="about-sketch-card__header">
-          <h2 id="about-sketch-title-inline">DRAW PAD</h2>
-          <button type="button" class="about-sketch-clear" data-sketch-clear aria-label="그림 지우기">Clear</button>
-        </div>
-        <canvas class="about-sketch-canvas" width="220" height="180" data-sketch-canvas aria-label="마우스나 터치로 그림을 그릴 수 있는 캔버스"></canvas>
-        <div class="about-sketch-tools" aria-label="색상 선택">
-          <button type="button" class="about-sketch-color is-active" data-sketch-color="#245b37" style="--swatch-color: #245b37;" aria-label="초록색"></button>
-          <button type="button" class="about-sketch-color" data-sketch-color="#111827" style="--swatch-color: #111827;" aria-label="검정색"></button>
-          <button type="button" class="about-sketch-color" data-sketch-color="#e67e22" style="--swatch-color: #e67e22;" aria-label="주황색"></button>
-          <label class="about-sketch-picker" aria-label="직접 색상 선택">
-            <input type="color" value="#245b37" data-sketch-custom-color>
-          </label>
-        </div>
-      </section>
     </div>
 
     <div class="about-copy-card">
@@ -42,6 +26,22 @@ permalink: /about.html
       </p>
     </div>
   </div>
+
+  <section class="about-sketch-card" aria-labelledby="about-sketch-title-inline">
+    <div class="about-sketch-card__header">
+      <h2 id="about-sketch-title-inline">DRAW PAD</h2>
+      <button type="button" class="about-sketch-clear" data-sketch-clear aria-label="그림 지우기">Clear</button>
+    </div>
+    <canvas class="about-sketch-canvas" width="620" height="180" data-sketch-canvas aria-label="마우스나 터치로 그림을 그릴 수 있는 캔버스"></canvas>
+    <div class="about-sketch-tools" aria-label="색상 선택">
+      <button type="button" class="about-sketch-color is-active" data-sketch-color="#245b37" style="--swatch-color: #245b37;" aria-label="초록색"></button>
+      <button type="button" class="about-sketch-color" data-sketch-color="#111827" style="--swatch-color: #111827;" aria-label="검정색"></button>
+      <button type="button" class="about-sketch-color" data-sketch-color="#e67e22" style="--swatch-color: #e67e22;" aria-label="주황색"></button>
+      <label class="about-sketch-picker" aria-label="직접 색상 선택">
+        <input type="color" value="#245b37" data-sketch-custom-color>
+      </label>
+    </div>
+  </section>
 
   <section class="about-panel">
     <h2>주요 관심 분야</h2>
