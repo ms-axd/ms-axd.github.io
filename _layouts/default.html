@@ -158,6 +158,9 @@
   <script src="{{ '/assets/js/mini-terminal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/profile-tilt.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  {% if page.url == '/about.html' %}
+  <script src="{{ '/assets/js/about-sketch.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  {% endif %}
   <script src="{{ '/assets/js/search.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
 </body>
 </html>
