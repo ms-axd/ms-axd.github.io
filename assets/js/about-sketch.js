@@ -12,6 +12,16 @@
   const clearButton = document.querySelector('[data-sketch-clear]');
   let isDrawing = false;
   let strokeColor = '#245b37';
+  let lastPoint = null;
+
+  const hexToRgba = (hex, alpha) => {
+    const color = hex.replace('#', '');
+    const red = parseInt(color.slice(0, 2), 16);
+    const green = parseInt(color.slice(2, 4), 16);
+    const blue = parseInt(color.slice(4, 6), 16);
+
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  };
 
   const resizeCanvas = () => {
     const rect = canvas.getBoundingClientRect();
@@ -39,6 +49,7 @@
 
     isDrawing = true;
     canvas.setPointerCapture(event.pointerId);
+    lastPoint = point;
     context.beginPath();
     context.moveTo(point.x, point.y);
   };
@@ -50,13 +61,34 @@
 
     const point = getPoint(event);
 
-    context.strokeStyle = strokeColor;
-    context.lineTo(point.x, point.y);
-    context.stroke();
+    if (!lastPoint) {
+      lastPoint = point;
+      return;
+    }
+
+    context.save();
+    context.globalCompositeOperation = 'multiply';
+
+    for (let index = 0; index < 7; index += 1) {
+      const spread = index * 0.75;
+      const offsetX = (Math.random() - 0.5) * spread;
+      const offsetY = (Math.random() - 0.5) * spread;
+
+      context.beginPath();
+      context.strokeStyle = hexToRgba(strokeColor, index === 0 ? 0.26 : 0.075);
+      context.lineWidth = index === 0 ? 3.2 : 5.5 + index * 0.55;
+      context.moveTo(lastPoint.x + offsetX, lastPoint.y + offsetY);
+      context.lineTo(point.x + offsetX, point.y + offsetY);
+      context.stroke();
+    }
+
+    context.restore();
+    lastPoint = point;
   };
 
   const stopDrawing = () => {
     isDrawing = false;
+    lastPoint = null;
     context.closePath();
   };
 
