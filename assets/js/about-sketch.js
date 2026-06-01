@@ -8,6 +8,7 @@
 
   const context = canvas.getContext('2d');
   const colorButtons = Array.from(document.querySelectorAll('[data-sketch-color]'));
+  const customColorInput = document.querySelector('[data-sketch-custom-color]');
   const clearButton = document.querySelector('[data-sketch-clear]');
   let isDrawing = false;
   let strokeColor = '#245b37';
@@ -62,9 +63,19 @@
   colorButtons.forEach((button) => {
     button.addEventListener('click', () => {
       strokeColor = button.dataset.sketchColor;
+      if (customColorInput) {
+        customColorInput.value = strokeColor;
+      }
       colorButtons.forEach((item) => item.classList.toggle('is-active', item === button));
     });
   });
+
+  if (customColorInput) {
+    customColorInput.addEventListener('input', () => {
+      strokeColor = customColorInput.value;
+      colorButtons.forEach((button) => button.classList.remove('is-active'));
+    });
+  }
 
   if (clearButton) {
     clearButton.addEventListener('click', () => {
