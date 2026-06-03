@@ -29,17 +29,39 @@ Ethernaut 사용법과 콘솔 상호작용을 익히는 튜토리얼.
 
 ### 풀이
 
-작성 예정.
+개발자 도구 콘솔에서 Ethernaut이 제공하는 전역 객체를 확인한다.
+
+```javascript
+await contract.info()
+```
+
+반환값이 다음에 호출할 함수를 알려준다. 힌트를 따라가면 된다.
+
+```javascript
+await contract.info1()
+await contract.info2("hello")
+await contract.infoNum()
+await contract.info42()
+await contract.theMethodName()
+await contract.method7123949()
+```
+
+마지막으로 `password` 값을 읽고 `authenticate`에 넘긴다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+const password = await contract.password();
+await contract.authenticate(password);
 ```
+
+![alt text](/assets/images/ethernaut/image.png)
 
 ### 정리
 
-작성 예정.
+0번은 Ethernaut 콘솔 사용법을 익히는 문제다. `contract` 인스턴스는 현재 레벨 컨트랙트를 가리키며
+
+ `await`로 view 함수와 트랜잭션 함수를 호출할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Fallback" markdown="1">
