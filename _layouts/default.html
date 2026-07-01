@@ -11,8 +11,33 @@
   <link rel="icon" type="image/png" href="{{ '/assets/images/favicon.png' | relative_url }}">
   <link rel="apple-touch-icon" href="{{ '/assets/images/favicon.png' | relative_url }}">
   <link rel="canonical" href="{{ page.url | replace: 'index.html', '' | prepend: site.baseurl | prepend: site.url }}">
+  <script>
+    (function () {
+      try {
+        var seen = sessionStorage.getItem('ms_axd_booted');
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!seen && !reduce) {
+          document.documentElement.classList.add('booting');
+          sessionStorage.setItem('ms_axd_booted', '1');
+          // safety net: never trap the page if the intro script fails to run
+          setTimeout(function () {
+            document.documentElement.classList.remove('booting');
+            var s = document.querySelector('[data-boot]');
+            if (s) s.style.display = 'none';
+          }, 6000);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
+  <div class="boot-screen" data-boot aria-hidden="true">
+    <canvas class="boot-canvas" data-boot-canvas></canvas>
+    <div class="boot-terminal">
+      <pre data-boot-log></pre><span class="boot-cursor" aria-hidden="true">_</span>
+    </div>
+    <p class="boot-skip">click / press any key to skip</p>
+  </div>
   <div class="cursor-glow" aria-hidden="true"></div>
   <div class="site-shell">
     <aside class="site-sidebar" aria-label="Site menu">
@@ -163,6 +188,7 @@
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/profile-tilt.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/spider-web.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/boot-intro.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% if page.url == '/about.html' %}
   <script src="{{ '/assets/js/about-sketch.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% endif %}
