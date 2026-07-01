@@ -1090,6 +1090,11 @@ footer {
   grid-template-columns: 260px minmax(0, 1fr);
 }
 
+/* keep the page hidden until the circular reveal starts (set by page-reveal.js) */
+html.revealing .site-shell {
+  visibility: hidden;
+}
+
 .site-sidebar {
   position: sticky;
   top: 0;

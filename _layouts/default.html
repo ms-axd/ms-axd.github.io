@@ -28,6 +28,19 @@
         }
       } catch (e) {}
     })();
+    // hide the shell before paint if we arrived via an in-site click, so the
+    // circular reveal can play without a flash of the full page first
+    (function () {
+      try {
+        if (sessionStorage.getItem('ms_axd_reveal')) {
+          document.documentElement.classList.add('revealing');
+          // safety net: never leave the page hidden if the reveal script fails
+          setTimeout(function () {
+            document.documentElement.classList.remove('revealing');
+          }, 1200);
+        }
+      } catch (e) {}
+    })();
   </script>
 </head>
 <body{% if page.layout == 'post' %} class="is-post"{% endif %}>
@@ -190,6 +203,7 @@
   <script src="{{ '/assets/js/profile-tilt.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/spider-web.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/boot-intro.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/page-reveal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% if page.url == '/about.html' %}
   <script src="{{ '/assets/js/about-sketch.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% endif %}
