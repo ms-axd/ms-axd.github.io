@@ -12,7 +12,7 @@
 //   * internal link clicks  -> next page unfurls from the click point
 //   * [data-genie-open="#id"] buttons / [data-genie-close] -> popup open expands
 (function () {
-  var DEFAULT_MS = 470;
+  var DEFAULT_MS = 760;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var supported = typeof document.body === 'undefined' ||
     (typeof Element !== 'undefined' && typeof Element.prototype.animate === 'function');
@@ -182,7 +182,7 @@
     // start the expand first (backwards-fill pins the collapsed frame 0), then
     // unhide — so the very first visible frame is the collapsed sliver, not the
     // full page
-    Genie.expand(shell, { x: x, y: y, duration: 470 }).then(function () {
+    Genie.expand(shell, { x: x, y: y, duration: 820 }).then(function () {
       root.classList.remove('genie-bg');
     });
     root.classList.remove('genie-in');
