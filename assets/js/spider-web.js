@@ -275,7 +275,6 @@
     drawSpider();
   }
 
-<<<<<<< HEAD
   // Metaball membrane: fills a smooth "neck" joining two liquid circles when
   // they are close enough, so nearby droplets read as one merged blob.
   // (canonical two-circle metaball connector, ported to canvas paths)
@@ -358,67 +357,7 @@
       ctx.beginPath();
       ctx.arc(beads[g].x - beads[g].r * 0.3, beads[g].y - beads[g].r * 0.35, beads[g].r * 0.35, 0, Math.PI * 2);
       ctx.fill();
-=======
-  function drawSpider() {
-    var body = R * 0.13;
-
-    // gooey liquid tendrils: rounded, fat at the base, thinning to a drip tip
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    for (var i = 0; i < LEGS; i++) {
-      var nodes = legs[i].nodes;
-      for (var j = 0; j < SEG; j++) {
-        var a = nodes[j], b = nodes[j + 1];
-        var t = j / SEG;
-        ctx.strokeStyle = liquidColor;
-        ctx.lineWidth = (1 - t) * 4.6 + 0.6;   // fat base -> thin tip, like a stretched drip
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-      // a bead of liquid hanging off the tip
-      var tip = nodes[SEG];
-      ctx.fillStyle = liquidColor;
-      ctx.beginPath();
-      ctx.arc(tip.x, tip.y, 2.0, 0, Math.PI * 2);
-      ctx.fill();
-      // wet gloss running down each tendril
-      ctx.strokeStyle = 'rgba(255,255,255,0.16)';
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(nodes[0].x, nodes[0].y);
-      for (var k = 1; k <= SEG; k++) ctx.lineTo(nodes[k].x, nodes[k].y);
-      ctx.stroke();
     }
-
-    // body: a wobbling glossy droplet of liquid
-    ctx.beginPath();
-    var N = 18;
-    for (var s = 0; s <= N; s++) {
-      var ang = (s / N) * Math.PI * 2;
-      var wob = 1 + Math.sin(ang * 3 + tick) * 0.06 + Math.sin(ang * 5 - tick * 1.3) * 0.04;
-      var rr = body * wob;
-      var xx = spider.x + Math.cos(ang) * rr;
-      var yy = spider.y + Math.sin(ang) * rr;
-      if (s === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
->>>>>>> e8ba5049310ddc9fa396f40014d2ae9bbf2096fb
-    }
-    ctx.closePath();
-    // rounded sheen: lighter core toward the top-left, darker rim
-    var grd = ctx.createRadialGradient(
-      spider.x - body * 0.35, spider.y - body * 0.45, body * 0.15,
-      spider.x, spider.y, body * 1.2);
-    grd.addColorStop(0, liquidShade);
-    grd.addColorStop(1, liquidColor);
-    ctx.fillStyle = grd;
-    ctx.fill();
-
-    // specular highlight -> wet look
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.beginPath();
-    ctx.ellipse(spider.x - body * 0.34, spider.y - body * 0.4, body * 0.3, body * 0.18, 0, 0, Math.PI * 2);
-    ctx.fill();
   }
 
   // --- loop -------------------------------------------------------------
