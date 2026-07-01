@@ -52,33 +52,6 @@
   {% if page.layout == 'post' %}
   <div class="read-progress" aria-hidden="true"><span data-read-progress></span></div>
   {% endif %}
-
-  <div class="codewarp" data-codewarp aria-hidden="true">
-    <div class="codewarp__stage">
-      <pre class="codewarp__code">async function exploit(target) {
-  const sess = await connect(target, { proto: 'ws' });
-  for (const node of sess.graph.nodes) {
-    if (node.role === 'root') node.grant(me);
-    trace(`+ pivot ${node.id} -> ${node.addr}`);
-  }
-  const key = derive(sess.seed ^ 0xC0FFEE);
-  return sess.unlock(key).then(shell => shell.spawn());
-}
-
-const rain = matrix.stream({ glyphs: KATA, speed: 42 });
-router.on('/post/:slug', (ctx) => render(ctx.params.slug));
-export default { boot, exploit, rain, router };
-
-while (alive) {
-  const pkt = queue.pop();
-  if (!verify(pkt.sig)) continue;
-  ledger.append(pkt.hash);
-  emit('block', { h: pkt.hash, t: now() });
-}
-grantAccess(user, { scope: '*', ttl: 3600 });
-// access granted — welcome back, operator_</pre>
-    </div>
-  </div>
   <div class="cursor-glow" aria-hidden="true"></div>
   <div class="site-shell">
     <aside class="site-sidebar" aria-label="Site menu">

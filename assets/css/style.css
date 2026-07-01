@@ -1090,75 +1090,9 @@ footer {
   grid-template-columns: 260px minmax(0, 1fr);
 }
 
-/* --- code-warp page transition (Star Wars-style code crawl) ---------- */
-.codewarp {
-  display: none;
-}
-
-html.revealing .codewarp {
-  display: block;
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  overflow: hidden;
-  background:
-    radial-gradient(120% 80% at 50% 118%, rgba(255, 64, 176, 0.28), transparent 60%),
-    radial-gradient(110% 75% at 50% -12%, rgba(128, 88, 255, 0.26), transparent 60%),
-    #07060d;
-  transition: opacity 0.4s ease;
-}
-
-.codewarp.is-done {
+/* keep the page hidden until the expand reveal starts (set by page-reveal.js) */
+html.revealing .site-shell {
   opacity: 0;
-}
-
-.codewarp__stage {
-  position: absolute;
-  inset: 0;
-  perspective: 340px;
-  perspective-origin: 50% 42%;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to top, #000 28%, rgba(0, 0, 0, 0.2) 68%, transparent 92%);
-  mask-image: linear-gradient(to top, #000 28%, rgba(0, 0, 0, 0.2) 68%, transparent 92%);
-}
-
-.codewarp__code {
-  position: absolute;
-  left: 50%;
-  bottom: -12%;
-  width: min(72%, 720px);
-  margin: 0;
-  transform-origin: 50% 100%;
-  transform: translateX(-50%) rotateX(64deg);
-  font: 600 clamp(11px, 1.5vw, 15px) / 1.75 "Cascadia Code", "Consolas", monospace;
-  color: #8affc0;
-  text-shadow: 0 0 8px rgba(122, 255, 180, 0.55), 0 0 2px rgba(122, 255, 180, 0.9);
-  white-space: pre;
-  text-align: left;
-}
-
-html.revealing .codewarp__code {
-  animation: codewarp-crawl 0.85s cubic-bezier(0.36, 0, 0.2, 1) forwards;
-}
-
-@keyframes codewarp-crawl {
-  from {
-    transform: translateX(-50%) rotateX(64deg) translateY(35%);
-    opacity: 0.15;
-  }
-  35% {
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-50%) rotateX(64deg) translateY(-175%);
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.revealing .codewarp {
-    display: none;
-  }
 }
 
 .site-sidebar {
