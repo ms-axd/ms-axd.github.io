@@ -1095,6 +1095,15 @@ html.genie-in .site-shell {
   visibility: hidden;
 }
 
+/* during a genie transition, the backdrop behind the warping page uses the
+   sidebar background colour */
+html.genie-in,
+html.genie-in body,
+html.genie-bg,
+html.genie-bg body {
+  background: var(--sidebar-bg);
+}
+
 .site-sidebar {
   position: sticky;
   top: 0;

@@ -163,6 +163,7 @@
     try {
       sessionStorage.setItem('ms_axd_genie', (e.clientX / window.innerWidth) + ',' + (e.clientY / window.innerHeight));
     } catch (_) {}
+    document.documentElement.classList.add('genie-bg'); // sidebar-coloured backdrop
     Genie.collapse(shell, { x: e.clientX, y: e.clientY, duration: 430 }).then(function () {
       window.location.href = url.href;
     });
@@ -183,10 +184,14 @@
     var y = parseFloat(p[1]) * window.innerHeight;
     if (!isFinite(x) || !isFinite(y)) { root.classList.remove('genie-in'); return; }
 
+    // keep the sidebar-coloured backdrop through the expand, then restore
+    root.classList.add('genie-bg');
     // start the expand first (backwards-fill pins the collapsed frame 0), then
     // unhide — so the very first visible frame is the collapsed sliver, not the
     // full page
-    Genie.expand(shell, { x: x, y: y, duration: 470 });
+    Genie.expand(shell, { x: x, y: y, duration: 470 }).then(function () {
+      root.classList.remove('genie-bg');
+    });
     root.classList.remove('genie-in');
   })();
 })();
