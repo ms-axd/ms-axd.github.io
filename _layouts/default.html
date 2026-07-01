@@ -28,16 +28,15 @@
         }
       } catch (e) {}
     })();
-    // hide the shell before paint if we arrived via an in-site click, so the
-    // circular reveal can play without a flash of the full page first
+    // hide the shell before paint if we arrived via a genie click, so the
+    // expand can unfurl from the point without a flash of the full page first
     (function () {
       try {
         var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!reduce && sessionStorage.getItem('ms_axd_reveal')) {
-          document.documentElement.classList.add('revealing');
-          // safety net: never leave the overlay up if the reveal script fails
+        if (!reduce && sessionStorage.getItem('ms_axd_genie')) {
+          document.documentElement.classList.add('genie-in');
           setTimeout(function () {
-            document.documentElement.classList.remove('revealing');
+            document.documentElement.classList.remove('genie-in');
           }, 1600);
         }
       } catch (e) {}
@@ -204,7 +203,7 @@
   <script src="{{ '/assets/js/profile-tilt.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/spider-web.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/boot-intro.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
-  <script src="{{ '/assets/js/page-reveal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/genie.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% if page.url == '/about.html' %}
   <script src="{{ '/assets/js/about-sketch.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% endif %}

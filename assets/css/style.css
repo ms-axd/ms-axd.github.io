@@ -1090,9 +1090,9 @@ footer {
   grid-template-columns: 260px minmax(0, 1fr);
 }
 
-/* keep the page hidden until the expand reveal starts (set by page-reveal.js) */
-html.revealing .site-shell {
-  opacity: 0;
+/* keep the page hidden until the genie expand starts (set by genie.js) */
+html.genie-in .site-shell {
+  visibility: hidden;
 }
 
 .site-sidebar {
