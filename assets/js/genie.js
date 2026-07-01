@@ -8,9 +8,9 @@
 //   Genie.openPopup(panel, origin)          -> Promise   (show + expand)
 //   Genie.closePopup(panel, origin)         -> Promise   (collapse + hide)
 //
-// Auto-wired:
-//   * internal link clicks  -> collapse the page into the click, then navigate
-//   * [data-genie-open="#id"] buttons / [data-genie-close] -> popup genie
+// Auto-wired (expand-only — no suck-in):
+//   * internal link clicks  -> next page unfurls from the click point
+//   * [data-genie-open="#id"] buttons / [data-genie-close] -> popup open expands
 (function () {
   var DEFAULT_MS = 470;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -100,15 +100,14 @@
       var p = pointOf(origin, panel);
       return Genie.expand(panel, { x: p.x, y: p.y });
     },
-    closePopup: function (panel, origin) {
+    closePopup: function (panel) {
+      // expand-only: closing just hides the panel (no suck-in)
       if (!panel) return Promise.resolve();
-      var p = pointOf(origin, panel);
-      return Genie.collapse(panel, { x: p.x, y: p.y }).then(function () {
-        panel.hidden = true;
-        panel.style.display = 'none';
-        panel.style.transformOrigin = '';
-        panel.style.willChange = '';
-      });
+      panel.hidden = true;
+      panel.style.display = 'none';
+      panel.style.transformOrigin = '';
+      panel.style.willChange = '';
+      return Promise.resolve();
     }
   };
 
@@ -156,17 +155,11 @@
     if (url.origin !== window.location.origin) return;
     if (url.pathname === window.location.pathname && url.hash) return;
 
-    var shell = document.querySelector('.site-shell');
-    if (!shell) return;
-
-    e.preventDefault();
+    // only record where the click happened; navigation proceeds normally and the
+    // next page unfurls (expand only — no suck-in on leave)
     try {
       sessionStorage.setItem('ms_axd_genie', (e.clientX / window.innerWidth) + ',' + (e.clientY / window.innerHeight));
     } catch (_) {}
-    document.documentElement.classList.add('genie-bg'); // sidebar-coloured backdrop
-    Genie.collapse(shell, { x: e.clientX, y: e.clientY, duration: 430 }).then(function () {
-      window.location.href = url.href;
-    });
   }, true);
 
   // --- replay the expand on arrival ------------------------------------
