@@ -1,4 +1,5 @@
-// Spidey Web — a verlet-physics spider web whose spider chases the cursor.
+// Liquid Web — a verlet-physics web whose glossy liquid droplet chases the
+// cursor, reaching gooey tendrils toward it (was a spider; now a liquid form).
 (function () {
   var host = document.querySelector('.spider-web');
   var canvas = document.querySelector('[data-spider-web]');
@@ -11,8 +12,8 @@
   var strand = 'rgba(40, 44, 42, 0.32)';
   var strandSoft = 'rgba(40, 44, 42, 0.16)';
   var dewColor = 'rgba(255, 255, 255, 0.5)';
-  var spiderColor = '#1a1c22';
-  var spiderShade = '#2c2f38';
+  var liquidColor = '#1a1c22';
+  var liquidShade = '#2c2f38';
 
   function pickColors() {
     var bg = getComputedStyle(host.closest('.site-sidebar') || host).backgroundColor;
@@ -21,18 +22,18 @@
     var r = +m[0], g = +m[1], b = +m[2];
     var lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     if (lum < 0.5) {
-      // dark sidebar -> pale threads, dark spider stays readable
+      // dark sidebar -> pale threads, dark liquid stays readable
       strand = 'rgba(226, 233, 228, 0.34)';
       strandSoft = 'rgba(226, 233, 228, 0.16)';
       dewColor = 'rgba(190, 255, 120, 0.55)';
-      spiderColor = '#0c0e0c';
-      spiderShade = '#1c2019';
+      liquidColor = '#0c0e0c';
+      liquidShade = '#1c2019';
     } else {
       strand = 'rgba(38, 42, 40, 0.34)';
       strandSoft = 'rgba(38, 42, 40, 0.15)';
       dewColor = 'rgba(255, 255, 255, 0.55)';
-      spiderColor = '#191b20';
-      spiderShade = '#2b2e37';
+      liquidColor = '#191b20';
+      liquidShade = '#2b2e37';
     }
   }
 
@@ -274,71 +275,97 @@
     drawSpider();
   }
 
-  function drawSpider() {
-    var body = R * 0.1;
+  // Metaball membrane: fills a smooth "neck" joining two liquid circles when
+  // they are close enough, so nearby droplets read as one merged blob.
+  // (canonical two-circle metaball connector, ported to canvas paths)
+  function metaball(c1, r1, c2, r2) {
+    var HALF_PI = Math.PI / 2, v = 0.5, handle = 2.4;
+    var dx = c2.x - c1.x, dy = c2.y - c1.y;
+    var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+    if (r1 === 0 || r2 === 0 || d > r1 + r2 * 2.5 || d <= Math.abs(r1 - r2)) return;
+    var u1, u2;
+    if (d < r1 + r2) {
+      u1 = Math.acos((r1 * r1 + d * d - r2 * r2) / (2 * r1 * d));
+      u2 = Math.acos((r2 * r2 + d * d - r1 * r1) / (2 * r2 * d));
+    } else { u1 = 0; u2 = 0; }
+    var ab = Math.atan2(dy, dx);
+    var spread = Math.acos((r1 - r2) / d);
+    var a1 = ab + u1 + (spread - u1) * v;
+    var a2 = ab - u1 - (spread - u1) * v;
+    var a3 = ab + Math.PI - u2 - (Math.PI - u2 - spread) * v;
+    var a4 = ab - Math.PI + u2 + (Math.PI - u2 - spread) * v;
+    var p1 = { x: c1.x + Math.cos(a1) * r1, y: c1.y + Math.sin(a1) * r1 };
+    var p2 = { x: c1.x + Math.cos(a2) * r1, y: c1.y + Math.sin(a2) * r1 };
+    var p3 = { x: c2.x + Math.cos(a3) * r2, y: c2.y + Math.sin(a3) * r2 };
+    var p4 = { x: c2.x + Math.cos(a4) * r2, y: c2.y + Math.sin(a4) * r2 };
+    var total = r1 + r2;
+    var d2 = Math.min(v * handle, Math.sqrt((p1.x - p3.x) * (p1.x - p3.x) + (p1.y - p3.y) * (p1.y - p3.y)) / total);
+    d2 *= Math.min(1, (d * 2) / total);
+    var h1 = r1 * d2, h2 = r2 * d2;
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.bezierCurveTo(
+      p1.x - Math.cos(a1 - HALF_PI) * h1, p1.y - Math.sin(a1 - HALF_PI) * h1,
+      p3.x + Math.cos(a3 - HALF_PI) * h2, p3.y + Math.sin(a3 - HALF_PI) * h2,
+      p3.x, p3.y);
+    ctx.lineTo(p4.x, p4.y);
+    ctx.bezierCurveTo(
+      p4.x + Math.cos(a4 + HALF_PI) * h2, p4.y + Math.sin(a4 + HALF_PI) * h2,
+      p2.x - Math.cos(a2 + HALF_PI) * h1, p2.y - Math.sin(a2 + HALF_PI) * h1,
+      p2.x, p2.y);
+    ctx.closePath();
+    ctx.fill();
+  }
 
-    // tendril legs: glossy, tapered from thick base to thin whipping tip
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+  function drawSpider() {
+    var body = R * 0.16;
+
+    // each tendril tip becomes a droplet: fat when gathered near the body,
+    // small when flung out toward the cursor -> beads that merge and split
+    var beads = [];
     for (var i = 0; i < LEGS; i++) {
-      var nodes = legs[i].nodes;
-      for (var j = 0; j < SEG; j++) {
-        var a = nodes[j], b = nodes[j + 1];
-        var t = j / SEG;
-        ctx.strokeStyle = spiderColor;
-        ctx.lineWidth = (1 - t) * 2.8 + 0.5;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
-      // a faint gloss line down each tendril
-      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
-      ctx.lineWidth = 0.7;
-      ctx.beginPath();
-      ctx.moveTo(nodes[0].x, nodes[0].y);
-      for (var k = 1; k <= SEG; k++) ctx.lineTo(nodes[k].x, nodes[k].y);
-      ctx.stroke();
+      var tip = legs[i].nodes[SEG];
+      var ddx = tip.x - spider.x, ddy = tip.y - spider.y;
+      var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+      var near = 1 - Math.min(1, dist / (R * 0.9));       // 1 close, 0 far
+      var pulse = 1 + Math.sin(tick + i) * 0.08;          // gentle liquid throb
+      beads.push({ x: tip.x, y: tip.y, r: R * (0.05 + 0.06 * near) * pulse });
     }
 
-    // body: elongated symbiote-like head + abdomen, oriented toward the aim
-    var cos = Math.cos(spider.ang), sin = Math.sin(spider.ang);
-    var bx = spider.x - cos * body * 1.0;   // abdomen (rear)
-    var by = spider.y - sin * body * 1.0;
-    var hx = spider.x + cos * body * 0.75;  // head (front)
-    var hy = spider.y + sin * body * 0.75;
-
-    ctx.fillStyle = spiderColor;
+    ctx.fillStyle = liquidColor;
+    // necks first, then the round bodies on top -> one seamless blob
+    for (var m = 0; m < beads.length; m++) {
+      metaball({ x: spider.x, y: spider.y }, body, beads[m], beads[m].r);
+    }
     ctx.beginPath();
-    ctx.ellipse(bx, by, body * 1.25, body * 0.95, spider.ang, 0, Math.PI * 2);
+    ctx.arc(spider.x, spider.y, body, 0, Math.PI * 2);
     ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(hx, hy, body * 0.9, body * 0.7, spider.ang, 0, Math.PI * 2);
-    ctx.fill();
-
-    // glossy back highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.14)';
-    ctx.beginPath();
-    ctx.ellipse(bx - cos * body * 0.3, by - sin * body * 0.3, body * 0.45, body * 0.28, spider.ang, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Venom eyes: two white slanted almonds on the head, facing the cursor
-    var px = -sin, py = cos; // perpendicular to facing
-    var eo = body * 0.42, ef = body * 0.35;
-    ctx.fillStyle = 'rgba(245,248,245,0.95)';
-    for (var s = -1; s <= 1; s += 2) {
-      var ex = hx + cos * ef + px * eo * s;
-      var ey = hy + sin * ef + py * eo * s;
+    for (var n = 0; n < beads.length; n++) {
       ctx.beginPath();
-      ctx.ellipse(ex, ey, body * 0.42, body * 0.2, spider.ang + s * 0.5, 0, Math.PI * 2);
+      ctx.arc(beads[n].x, beads[n].y, beads[n].r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // wet sheen on the main droplet
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(spider.x - body * 0.34, spider.y - body * 0.4, body * 0.3, body * 0.18, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // a small glint on each bead
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    for (var g = 0; g < beads.length; g++) {
+      ctx.beginPath();
+      ctx.arc(beads[g].x - beads[g].r * 0.3, beads[g].y - beads[g].r * 0.35, beads[g].r * 0.35, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
   // --- loop -------------------------------------------------------------
   var running = false;
+  var tick = 0;               // drives the droplet's idle wobble
   function frame() {
     if (!running) return;
+    tick += 0.05;
     integrate();
     stepSpider();
     solve();
