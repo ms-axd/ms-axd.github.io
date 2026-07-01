@@ -30,12 +30,9 @@
     })();
   </script>
 </head>
-<body>
+<body{% if page.layout == 'post' %} class="is-post"{% endif %}>
   <div class="boot-screen" data-boot aria-hidden="true">
     <canvas class="boot-canvas" data-boot-canvas></canvas>
-    <div class="boot-terminal">
-      <pre data-boot-log></pre><span class="boot-cursor" aria-hidden="true">_</span>
-    </div>
     <p class="boot-skip">click / press any key to skip</p>
   </div>
   <div class="cursor-glow" aria-hidden="true"></div>
@@ -183,6 +180,7 @@
   {% if page.layout == 'post' %}
   <script src="{{ '/assets/js/post-toc.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/code-language-labels.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  <script src="{{ '/assets/js/post-progress.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   {% endif %}
   <script src="{{ '/assets/js/mini-terminal.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   <script src="{{ '/assets/js/discord-popover.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>

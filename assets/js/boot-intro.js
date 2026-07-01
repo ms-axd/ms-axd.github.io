@@ -1,12 +1,11 @@
-// Boot intro: a terminal boot sequence, then a spider sweeps across, then reveal.
+// Boot intro: a cat trots across a dark screen, then reveal.
 (function () {
   var root = document.documentElement;
   if (!root.classList.contains('booting')) return; // only the first visit of a session
 
   var screen = document.querySelector('[data-boot]');
-  var log = document.querySelector('[data-boot-log]');
   var canvas = document.querySelector('[data-boot-canvas]');
-  if (!screen || !log || !canvas) { root.classList.remove('booting'); return; }
+  if (!screen || !canvas) { root.classList.remove('booting'); return; }
 
   var ctx = canvas.getContext('2d');
   var finished = false;
@@ -26,173 +25,169 @@
   screen.addEventListener('click', finish);
   window.addEventListener('keydown', finish, { once: true });
 
-  // --- 1. terminal typing ----------------------------------------------
-  var lines = [
-    '> ms_axd.init()',
-    '> loading modules ........ ok',
-    '> weaving web ............ ok',
-    '> summoning spider ....... ok',
-    '> access granted'
-  ];
-  var text = lines.join('\n');
-  var i = 0;
-  function type() {
-    if (finished) return;
-    log.textContent = text.slice(0, i);
-    if (i >= text.length) { setTimeout(startSweep, 260); return; }
-    var ch = text.charAt(i);
-    i++;
-    setTimeout(type, ch === '\n' ? 150 : 15);
-  }
-
-  // --- 2. spider sweep --------------------------------------------------
-  var W = 0, H = 0, dpr = 1;
+  // --- cat walk ---------------------------------------------------------
+  var W = 0, H = 0, dpr = 1, s = 1, groundY = 0;
   function size() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    s = Math.max(0.75, Math.min(1.7, H / 720));
+    groundY = H * 0.66;
   }
 
-  var SEG = 6;
-  var LEGS = 8;
-  var legs = [];
-  var spider = { x: 0, y: 0, px: 0, py: 0, ang: 0 };
-
-  function initSpider() {
-    spider.x = spider.px = -W * 0.12;
-    spider.y = spider.py = H * 0.6;
-    legs = [];
-    for (var l = 0; l < LEGS; l++) {
-      var nodes = [];
-      for (var n = 0; n <= SEG; n++) nodes.push({ x: spider.x, y: spider.y, ox: spider.x, oy: spider.y });
-      legs.push(nodes);
-    }
-  }
-
+  var cat = { x: 0 };
   var startTime = null;
-  var DURATION = 1500;
+  var DURATION = 2000;
 
-  function startSweep() {
+  function startWalk() {
     if (finished) return;
     size();
-    initSpider();
     window.addEventListener('resize', size);
-    raf = requestAnimationFrame(sweep);
+    raf = requestAnimationFrame(walk);
   }
 
-  function sweep(ts) {
+  function walk(ts) {
     if (finished) return;
     if (startTime === null) startTime = ts;
     var p = (ts - startTime) / DURATION;
     if (p > 1) p = 1;
 
-    // ease across the screen, with a subtle vertical bob
-    var ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    spider.px = spider.x; spider.py = spider.y;
-    spider.x = -W * 0.12 + ease * (W * 1.24);
-    spider.y = H * 0.6 + Math.sin(p * Math.PI * 3) * H * 0.03;
-    var vx = spider.x - spider.px, vy = spider.y - spider.py;
-    spider.ang = Math.atan2(vy, vx || 1);
+    cat.x = -W * 0.15 + p * (W * 1.3);
+    render(p);
 
-    updateLegs();
-    render();
-
-    if (p < 1) raf = requestAnimationFrame(sweep);
+    if (p < 1) raf = requestAnimationFrame(walk);
     else finish();
   }
 
-  function updateLegs() {
-    var seg = Math.max(14, W * 0.02);
-    for (var l = 0; l < LEGS; l++) {
-      var nodes = legs[l];
-      // mount points fan around the body, biased to the rear (trailing legs)
-      var t = (l / (LEGS - 1)) - 0.5;           // -0.5..0.5
-      var mount = spider.ang + Math.PI + t * 1.6;
-      var body = Math.max(9, W * 0.012);
-      var ax = spider.x + Math.cos(mount) * body;
-      var ay = spider.y + Math.sin(mount) * body;
+  // four legs in a trot: diagonal pairs share a phase
+  var LEGS = [
+    { hip: -0.30, phase: 0,          depth: -3 }, // back-far
+    { hip:  0.30, phase: Math.PI,    depth: -3 }, // front-far
+    { hip: -0.30, phase: Math.PI,    depth:  3 }, // back-near
+    { hip:  0.30, phase: 0,          depth:  3 }  // front-near
+  ];
 
-      // verlet inertia -> legs stream and whip behind the running body
-      for (var n = 1; n <= SEG; n++) {
-        var q = nodes[n];
-        var qvx = (q.x - q.ox) * 0.78, qvy = (q.y - q.oy) * 0.78;
-        q.ox = q.x; q.oy = q.y;
-        q.x += qvx; q.y += qvy + 0.7; // gravity so they dangle
-      }
-      // distance constraints, base pinned to the mount
-      for (var pass = 0; pass < 3; pass++) {
-        nodes[0].x = ax; nodes[0].y = ay;
-        for (var j = 0; j < SEG; j++) {
-          var a = nodes[j], b = nodes[j + 1];
-          var dx = b.x - a.x, dy = b.y - a.y;
-          var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
-          var diff = (seg - d) / d;
-          var ox = dx * diff, oy = dy * diff;
-          if (j !== 0) { a.x -= ox * 0.5; a.y -= oy * 0.5; b.x += ox * 0.5; b.y += oy * 0.5; }
-          else { b.x += ox; b.y += oy; }
-        }
-      }
-    }
+  function leg(cx, hipY, hipX, foot, thick, col) {
+    // hip -> knee -> foot, knee kicked slightly forward
+    var kx = (hipX + foot.x) / 2 + 4 * s;
+    var ky = (hipY + foot.y) / 2;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = thick;
+    ctx.beginPath();
+    ctx.moveTo(hipX, hipY);
+    ctx.quadraticCurveTo(kx, ky, foot.x, foot.y);
+    ctx.stroke();
+    // paw
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.ellipse(foot.x + 1.5 * s, foot.y, 3.4 * s, 2.4 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  function render() {
+  function render(p) {
     ctx.clearRect(0, 0, W, H);
-    var body = Math.max(9, W * 0.012);
-    var cos = Math.cos(spider.ang), sin = Math.sin(spider.ang);
 
-    // trailing silk thread back to the edge it came from
-    ctx.strokeStyle = 'rgba(124, 255, 158, 0.14)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(-20, spider.y - 2);
-    ctx.lineTo(spider.x, spider.y);
-    ctx.stroke();
+    var bodyLen = 130 * s, bodyH = 52 * s, legLen = 34 * s;
+    var cyc = p * 6 * Math.PI * 2;            // walk phase over the crossing
+    var bob = Math.sin(cyc) * 3 * s;
+    var bcx = cat.x, bcy = groundY - legLen - bodyH * 0.4 + bob;
+
+    var dark = '#0c100d';
 
     ctx.save();
-    ctx.shadowColor = 'rgba(124, 255, 158, 0.55)';
-    ctx.shadowBlur = 12;
+    ctx.shadowColor = 'rgba(124, 255, 158, 0.5)';
+    ctx.shadowBlur = 14;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // tendril legs, tapered
-    for (var l = 0; l < LEGS; l++) {
-      var nodes = legs[l];
-      for (var j = 0; j < SEG; j++) {
-        var a = nodes[j], b = nodes[j + 1];
-        ctx.strokeStyle = 'rgba(20, 26, 22, 0.95)';
-        ctx.lineWidth = (1 - j / SEG) * 3 + 0.6;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      }
+    // --- tail: swishes behind ---
+    var tbx = bcx - bodyLen * 0.44, tby = bcy - bodyH * 0.12;
+    var sw = Math.sin(cyc * 0.5);
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = 8 * s;
+    ctx.beginPath();
+    ctx.moveTo(tbx, tby);
+    ctx.quadraticCurveTo(
+      tbx - 34 * s, tby - 14 * s + sw * 12 * s,
+      tbx - 30 * s - sw * 10 * s, tby - 44 * s - sw * 8 * s
+    );
+    ctx.stroke();
+
+    // --- back legs (behind body) ---
+    for (var a = 0; a < LEGS.length; a++) {
+      if (LEGS[a].depth >= 0) continue;
+      drawLeg(LEGS[a], bcx, bcy, bodyLen, bodyH, legLen, cyc, dark);
     }
 
-    // body: abdomen + head
-    var bx = spider.x - cos * body * 1.1, by = spider.y - sin * body * 1.1;
-    var hx = spider.x + cos * body * 0.8, hy = spider.y + sin * body * 0.8;
-    ctx.fillStyle = '#0c100d';
+    // --- body ---
+    ctx.fillStyle = dark;
     ctx.beginPath();
-    ctx.ellipse(bx, by, body * 1.35, body * 1.0, spider.ang, 0, Math.PI * 2);
+    ctx.ellipse(bcx, bcy, bodyLen * 0.5, bodyH * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- head + ears (front) ---
+    var hx = bcx + bodyLen * 0.42, hy = bcy - bodyH * 0.28;
+    var hr = 22 * s;
+    // ears
+    ctx.beginPath();
+    ctx.moveTo(hx - hr * 0.7, hy - hr * 0.6);
+    ctx.lineTo(hx - hr * 0.2, hy - hr * 1.5);
+    ctx.lineTo(hx + hr * 0.25, hy - hr * 0.7);
+    ctx.closePath();
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(hx, hy, body * 0.95, body * 0.72, spider.ang, 0, Math.PI * 2);
+    ctx.moveTo(hx + hr * 0.3, hy - hr * 0.7);
+    ctx.lineTo(hx + hr * 0.85, hy - hr * 1.45);
+    ctx.lineTo(hx + hr * 1.05, hy - hr * 0.4);
+    ctx.closePath();
+    ctx.fill();
+    // head
+    ctx.beginPath();
+    ctx.arc(hx, hy, hr, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- front legs (in front of body) ---
+    for (var b = 0; b < LEGS.length; b++) {
+      if (LEGS[b].depth < 0) continue;
+      drawLeg(LEGS[b], bcx, bcy, bodyLen, bodyH, legLen, cyc, dark);
+    }
+    ctx.restore();
+
+    // --- glowing eye + nose + whiskers (facing travel direction) ---
+    ctx.save();
+    ctx.shadowColor = 'rgba(150, 255, 180, 0.9)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = 'rgba(190, 255, 205, 0.98)';
+    ctx.beginPath();
+    ctx.ellipse(hx + hr * 0.45, hy - hr * 0.05, 4.2 * s, 2.6 * s, -0.3, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // Venom eyes facing the direction of travel
-    var px = -sin, py = cos;
-    ctx.fillStyle = 'rgba(200, 255, 210, 0.95)';
-    for (var s = -1; s <= 1; s += 2) {
-      var ex = hx + cos * body * 0.35 + px * body * 0.45 * s;
-      var ey = hy + sin * body * 0.35 + py * body * 0.45 * s;
+    ctx.strokeStyle = 'rgba(124, 255, 158, 0.35)';
+    ctx.lineWidth = 1;
+    var mx = hx + hr * 0.95, my = hy + hr * 0.25;
+    for (var w = -1; w <= 1; w++) {
       ctx.beginPath();
-      ctx.ellipse(ex, ey, body * 0.5, body * 0.22, spider.ang + s * 0.5, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx + 20 * s, my + w * 5 * s);
+      ctx.stroke();
     }
   }
 
-  type();
+  function drawLeg(L, bcx, bcy, bodyLen, bodyH, legLen, cyc, col) {
+    var hipX = bcx + L.hip * bodyLen + L.depth * s;
+    var hipY = bcy + bodyH * 0.32;
+    var ph = cyc + L.phase;
+    var stride = 15 * s;
+    var lift = Math.max(0, Math.sin(ph)) * 12 * s;
+    var foot = {
+      x: hipX + Math.cos(ph) * stride,
+      y: groundY - lift
+    };
+    leg(bcx, hipY, hipX, foot, 6 * s, col);
+  }
+
+  startWalk();
 })();
