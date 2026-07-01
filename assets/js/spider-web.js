@@ -94,15 +94,19 @@
     hold = grid[1][0];
   }
 
-  // --- spider -----------------------------------------------------------
-  var spider = { x: 0, y: 0, tx: 0, ty: 0, ang: 0 };
+  // --- spider (Venom-style reaching tendrils) ---------------------------
+  var spider = { x: 0, y: 0, ang: 0 };
   var LEGS = 8;
-  var feet = [];   // planted foot positions, they lag behind the body
+  var SEG = 7;          // nodes per tendril
+  var legs = [];        // each: { nodes:[{x,y,ox,oy}], seg:restLen }
   function initSpider() {
-    spider.x = spider.tx = cx;
-    spider.y = spider.ty = cy;
-    feet = [];
-    for (var i = 0; i < LEGS; i++) feet.push({ x: cx, y: cy });
+    spider.x = cx; spider.y = cy;
+    legs = [];
+    for (var i = 0; i < LEGS; i++) {
+      var nodes = [];
+      for (var n = 0; n <= SEG; n++) nodes.push({ x: cx, y: cy, ox: cx, oy: cy });
+      legs.push({ nodes: nodes, seg: R * 0.16 });
+    }
   }
 
   // --- pointer ----------------------------------------------------------
@@ -166,45 +170,79 @@
     }
   }
 
+  // where the tendrils are reaching (the cursor, or a roaming point when idle)
+  var aim = { x: 0, y: 0 };
+
   function stepSpider() {
     if (pointer.active) {
-      // clamp the target to the web disc so the spider stays on its web
-      var dx = pointer.x - cx, dy = pointer.y - cy;
-      var dist = Math.sqrt(dx * dx + dy * dy) || 0.0001;
-      var max = R * 0.98;
-      if (dist > max) { dx = dx / dist * max; dy = dy / dist * max; }
-      spider.tx = cx + dx; spider.ty = cy + dy;
+      aim.x = pointer.x; aim.y = pointer.y;
     } else {
       idle += 0.02;
-      spider.tx = cx + Math.cos(idle) * R * 0.18;
-      spider.ty = cy + Math.sin(idle * 1.3) * R * 0.18;
+      aim.x = cx + Math.cos(idle) * R * 0.7;
+      aim.y = cy + Math.sin(idle * 1.3) * R * 0.55;
     }
-    var sx = spider.tx - spider.x, sy = spider.ty - spider.y;
-    if (Math.abs(sx) + Math.abs(sy) > 0.4) spider.ang = Math.atan2(sy, sx);
-    spider.x += sx * 0.12;
-    spider.y += sy * 0.12;
 
-    // drag the held web point along -> the whole web stretches toward the spider
+    // body stays back on the web, drifting only slightly toward the cursor
+    var bdx = aim.x - cx, bdy = aim.y - cy;
+    var bd = Math.sqrt(bdx * bdx + bdy * bdy) || 0.0001;
+    var bmax = R * 0.32;
+    if (bd > bmax) { bdx = bdx / bd * bmax; bdy = bdy / bd * bmax; }
+    var btx = cx + bdx, bty = cy + bdy;
+    spider.x += (btx - spider.x) * 0.08;
+    spider.y += (bty - spider.y) * 0.08;
+    spider.ang = Math.atan2(aim.y - spider.y, aim.x - spider.x);
+
+    // drag the held web point along -> the web stretches toward the spider
     var hp = points[hold];
     hp.pinned = true;
     hp.x = spider.x; hp.y = spider.y;
     hp.ox = spider.x; hp.oy = spider.y;
 
-    // feet chase leg anchors around the body (a lagging, stepping gait)
+    // reach each tendril toward the cursor, fanned out around the aim direction
+    var dm = Math.atan2(aim.y - spider.y, aim.x - spider.x);
+    var reachDist = Math.min(Math.hypot(aim.x - spider.x, aim.y - spider.y), R * 1.25);
+    var maxSeg = R * 0.2;
     for (var i = 0; i < LEGS; i++) {
-      var side = i < LEGS / 2 ? -1 : 1;
-      var slot = i % (LEGS / 2);
-      var spread = (slot - (LEGS / 2 - 1) / 2) * 0.5;
-      var la = spider.ang + side * (Math.PI / 2) + spread;
-      var reach = R * 0.34;
-      var ax = spider.x + Math.cos(la) * reach;
-      var ay = spider.y + Math.sin(la) * reach;
-      var f = feet[i];
-      var fd = Math.hypot(ax - f.x, ay - f.y);
-      // replant the foot only once it strays too far -> visible steps
-      var ease = fd > reach * 0.55 ? 0.4 : 0.12;
-      f.x += (ax - f.x) * ease;
-      f.y += (ay - f.y) * ease;
+      var leg = legs[i];
+      var nodes = leg.nodes;
+      var spread = ((i - (LEGS - 1) / 2) / (LEGS - 1)) * 1.9; // ~ -0.95..0.95 rad
+      var ang = dm + spread;
+      var reach = reachDist * (1 - Math.abs(spread) * 0.16);
+      var tx = spider.x + Math.cos(ang) * reach;
+      var ty = spider.y + Math.sin(ang) * reach;
+      leg.seg = Math.min(maxSeg, Math.max(R * 0.05, (reach / SEG) * 1.12));
+
+      // mount the tendril base on the body rim
+      var mount = spider.ang + Math.PI + spread * 0.6;
+      var body = R * 0.1;
+      var ax = spider.x + Math.cos(mount) * body * 0.6;
+      var ay = spider.y + Math.sin(mount) * body * 0.6;
+
+      // verlet inertia -> whippy motion
+      for (var n = 1; n <= SEG; n++) {
+        var p = nodes[n];
+        var vx = (p.x - p.ox) * 0.74, vy = (p.y - p.oy) * 0.74;
+        p.ox = p.x; p.oy = p.y;
+        p.x += vx; p.y += vy + 0.05;
+      }
+      // pull the tip toward the reach target
+      var tip = nodes[SEG];
+      tip.x += (tx - tip.x) * 0.32;
+      tip.y += (ty - tip.y) * 0.32;
+
+      // distance constraints, base pinned to the body mount
+      for (var pass = 0; pass < 4; pass++) {
+        nodes[0].x = ax; nodes[0].y = ay;
+        for (var j = 0; j < SEG; j++) {
+          var a = nodes[j], b = nodes[j + 1];
+          var ddx = b.x - a.x, ddy = b.y - a.y;
+          var d = Math.sqrt(ddx * ddx + ddy * ddy) || 0.0001;
+          var diff = (leg.seg - d) / d;
+          var ox = ddx * diff, oy = ddy * diff;
+          if (j !== 0) { a.x -= ox * 0.5; a.y -= oy * 0.5; b.x += ox * 0.5; b.y += oy * 0.5; }
+          else { b.x += ox; b.y += oy; }
+        }
+      }
     }
   }
 
@@ -237,44 +275,64 @@
   }
 
   function drawSpider() {
-    var body = R * 0.11;
+    var body = R * 0.1;
 
-    // legs
-    ctx.strokeStyle = spiderColor;
-    ctx.lineWidth = 1.6;
+    // tendril legs: glossy, tapered from thick base to thin whipping tip
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     for (var i = 0; i < LEGS; i++) {
-      var f = feet[i];
-      // arch the knee outward from the mid-point for a bent-leg look
-      var mx = (spider.x + f.x) / 2;
-      var my = (spider.y + f.y) / 2;
-      var nx = -(f.y - spider.y), ny = f.x - spider.x;
-      var nl = Math.hypot(nx, ny) || 1;
-      var arch = body * 0.9;
-      mx += nx / nl * arch; my += ny / nl * arch - body * 0.4;
+      var nodes = legs[i].nodes;
+      for (var j = 0; j < SEG; j++) {
+        var a = nodes[j], b = nodes[j + 1];
+        var t = j / SEG;
+        ctx.strokeStyle = spiderColor;
+        ctx.lineWidth = (1 - t) * 2.8 + 0.5;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      // a faint gloss line down each tendril
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 0.7;
       ctx.beginPath();
-      ctx.moveTo(spider.x, spider.y);
-      ctx.quadraticCurveTo(mx, my, f.x, f.y);
+      ctx.moveTo(nodes[0].x, nodes[0].y);
+      for (var k = 1; k <= SEG; k++) ctx.lineTo(nodes[k].x, nodes[k].y);
       ctx.stroke();
     }
 
-    // abdomen (rear) + cephalothorax (front), oriented along travel
-    var bx = spider.x - Math.cos(spider.ang) * body * 0.9;
-    var by = spider.y - Math.sin(spider.ang) * body * 0.9;
+    // body: elongated symbiote-like head + abdomen, oriented toward the aim
+    var cos = Math.cos(spider.ang), sin = Math.sin(spider.ang);
+    var bx = spider.x - cos * body * 1.0;   // abdomen (rear)
+    var by = spider.y - sin * body * 1.0;
+    var hx = spider.x + cos * body * 0.75;  // head (front)
+    var hy = spider.y + sin * body * 0.75;
+
     ctx.fillStyle = spiderColor;
     ctx.beginPath();
-    ctx.ellipse(bx, by, body * 1.15, body * 0.95, spider.ang, 0, Math.PI * 2);
+    ctx.ellipse(bx, by, body * 1.25, body * 0.95, spider.ang, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = spiderShade;
     ctx.beginPath();
-    ctx.arc(spider.x, spider.y, body * 0.7, 0, Math.PI * 2);
+    ctx.ellipse(hx, hy, body * 0.9, body * 0.7, spider.ang, 0, Math.PI * 2);
     ctx.fill();
 
-    // a tiny back highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    // glossy back highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.14)';
     ctx.beginPath();
-    ctx.arc(bx - body * 0.25, by - body * 0.25, body * 0.35, 0, Math.PI * 2);
+    ctx.ellipse(bx - cos * body * 0.3, by - sin * body * 0.3, body * 0.45, body * 0.28, spider.ang, 0, Math.PI * 2);
     ctx.fill();
+
+    // Venom eyes: two white slanted almonds on the head, facing the cursor
+    var px = -sin, py = cos; // perpendicular to facing
+    var eo = body * 0.42, ef = body * 0.35;
+    ctx.fillStyle = 'rgba(245,248,245,0.95)';
+    for (var s = -1; s <= 1; s += 2) {
+      var ex = hx + cos * ef + px * eo * s;
+      var ey = hy + sin * ef + py * eo * s;
+      ctx.beginPath();
+      ctx.ellipse(ex, ey, body * 0.42, body * 0.2, spider.ang + s * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   // --- loop -------------------------------------------------------------
