@@ -35,6 +35,9 @@
     <canvas class="boot-canvas" data-boot-canvas></canvas>
     <p class="boot-skip">click / press any key to skip</p>
   </div>
+  {% if page.layout == 'post' %}
+  <div class="read-progress" aria-hidden="true"><span data-read-progress></span></div>
+  {% endif %}
   <div class="cursor-glow" aria-hidden="true"></div>
   <div class="site-shell">
     <aside class="site-sidebar" aria-label="Site menu">

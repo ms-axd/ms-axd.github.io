@@ -1391,9 +1391,9 @@ body.is-post .site-sidebar {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   z-index: 40;
-  background: rgba(124, 255, 158, 0.1);
+  background: rgba(0, 0, 0, 0.12);
   pointer-events: none;
 }
 
@@ -1401,8 +1401,8 @@ body.is-post .site-sidebar {
   display: block;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, #7cff9e, #34d39b);
-  box-shadow: 0 0 8px rgba(124, 255, 158, 0.55);
+  background: linear-gradient(90deg, #00e676, #12b866);
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.85), 0 0 3px rgba(0, 230, 118, 0.9);
 }
 
 .content-area {
